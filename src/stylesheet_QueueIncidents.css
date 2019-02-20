@@ -47,3 +47,11 @@
 .butt.change button:hover{
   background-color:pink;
 }
+
+.content{
+padding-left: 260px;
+overflow-y: hidden;
+}
+::-webkit-scrollbar { 
+  display: none; 
+}

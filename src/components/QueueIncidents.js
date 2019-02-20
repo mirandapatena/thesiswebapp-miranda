@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import EmergencyDetails from './EmergencyDetails';
-import { Button, Modal, Form,} from 'semantic-ui-react';
 import fire from '../config/Fire';
 import _ from 'lodash';
 
@@ -9,10 +8,8 @@ class QueueIncidents extends Component {
     constructor(props){
         super(props);
         this.state = {
-            open: false,
-            incidentType: '',
-            incidentLocation: '',
-            isResponded: null,
+            
+
             incidentsList : [{
                 incidentType: '',
                 incidentLocation: '',
@@ -26,31 +23,9 @@ class QueueIncidents extends Component {
         })
     }
 
-    show = size => () => this.setState({ size, open: true })
-    close = () => this.setState({ open: false })
+    
 
-    inputIncidentTypeHandler = (e) => {
-        this.setState({incidentType: e.target.value});
-    }
-
-    inputIncidentLocationHandler = (e) => {
-        this.setState({incidentLocation: e.target.value});
-    }
-
-    submitIncidentHandler = (e) => {
-        e.preventDefault();
-        let firebaseRef = fire.database().ref('/incidents');
-        firebaseRef.push({
-            incidentType: this.state.incidentType,
-            incidentLocation: this.state.incidentLocation,
-            responded: false
-        });
-        this.setState({
-            incidentType: '',
-            incidentLocation: '',
-            responded: null
-        });
-    } 
+    
 
     getData = (values) => {
         let incidentValues = values;
@@ -67,7 +42,7 @@ class QueueIncidents extends Component {
     }
 
     render(){
-        const { open, size } = this.state
+        
         let incidentNodes = this.state.incidentsList.map((incidents, key) => {
             return (
                 <div className='item' key={key}>
@@ -83,34 +58,7 @@ class QueueIncidents extends Component {
         return (
             
                 <div className="ui visible left vertical sidebar menu">
-                    
                         {incidentNodes}
-                    <Modal size={size} open={open} onClose={this.close}>
-                    <Modal.Header>New Emergency</Modal.Header>
-                        <Modal.Content>
-                            <Form>
-                                <Form.Field>
-                                    <label>Type of Incident</label>
-                                    <input 
-                                        name='incidentType' 
-                                        onChange={this.inputIncidentTypeHandler}
-                                    />
-                                </Form.Field>
-                                <Form.Field>
-                                    <label>Incident Location</label>
-                                    <input 
-                                        name='incidentLocation'
-                                        onChange={this.inputIncidentLocationHandler}
-                                    />
-                                </Form.Field>
-                            </Form>
-                            </Modal.Content>
-                            <Modal.Actions>
-                                <Button basic color='green' onClick={this.submitIncidentHandler}>
-                                    Submit
-                                </Button>
-                            </Modal.Actions>
-                    </Modal>
                 </div>
         );
     }
