@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import EmergencyDetails from './EmergencyDetails';
-import { Button, Modal, Header, Form,  Dropdown,} from 'semantic-ui-react';
+import { Button, Modal, Form,} from 'semantic-ui-react';
 import fire from '../config/Fire';
 import _ from 'lodash';
 
@@ -83,22 +83,7 @@ class QueueIncidents extends Component {
         return (
             
                 <div className="ui visible left vertical sidebar menu">
-                    <div>
-                        <Header>
-                            <Button size="tiny"><Dropdown styles='width:0x;' text='Filter' icon='filter' floating labeled button className='icon'>
-                                <Dropdown.Menu>
-                                    <Dropdown.Header icon='tags' content='Filter by incident status' />
-                                 <Dropdown.Divider />
-                                    <Dropdown.Item icon='attention' text='New' />
-                                    <Dropdown.Item icon='comment' text='Responding' />
-                                    <Dropdown.Item icon='conversation' text='Settled' />
-                                </Dropdown.Menu>
-                            </Dropdown></Button>
-                            <Button primary onClick={this.show('tiny')}>
-                                Add Incident
-                            </Button>
-                        </Header>
-                    </div>
+                    
                         {incidentNodes}
                     <Modal size={size} open={open} onClose={this.close}>
                     <Modal.Header>New Emergency</Modal.Header>

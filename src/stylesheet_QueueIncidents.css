@@ -31,5 +31,19 @@
 }
 
 .fixed-width {
-  width: 500px;
+  min-width: 500px;
+}
+
+.sidebar{
+  min-height:50px;
+}
+
+.aboutcontainer{
+  background-image: url(./images/bg_about.png);
+  background-size: 100%;
+  background-repeat: no-repeat;
+}
+
+.butt.change button:hover{
+  background-color:pink;
 }

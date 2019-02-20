@@ -8,17 +8,23 @@ class Dashboard extends Component {
     render(){
         return (
             <div className="ui visible">
-                <HeaderDashboard/>
                 <div className="ui bottom attached segment pushable" style={{minHeight: '100vh', display: 'flex', flexFlow: 'column nowrap'}}>
                     <QueueIncidents/>
-                    <div className="pusher">
-                        <div className="ui basic segment" style={{minHeight: '100vh', display: 'flex', flexFlow: 'column nowrap'}}>
-                            <CityMap/>
+                    <div className="pusher"> 
+                        <div className="ui basic segment" >
+                            <div style={{maxHeight:'100%', maxWidth:'83.5%', flexFlow: 'column nowrap'}}>
+                             <HeaderDashboard/>
+                            </div>
+                            <div style={{minHeight: '100vh', display: 'flex', flexFlow: 'column nowrap'}}>
+                                <CityMap/>
+                            </div>
                         </div>
                     </div>
                 </div>
+           </div>
+                  
             
-            </div>
+            
             
         );
     }
