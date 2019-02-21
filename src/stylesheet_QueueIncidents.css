@@ -1,3 +1,8 @@
+html, body{
+  height: 99%;
+  overflow:hidden;
+}
+
 .inc_stat {
   background-image: url(./images/incident_new.png);
   background-color: white;
