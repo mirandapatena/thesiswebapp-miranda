@@ -10,7 +10,7 @@ class Dashboard extends Component {
           
             <div className="ui visible">
                 <div className="ui bottom attached segment pushable" style={{maxHeight:'100vh', minHeight: '100vh', display: 'compact', flexFlow: 'column nowrap'}}>
-                    <QueueIncidents/>
+                    <QueueIncidents/><div className="hidescrollbar">
                     <div className="content"> 
                             <div style={{maxHeight:'100%', maxWidth:'100%', }}>
                              <HeaderDashboard/>
@@ -19,7 +19,7 @@ class Dashboard extends Component {
                                 <CityMap/>
                             </div>
                         </div>
-                   
+                        </div>
                 </div>  
            </div>
         );

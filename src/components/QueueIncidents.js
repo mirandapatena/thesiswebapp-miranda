@@ -56,10 +56,10 @@ class QueueIncidents extends Component {
         });
         
         return (
-            
+            <div className="hidescrollbar">
                 <div className="ui visible left vertical sidebar menu">
                         {incidentNodes}
-                </div>
+                </div></div>
         );
     }
 }
