@@ -134,12 +134,6 @@ class HeaderDashboard extends Component{
                   {/*Settings*/}
                   <Dropdown trigger={this.filtertrigger} options={this.filteroptions} icon={null} />
               </Menu.Item>
-              <Menu.Item link onClick={this.show('tiny')}>
-                  Add Incident
-              </Menu.Item>
-              <Menu.Item>
-                  Filter Incidents
-              </Menu.Item>
           </Menu.Menu>
         <Menu.Menu position='right'>
               <Menu.Item onClick={this.handleItemClick}>
