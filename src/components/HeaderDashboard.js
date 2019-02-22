@@ -2,24 +2,47 @@ import React, { Component } from 'react'
 import { Menu, Dropdown, Icon, Modal, Form, Button} from 'semantic-ui-react'
 import fire from '../config/Fire';
 import '../stylesheet_QueueIncidents.css';
+import PlacesAutocomplete, {
+  geocodeByAddress,
+  getLatLng,
+} from 'react-places-autocomplete';
 
-class HeaderDashboard extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      open: false,
-      incidentType: '',
-      incidentLocation: '',
-      isResponded: null,
+class HeaderDashboard extends Component{
+  
+    constructor(props){
+      
+        super(props);
+        
+        this.state = {
+          open: false,
+          incidentType: '',
+          incidentLocation: '',
+          isResponded: null,
+        }
+        this.logout = this.logout.bind(this);
     }
-    this.logout = this.logout.bind(this);
-  }
+
 
   show = size => () => this.setState({ size, open: true })
   close = () => this.setState({ open: false })
+    
+    handleChange = incidentLocation => {
+      this.setState({ incidentLocation });
+  };
+  
 
-  inputIncidentTypeHandler = (e) => {
-    this.setState({ incidentType: e.target.value });
+  handleSelect = incidentLocation => {
+      geocodeByAddress(incidentLocation)
+        .then(results => getLatLng(results[0]))
+        .then(latLng => {
+            console.log('Success', latLng);
+            this.setState({lng: latLng.lng, lat: latLng.lat});
+        })
+        .catch(error => console.error('Error', error));
+    };
+  
+    inputIncidentTypeHandler = (e) => {
+      this.setState({incidentType: e.target.value});
   }
 
   inputIncidentLocationHandler = (e) => {
@@ -28,19 +51,24 @@ class HeaderDashboard extends Component {
 
   submitIncidentHandler = (e) => {
     e.preventDefault();
+    
     let firebaseRef = fire.database().ref('/incidents');
-    firebaseRef.push({
-      incidentType: this.state.incidentType,
-      incidentLocation: this.state.incidentLocation,
-      responded: false
-    });
 
-    this.setState({
-      incidentType: '',
-      incidentLocation: '',
-      responded: null
+    firebaseRef.push({
+        incidentType: this.state.incidentType,
+        incidentLocation: this.state.incidentLocation,
+        responded: false,
+        coordinates: {lng: this.state.lng, lat: this.state.lat}
     });
-  }
+    this.setState({
+        incidentType: '',
+        incidentLocation: '',
+        responded: null,
+        lng: null,
+        lat: null
+    });
+    console.log(this.state.incidentsList);
+}
 
   trigger = (
     <span>
@@ -95,59 +123,100 @@ class HeaderDashboard extends Component {
     return (<div className="menuz">
     {/* Header Menu */}
       <Menu inverted>
-        <Menu.Menu position='left'>
-          <Menu.Item>
-            App Name with Logo
-          </Menu.Item>
-          <Menu.Item link onClick={this.show('tiny')}>
-            <Icon name="plus" />Add Incident
-          </Menu.Item>
-          <Menu.Item onClick={this.handleItemClick}>
-            {/*Settings*/}
-            <Dropdown trigger={this.filtertrigger} options={this.filteroptions} icon={null} />
-         
-          </Menu.Item>
-        </Menu.Menu>
+          <Menu.Menu position='left'>
+              <Menu.Item>
+                 App Name with Logo
+              </Menu.Item>
+              <Menu.Item link onClick={this.show('tiny')}>
+                 <Icon name="plus" />Add Incident
+              </Menu.Item>
+              <Menu.Item onClick={this.handleItemClick}>
+                  {/*Settings*/}
+                  <Dropdown trigger={this.filtertrigger} options={this.filteroptions} icon={null} />
+              </Menu.Item>
+              <Menu.Item link onClick={this.show('tiny')}>
+                  Add Incident
+              </Menu.Item>
+              <Menu.Item>
+                  Filter Incidents
+              </Menu.Item>
+          </Menu.Menu>
         <Menu.Menu position='right'>
-          <Menu.Item onClick={this.handleItemClick}>
-          <Dropdown icon='tasks' className='icon'>
-            <Dropdown.Menu>
-              <Dropdown.Header content='Personnel Actions' />
-            <Dropdown.Divider />
-            <Dropdown.Item icon='user plus' text='Add Responder' />
-            <Dropdown.Item icon='user plus' text='Add Volunteer' />
-          </Dropdown.Menu>
-        </Dropdown>
-          </Menu.Item>
-          <Menu.Item onClick={this.handleItemClick}>
-            <Dropdown trigger={this.trigger} options={this.options} pointing='top left' icon={null} />
-          </Menu.Item>
+              <Menu.Item onClick={this.handleItemClick}>
+                  <Dropdown icon='tasks' className='icon'>
+                      <Dropdown.Menu>
+                      <Dropdown.Header content='Personnel Actions' />
+                      <Dropdown.Divider />
+                          <Dropdown.Item icon='user plus' text='Add Responder' />
+                          <Dropdown.Item icon='user plus' text='Add Volunteer' />
+                    </Dropdown.Menu>
+                  </Dropdown>
+              </Menu.Item>
+              <Menu.Item onClick={this.handleItemClick}>
+                  <Dropdown trigger={this.trigger} options={this.options} pointing='top left' icon={null} />
+              </Menu.Item>
         </Menu.Menu>
       </Menu>
       {/* Add Incident Modal */}
       <Modal size={size} open={open} onClose={this.close}>
-        <Modal.Header>New Emergency</Modal.Header>
-        <Modal.Content>
-          <Form>
-            <Form.Field>
-              <label>Type of Incident</label>
-              <input
-                name='incidentType'
-                onChange={this.inputIncidentTypeHandler}
-              />
-            </Form.Field>
-            <Form.Field>
-              <label>Incident Location</label>
-              <input
-                name='incidentLocation'
-                onChange={this.inputIncidentLocationHandler}
-              />
-            </Form.Field>
-          </Form>
-        </Modal.Content>
-        <Modal.Actions>
-          <Button basic color='green' onClick={this.submitIncidentHandler}>
-            Submit
+      <Modal.Header>New Emergency</Modal.Header>
+          <Modal.Content>
+              <Form>
+                  <Form.Field>
+                      <label>Type of Incident</label>
+                      <input 
+                          name='incidentType' 
+                          onChange={this.inputIncidentTypeHandler}
+                      />
+                  </Form.Field>
+                  <Form.Field>
+                  <label>Incident Location</label>
+                  <PlacesAutocomplete
+                      onError={this._handleError}
+                      clearItemsOnError={true}
+                      value={this.state.incidentLocation}
+                      onChange={this.handleChange}
+                      onSelect={this.handleSelect}
+                  >
+                      {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                      <div>
+                          <input
+                          {...getInputProps({
+                              placeholder: 'Search Places ...',
+                              className: 'location-search-input',
+                          })}
+                          />
+                          <div className="autocomplete-dropdown-container">
+                          {loading && <div>Loading...</div>}
+                          {suggestions.map(suggestion => {
+                              const className = suggestion.active
+                              ? 'suggestion-item--active'
+                              : 'suggestion-item';
+                              // inline style for demonstration purpose
+                              const style = suggestion.active
+                              ? { backgroundColor: '#fafafa', cursor: 'pointer' }
+                              : { backgroundColor: '#ffffff', cursor: 'pointer' };
+                              return (
+                              <div
+                                  {...getSuggestionItemProps(suggestion, {
+                                  className,
+                                  style,
+                                  })}
+                              >
+                                  <span>{suggestion.description}</span>
+                              </div>
+                              );
+                          })}
+                          </div>
+                      </div>
+                      )}
+                  </PlacesAutocomplete>   
+                  </Form.Field>
+              </Form>
+              </Modal.Content>
+              <Modal.Actions>
+                  <Button basic color='green' onClick={this.submitIncidentHandler}>
+                      Submit
                   </Button>
         </Modal.Actions>
       </Modal></div>

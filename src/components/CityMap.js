@@ -1,33 +1,62 @@
-import React, { Component } from 'react';
-import { Map, GoogleApiWrapper } from 'google-maps-react';
+import React, {Component} from 'react';
+import _ from "lodash";
+import fire from '../config/Fire';
+import MapWithPlaces from './MapWithPlaces';
 
-const mapStyles = {
-  width: '83%',
-  height: '94.66%'
-};
+class CityMap extends Component {
+    constructor(props){
+      super(props);
+      this.state = {
+          incidentsList: [{
+              incidentType: '',
+              incidentLocation: '',
+              coordinates: {
+                lng: '',
+                lat: ''
+              },
+              responded: null
+          }]
+      }
 
-export class MapContainer extends Component {
-  render() {
-    return (
-      <Map
-        google={this.props.google}
-        zoom={15}
-        style={mapStyles}
-        //Mandaue City coords
+      let app = fire.database().ref('/incidents');
+      app.on('value', snapshot => {
+          this.getData(snapshot.val());
+      });
+  }
+
+  getData = (values) => {
+      let incidentValues = values;
+      let incidentsList = _(incidentValues)
+                          .keys()
+                          .map(incidentKey => {
+                              let cloned = _.clone(incidentValues[incidentKey]);
+                              cloned.key = incidentKey;
+                              return cloned;
+                          })
+                          .value();
+      this.setState({incidentsList: incidentsList});
+      console.log('getData', this.state.incidentsList)
+  }
+  
+  render() { 
+    return(
+      <div>
+        {console.log('city map', this.state.incidentsList)}
+        <MapWithPlaces 
+          center={{ lat: 10.324646, lng: 123.942197 }}
+          zoom={15}
+          places={this.state.incidentsList}
+        />
+      </div>
+    );
+  }
+}
+
+export default CityMap;
+
+    //Mandaue City coords
         // lat: 10.333333,
         // lng: 123.933334
         
         //MCPO coords
         // 10.324646, 123.942197
-        initialCenter={{
-         lat: 10.324646,
-         lng: 123.942197
-        }}
-      />
-    );
-  }
-}
-
-export default GoogleApiWrapper({
-  apiKey: 'AIzaSyDnJpxYlDPNrGJSQir9SoWBEbMaFa5Nv5w'
-})(MapContainer);

@@ -23,10 +23,6 @@ class QueueIncidents extends Component {
         })
     }
 
-    
-
-    
-
     getData = (values) => {
         let incidentValues = values;
         let incidentsList = _(incidentValues)

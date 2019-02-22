@@ -3,6 +3,7 @@ import QueueIncidents from './QueueIncidents';
 import CityMap from './CityMap';
 import HeaderDashboard from './HeaderDashboard';
 import '../stylesheet_QueueIncidents.css';
+
 class Dashboard extends Component {
 
     render(){
@@ -25,5 +26,9 @@ class Dashboard extends Component {
         );
     }
 }
-
+// <CityMap
+// containerElement={<div style={{ height: `400px` }} />}
+// mapElement={<div style={{ height: `100%` }} />}
+// coordinates={this.state.coordinates}
+// />
 export default Dashboard;
