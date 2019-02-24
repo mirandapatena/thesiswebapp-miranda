@@ -8,18 +8,22 @@ class QueueIncidents extends Component {
     constructor(props){
         super(props);
         this.state = {
-            
-
             incidentsList : [{
+                key: '',
                 incidentType: '',
                 incidentLocation: '',
-                isResponded: ''
+                isResponded: '',
+                coordinates: {
+                    lng: '',
+                    lat: ''
+                }
             }]
         }
 
         let app = fire.database().ref('/incidents');
         app.on('value', snapshot => {
             this.getData(snapshot.val());
+            console.log('snapshot', snapshot.val());
         })
     }
 
@@ -34,11 +38,9 @@ class QueueIncidents extends Component {
                             })
                             .value();
         this.setState({incidentsList: incidentsList});
-
     }
 
     render(){
-        
         let incidentNodes = this.state.incidentsList.map((incidents, key) => {
             return (
                 <div className='item' key={key}>
@@ -48,7 +50,6 @@ class QueueIncidents extends Component {
                     />
                 </div>
             );
-            
         });
         
         return (

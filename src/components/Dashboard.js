@@ -8,7 +8,6 @@ class Dashboard extends Component {
 
     render(){
         return (
-          
             <div className="ui visible">
                 <div className="ui bottom attached segment pushable" style={{maxHeight:'100vh', minHeight: '100vh', display: 'compact', flexFlow: 'column nowrap'}}>
                     <QueueIncidents/><div className="hidescrollbar">

@@ -30,7 +30,7 @@ v
                 </Card.Content>
                 <Card.Content>
                     <Card.Description>
-                        P. Sherman 42 Wallaby Way, Sydney
+                        {this.props.incidentLocation}
                     </Card.Description>
                      <br></br>
                     <Card.Description>
@@ -43,7 +43,7 @@ v
             <Modal size={size} open={open} onClose={this.close}>
                 <Modal.Header>New Emergency</Modal.Header>
                     <Modal.Content>
-                            <p>Reported by: {this.props.name}</p>
+                            <p>Reported by: Regular User</p>
                             <p>Type of Incident: {this.props.incidentType}</p>
                             <p>Location of Incident: {this.props.incidentLocation}</p>
                             <p>Photo of Incident:</p>

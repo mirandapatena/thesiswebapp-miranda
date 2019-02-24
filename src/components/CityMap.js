@@ -8,6 +8,7 @@ class CityMap extends Component {
       super(props);
       this.state = {
           incidentsList: [{
+              key: '',
               incidentType: '',
               incidentLocation: '',
               coordinates: {
@@ -17,7 +18,6 @@ class CityMap extends Component {
               responded: null
           }]
       }
-
       let app = fire.database().ref('/incidents');
       app.on('value', snapshot => {
           this.getData(snapshot.val());
@@ -35,13 +35,12 @@ class CityMap extends Component {
                           })
                           .value();
       this.setState({incidentsList: incidentsList});
-      console.log('getData', this.state.incidentsList)
   }
   
   render() { 
     return(
       <div>
-        {console.log('city map', this.state.incidentsList)}
+        {console.log('city map keys', this.state.incidentsList)}
         <MapWithPlaces 
           center={{ lat: 10.324646, lng: 123.942197 }}
           zoom={15}

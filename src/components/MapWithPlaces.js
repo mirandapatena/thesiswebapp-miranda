@@ -4,12 +4,13 @@ import {
   GoogleMap,
   withScriptjs,
   Marker,
-  InfoWindow
 } from "react-google-maps";
 import { compose, withProps, withStateHandlers } from "recompose";
+import { Button, Modal,} from 'semantic-ui-react';
 
 
 const MapWithPlaces = compose(
+  
   withProps({
     googleMapURL:
       "https://maps.googleapis.com/maps/api/js?key=AIzaSyDnJpxYlDPNrGJSQir9SoWBEbMaFa5Nv5w&libraries=geometry,drawing,places",
@@ -40,20 +41,31 @@ const MapWithPlaces = compose(
       props.places.map((place, i) => {
         let lat = parseFloat(place.coordinates.lat, 10);
         let lng = parseFloat(place.coordinates.lng, 10);
-        console.log('mapwithplaces', props);
         return (
-          <Marker
-            position={{ lat: lat, lng: lng }}
-            title="Location"
-            onClick={props.onToggleOpen.bind(this, i)}
-            key = {i}
-          >
-            {/*props.infoWindows[i].isOpen && (
-              <InfoWindow onCloseClick={props.onToggleOpen.bind(i)}>
-                <div>{place.incidentType}</div>
-              </InfoWindow>
-            )*/}
-          </Marker>
+            <div>
+
+                <Modal size="tiny" trigger={<Marker
+                  position={{ lat: lat, lng: lng }}
+                  title={place.incidentLocation}
+                  key = {i} />}>
+                    <Modal.Header>New Emergency</Modal.Header>
+                    <Modal.Content>
+                          <p>Reported by: Regular User</p>
+                          <p>Type of Incident: {place.incidentType}</p>
+                          <p>Location of Incident: {place.incidentLocation}</p>
+                          <p>Photo of Incident:</p>
+                      </Modal.Content>
+                      <Modal.Actions>
+                          <Button basic color='green'>
+                              Dispatch Responders
+                          </Button>
+                          <Button basic color='green'>
+                              Request Volunteers
+                          </Button>
+              </Modal.Actions>
+  </Modal>
+
+            </div>
         );
       })}
   </GoogleMap>
