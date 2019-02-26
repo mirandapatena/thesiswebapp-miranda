@@ -8,7 +8,6 @@ const config = {
   projectId: "emergencyresponsesystem-57dc4",
   storageBucket: "emergencyresponsesystem-57dc4.appspot.com",
   messagingSenderId: "583480520859"
-
 };
 const fire = firebase.initializeApp(config);
 // const firebaseRef = firebase.database().ref();

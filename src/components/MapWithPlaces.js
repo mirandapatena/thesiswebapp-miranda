@@ -8,7 +8,8 @@ import {
 } from "react-google-maps";
 import { compose, withProps, withStateHandlers } from "recompose";
 import { Button, Modal,} from 'semantic-ui-react';
-
+import logo1 from '../../src/images/va_new.png';
+import logo2 from '../../src/images/pi_new.png';
 
 const MapWithPlaces = compose(
   
@@ -41,16 +42,19 @@ const MapWithPlaces = compose(
     {props.places &&
       props.places.map((place, i) => {
         let lat = parseFloat(place.coordinates.lat, 10);
-        let lng = parseFloat(place.coordinates.lng, 10);
-        let phyURL = {url: 'thesiswebapp-miranda/src/images/type_veh.png', scaledSize: { width: 32, height: 32 }};
-        //let vehURL = '../images/type_veh.png';
+        let lng = parseFloat(place.coordinates.lng, 10);        //let vehURL = '../images/type_veh.png';
+        let incidentLogo = (place.incidentType === 'Vehicular Accident' ? logo1 : logo2);
 
         return (
             <div>
                 <Modal size="tiny" trigger={<Marker
                   position={{ lat: lat, lng: lng }}
                   title={place.incidentLocation}
-                  key = {i}>
+                  key = {i}
+                  icon={{
+                    url: incidentLogo,
+                    scaledSize: new window.google.maps.Size(50,50) 
+                  }}>
                   <Circle center={{lat: lat, lng: lng}} radius={250} visible={"false"} 
                     options={{
                       strokeColor: '#babfc7',
@@ -58,7 +62,6 @@ const MapWithPlaces = compose(
                       strokeOpacity: 0.5,
                       strokeWeight: 1,
                       fillOpacity: 0.5,
-                      icon: {url: phyURL}
                       }}   
                   />
                   </Marker>}>

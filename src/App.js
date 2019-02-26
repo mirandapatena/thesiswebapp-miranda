@@ -3,7 +3,6 @@ import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import fire from './config/Fire';
 
-
 class App extends Component {
   constructor(props){
     super(props);

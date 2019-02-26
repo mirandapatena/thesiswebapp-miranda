@@ -40,7 +40,6 @@ class CityMap extends Component {
   render() { 
     return(
       <div>
-        {console.log('city map keys', this.state.incidentsList)}
         <MapWithPlaces 
           center={{ lat: 10.324646, lng: 123.942197 }}
           zoom={15}

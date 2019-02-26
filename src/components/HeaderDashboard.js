@@ -41,10 +41,6 @@ class HeaderDashboard extends Component{
         .catch(error => console.error('Error', error));
     };
   
-    inputIncidentTypeHandler = (e) => {
-      this.setState({incidentType: e.target.value});
-  }
-
   inputIncidentTypeHandler = (e, {incidentType}) => this.setState({ incidentType})
 
   inputIncidentLocationHandler = (e) => {
@@ -106,12 +102,9 @@ class HeaderDashboard extends Component{
   },
   { key: 'exclamation', text: 'Unresponded' },
   { key: 'car', text: 'Responding' },
-  { key: 'thumbs up', text: 'Settled', },
+  { key: 'thumbs up', text: 'Settled', }
   ];
    
-  
-
-
   logout() {
     fire.auth().signOut();
   }
@@ -162,7 +155,6 @@ class HeaderDashboard extends Component{
                   <label>Type of Incident</label>
                     <Radio
                       label='Vehicular Accident'
-                      name='incidentType'
                       incidentType='Vehicular Accident'
                       checked={this.state.incidentType === 'Vehicular Accident'}
                       onChange={this.inputIncidentTypeHandler}
@@ -170,7 +162,6 @@ class HeaderDashboard extends Component{
                     <br/>
                     <Radio
                       label='Physical Injury'
-                      name='incidentType'
                       incidentType='Physical Injury'
                       checked={this.state.incidentType === 'Physical Injury'}
                       onChange={this.inputIncidentTypeHandler}
