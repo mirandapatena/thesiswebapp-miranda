@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Menu, Dropdown, Icon, Modal, Form, Button} from 'semantic-ui-react'
+import { Menu, Dropdown, Icon, Modal, Form, Button, Radio} from 'semantic-ui-react'
 import fire from '../config/Fire';
 import '../stylesheet_QueueIncidents.css';
 import PlacesAutocomplete, {
@@ -44,6 +44,8 @@ class HeaderDashboard extends Component{
     inputIncidentTypeHandler = (e) => {
       this.setState({incidentType: e.target.value});
   }
+
+  inputIncidentTypeHandler = (e, {incidentType}) => this.setState({ incidentType})
 
   inputIncidentLocationHandler = (e) => {
     this.setState({ incidentLocation: e.target.value });
@@ -156,12 +158,23 @@ class HeaderDashboard extends Component{
       <Modal.Header>New Emergency</Modal.Header>
           <Modal.Content>
               <Form>
-                  <Form.Field>
-                      <label>Type of Incident</label>
-                      <input 
-                          name='incidentType' 
-                          onChange={this.inputIncidentTypeHandler}
-                      />
+                <Form.Field>
+                  <label>Type of Incident</label>
+                    <Radio
+                      label='Vehicular Accident'
+                      name='incidentType'
+                      incidentType='Vehicular Accident'
+                      checked={this.state.incidentType === 'Vehicular Accident'}
+                      onChange={this.inputIncidentTypeHandler}
+                    />
+                    <br/>
+                    <Radio
+                      label='Physical Injury'
+                      name='incidentType'
+                      incidentType='Physical Injury'
+                      checked={this.state.incidentType === 'Physical Injury'}
+                      onChange={this.inputIncidentTypeHandler}
+                    />
                   </Form.Field>
                   <Form.Field>
                   <label>Incident Location</label>

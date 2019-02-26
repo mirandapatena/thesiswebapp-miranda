@@ -16,7 +16,7 @@ class EmergencyDetails extends Component{
         console.log('Modal pressed');
     }
     close = () => this.setState({ open: false })
-v
+   
     render() {
         const { open, size } = this.state
         return (
@@ -64,7 +64,7 @@ v
     }
 
 EmergencyDetails.defaultProps = {
-    name: 'Vehicular or Physical',
+    name: 'Command Center Personnel',
     accountID : 12345,
     timeReported: new Date(),
     incidentType: 'Police Emergency',

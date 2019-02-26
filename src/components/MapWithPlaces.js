@@ -4,6 +4,7 @@ import {
   GoogleMap,
   withScriptjs,
   Marker,
+  Circle
 } from "react-google-maps";
 import { compose, withProps, withStateHandlers } from "recompose";
 import { Button, Modal,} from 'semantic-ui-react';
@@ -41,13 +42,26 @@ const MapWithPlaces = compose(
       props.places.map((place, i) => {
         let lat = parseFloat(place.coordinates.lat, 10);
         let lng = parseFloat(place.coordinates.lng, 10);
+        let phyURL = {url: 'thesiswebapp-miranda/src/images/type_veh.png', scaledSize: { width: 32, height: 32 }};
+        //let vehURL = '../images/type_veh.png';
+
         return (
             <div>
-
                 <Modal size="tiny" trigger={<Marker
                   position={{ lat: lat, lng: lng }}
                   title={place.incidentLocation}
-                  key = {i} />}>
+                  key = {i}>
+                  <Circle center={{lat: lat, lng: lng}} radius={250} visible={"false"} 
+                    options={{
+                      strokeColor: '#babfc7',
+                      fillColor: '#7d899e',
+                      strokeOpacity: 0.5,
+                      strokeWeight: 1,
+                      fillOpacity: 0.5,
+                      icon: {url: phyURL}
+                      }}   
+                  />
+                  </Marker>}>
                     <Modal.Header>New Emergency</Modal.Header>
                     <Modal.Content>
                           <p>Reported by: Regular User</p>
@@ -62,8 +76,8 @@ const MapWithPlaces = compose(
                           <Button basic color='green'>
                               Request Volunteers
                           </Button>
-              </Modal.Actions>
-  </Modal>
+                      </Modal.Actions>
+                </Modal>
 
             </div>
         );
