@@ -8,8 +8,12 @@ import {
 } from "react-google-maps";
 import { compose, withProps, withStateHandlers } from "recompose";
 import { Button, Modal,} from 'semantic-ui-react';
-import logo1 from '../../src/images/va_new.png';
-import logo2 from '../../src/images/pi_new.png';
+import vehicularUnresponded from '../../src/images/va_new.png';
+import vehicularResponding from '../../src/images/va_otw.png';
+import vehicularSettled from '../../src/images/va_fin.png';
+import physicalUnresponded from '../../src/images/pi_new.png';
+import physicalResponding from '../../src/images/pi_otw.png';
+import physicalSettled from '../../src/images/pi_fin.png';
 
 const MapWithPlaces = compose(
   
@@ -42,20 +46,19 @@ const MapWithPlaces = compose(
     {props.places &&
       props.places.map((place, i) => {
         let lat = parseFloat(place.coordinates.lat, 10);
-        let lng = parseFloat(place.coordinates.lng, 10);        //let vehURL = '../images/type_veh.png';
-        let incidentLogo = (place.incidentType === 'Vehicular Accident' ? logo1 : logo2);
+        let lng = parseFloat(place.coordinates.lng, 10);     
+        let incidentLogo = setLogo(place.incidentType, place.unresponded, place.isResponding, place.isSettled);
 
         return (
-            <div>
+            <div key = {i}>
                 <Modal size="tiny" trigger={<Marker
                   position={{ lat: lat, lng: lng }}
-                  title={place.incidentLocation}
-                  key = {i}
+                  title={place.incidentLocation} 
                   icon={{
                     url: incidentLogo,
                     scaledSize: new window.google.maps.Size(50,50) 
                   }}>
-                  <Circle center={{lat: lat, lng: lng}} radius={250} visible={"false"} 
+                  <Circle center={{lat: lat, lng: lng}} radius={350} visible={true} 
                     options={{
                       strokeColor: '#babfc7',
                       fillColor: '#7d899e',
@@ -87,5 +90,32 @@ const MapWithPlaces = compose(
       })}
   </GoogleMap>
 ));
+
+const setLogo = (incidentType, unresponded, responding, settled) => {
+  let logo = null;
+  switch(incidentType){
+    case 'Vehicular Accident':
+      if(unresponded){
+        logo = vehicularUnresponded;
+      }else if(responding){
+        logo = vehicularResponding;
+      }else if(settled){
+        logo = vehicularSettled;
+      }
+      break;
+    case 'Physical Injury':
+      if(unresponded){
+        logo = physicalUnresponded;
+      }else if(responding){
+        logo = physicalResponding;
+      }else if(settled){
+        logo = physicalSettled;
+      }
+      break;
+    default:
+      break;
+  }
+  return logo;
+}
 
 export default MapWithPlaces;

@@ -17,7 +17,9 @@ class HeaderDashboard extends Component{
           open: false,
           incidentType: '',
           incidentLocation: '',
-          isResponded: null,
+          unresponded: null,
+          isResponding: null,
+          isSettled: null
         }
         this.logout = this.logout.bind(this);
     }
@@ -55,13 +57,17 @@ class HeaderDashboard extends Component{
     firebaseRef.push({
         incidentType: this.state.incidentType,
         incidentLocation: this.state.incidentLocation,
-        responded: false,
+        unresponded: true,
+        isResponding: false,
+        isSettled: false,
         coordinates: {lng: this.state.lng, lat: this.state.lat}
     });
     this.setState({
         incidentType: '',
         incidentLocation: '',
-        responded: null,
+        unresponded: null,
+        isResponding: null,
+        isSettled: null,
         lng: null,
         lat: null
     });
@@ -83,7 +89,7 @@ class HeaderDashboard extends Component{
 
   filtertrigger = (
     <span>
-      <Icon name='small filter' />Filter
+      <Icon className='small filter' />Filter
     </span>
   )
     //Personnel Actions Trigger
@@ -123,7 +129,7 @@ class HeaderDashboard extends Component{
                  App Name with Logo
               </Menu.Item>
               <Menu.Item link onClick={this.show('tiny')}>
-                 <Icon name="plus" />Add Incident
+                 <Icon className="plus" />Add Incident
               </Menu.Item>
               <Menu.Item onClick={this.handleItemClick}>
                   {/*Settings*/}
