@@ -8,6 +8,7 @@ import {
 } from "react-google-maps";
 import { compose, withProps, withStateHandlers } from "recompose";
 import { Button, Modal,} from 'semantic-ui-react';
+//load custom markers for map
 import vehicularUnresponded from '../../src/images/va_new.png';
 import vehicularResponding from '../../src/images/va_otw.png';
 import vehicularSettled from '../../src/images/va_fin.png';
@@ -91,6 +92,7 @@ const MapWithPlaces = compose(
   </GoogleMap>
 ));
 
+//assigns the custom markers
 const setLogo = (incidentType, unresponded, responding, settled) => {
   let logo = null;
   switch(incidentType){
