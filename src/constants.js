@@ -1,0 +1,1 @@
+export const GET_INCIDENTS = 'GET_INCIDENTS';
