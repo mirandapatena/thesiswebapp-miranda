@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import '../stylesheet_QueueIncidents.css';
 import '../Login.css';
-import { Transition, Button, Container, Divider, Form, Grid, Header, Icon, Image,  List, Menu,  Responsive, Segment, Sidebar, Visibility, TransitionGroup,} from 'semantic-ui-react'
+import {  Button, Container, Divider, Form, Grid, Header, Icon, List, Menu, Responsive, Segment, Sidebar, Visibility} from 'semantic-ui-react'
 import fire from '../config/Fire';
 
 
