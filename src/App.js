@@ -2,11 +2,21 @@ import React, { Component } from 'react';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import fire from './config/Fire';
+import withAuthProtection from "./components/WithAuthProtection";
+import { BrowserRouter, Switch, Route, Link, history } from "react-router-dom";
+import _ from 'lodash';
+import LoginAction from './components/LoginAction'
 
+const ProtectedDashboard = withAuthProtection("/")(Dashboard);
+const Wrapper = props =>(
+  <div style={{maxWidth:400,padding:16,margin:"auto"}} {...props}/>
+)
 class App extends Component {
   constructor(props){
     super(props);
-    this.state = {user: {}};
+    this.state = {
+      user: fire.auth().currentUser
+    };
   }
 
   componentDidMount(){
@@ -26,11 +36,45 @@ class App extends Component {
     });
   }
 
+  handleSignIn = history => (email, password) =>{
+    console.log('as')
+    return fire.auth().signInWithEmailAndPassword(email, password).then (()=>{
+      return history.push("/Dashboard");
+    })
+  }
+
   render() {
+    const { user } = this.state;
+
     return (
-      <div className="App">
-      {this.state.user ? (<Dashboard/>) : (<Login/>)};
-      </div>
+      <BrowserRouter>
+      <Switch>
+      <Route
+          path="/"
+          exact
+          render={()=>(
+            <div>
+              <Login/>
+              </div>
+          )}/>
+        <Route
+          path="/LoginForm"
+          exact
+          render={({history})=>(
+            <div>
+              <LoginAction onSubmit={this.handleSignIn(history)}/>
+              </div>
+          )}/>
+           <Route
+            path="/Dashboard"
+            exact
+            render={props => (
+              <div>
+                <ProtectedDashboard {...props} user={user} />
+              </div>
+            )}/>
+            </Switch>
+            </BrowserRouter>
     );
   }
 }
