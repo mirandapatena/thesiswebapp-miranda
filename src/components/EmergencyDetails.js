@@ -49,10 +49,10 @@ class EmergencyDetails extends Component{
                             <p>Photo of Incident:</p>
                         </Modal.Content>
                         <Modal.Actions>
-                            <Button basic color='green'>
+                            <Button inverted color='gray'>
                                 Dispatch Responders
                             </Button>
-                            <Button basic color='green'>
+                            <Button inverted color='gray'>
                                 Request Volunteers
                             </Button>
                 </Modal.Actions>

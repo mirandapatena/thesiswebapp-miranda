@@ -1,11 +1,11 @@
-import PropTypes from 'prop-types'
+//import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import '../stylesheet_QueueIncidents.css';
 import '../Login.css';
-import { Button, Container, Divider, Form, Grid, Header, Icon,   List, Menu,  Responsive, Segment, Sidebar, Visibility, } from 'semantic-ui-react'
+import { Button, Form, Grid, Header, Segment} from 'semantic-ui-react'
 import fire from '../config/Fire';
 import CircularProgress from "@material-ui/core/CircularProgress"
-import { BrowserRouter, Switch, Route, Link, history } from "react-router-dom";
+//import { BrowserRouter, Switch, Route, Link, history } from "react-router-dom";
 
 
 class LoginAction extends Component{

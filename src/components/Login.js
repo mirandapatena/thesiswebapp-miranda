@@ -2,12 +2,12 @@ import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import '../stylesheet_QueueIncidents.css';
 import '../Login.css';
-import {  Container, Divider, Form, Grid, Header, Icon,   List, Menu,  Responsive, Segment, Sidebar, Visibility, } from 'semantic-ui-react'
-import fire from '../config/Fire';
-import CircularProgress from "@material-ui/core/CircularProgress"
+import {  Container, Divider, Grid, Header, Icon,   List, Menu,  Responsive, Segment, Sidebar, Visibility, } from 'semantic-ui-react'
+//import fire from '../config/Fire';
+//import CircularProgress from "@material-ui/core/CircularProgress"
 import Button from "@material-ui/core/Button"
-import LoginAction from './LoginAction';
-import { BrowserRouter, Switch, Route, Link, history, withRouter, Redirect} from "react-router-dom";
+//import LoginAction from './LoginAction';
+import {Link} from "react-router-dom";
 
 
 
