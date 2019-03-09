@@ -2,8 +2,13 @@ import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import '../stylesheet_QueueIncidents.css';
 import '../Login.css';
-import { Transition, Button, Container, Divider, Form, Grid, Header, Icon, Image,  List, Menu,  Responsive, Segment, Sidebar, Visibility, TransitionGroup,} from 'semantic-ui-react'
+import {  Container, Divider, Form, Grid, Header, Icon,   List, Menu,  Responsive, Segment, Sidebar, Visibility, } from 'semantic-ui-react'
 import fire from '../config/Fire';
+import CircularProgress from "@material-ui/core/CircularProgress"
+import Button from "@material-ui/core/Button"
+import LoginAction from './LoginAction';
+import { BrowserRouter, Switch, Route, Link, history, withRouter, Redirect} from "react-router-dom";
+
 
 
 // Heads up!
@@ -58,7 +63,9 @@ HomepageHeading.propTypes = {
  * It can be more complicated, but you can create really flexible markup.
  */
 class DesktopContainer extends Component {
-  state = {}
+  state = {
+  }
+
 
   hideFixedMenu = () => this.setState({ fixed: false })
   showFixedMenu = () => this.setState({ fixed: true })
@@ -66,7 +73,6 @@ class DesktopContainer extends Component {
   render() {
     const { children } = this.props
     const { fixed } = this.state
-
     return (
       <Responsive getWidth={getWidth} minWidth={Responsive.onlyTablet.minWidth}>
         <Visibility
@@ -100,7 +106,7 @@ class DesktopContainer extends Component {
                     Be a Volunteer
                   </Button>
                  
-                  <Button as='a' href="#logginin" inverted={!fixed} primary={fixed} style={{ marginLeft: '0.5em' }}>
+                  <Button as='a' inverted={!fixed} primary={fixed} style={{ marginLeft: '0.5em' }} component={Link} to ="/LoginForm">
                    Personnel Login
                   </Button>
                  
@@ -206,75 +212,7 @@ ResponsiveContainer.propTypes = {
 }
 
 
-class LoginPage extends Component{
-  constructor(props){
-    super(props);
-    this.login = this.login.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.state = {
-      email: '',
-      password: ''
-    }
-  }
 
-  handleChange(e){
-    this.setState({[e.target.name]: e.target.value});
-  }
-
-  login(e) {
-    e.preventDefault();
-    fire.auth().signInWithEmailAndPassword(this.state.email.trim(), this.state.password).then((u)=>{
-    }).catch((error) => {
-        console.log(error);
-      });
-    console.log('Login');
-  }
-
-  render(){
-    return(
-      <div className='login-form'>
-    <style>{`
-      body > div,
-      body > div > div,
-      body > div > div > div.login-form {
-        height: 100%;
-      }
-    `}</style>
-    
-    <Grid textAlign='center' style={{ height: '100%' }} verticalAlign='middle'>
-    
-      <Grid.Column style={{ maxWidth: 450 }}>
-        
-        <Form size='large'>
-          <Segment stacked>
-          <Header as='h2' textAlign='center' style={{color: 'white'}}>
-            Personnel Login   
-          </Header>
-            <Form.Input fluid icon='user' iconPosition='left' placeholder='E-mail address' name='email' value={this.state.email} onChange={this.handleChange}/>
-            <Form.Input
-              fluid
-              icon='lock'
-              iconPosition='left'
-              placeholder='Password'
-              type='password'
-              name='password'
-              value={this.state.password}
-              onChange={this.handleChange}
-            />
-            <Button inverted color='gray' fluid size='large' onClick={this.login}>
-              Login
-            </Button>
-          </Segment>
-        </Form>
-        
-      </Grid.Column>
-    </Grid>
-    
-  </div>
-    );
-  }
-  
-}
 
 
 const Login = () => (
@@ -302,7 +240,6 @@ const Login = () => (
           
           <Grid.Column floated='right' width={6}>
              
-             <LoginPage/>
              
           </Grid.Column>
         </Grid.Row>

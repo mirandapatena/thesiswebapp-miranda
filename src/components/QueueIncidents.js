@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import EmergencyDetails from './EmergencyDetails';
-import fire from '../config/Fire';
 import _ from 'lodash';
+import {connect} from 'react-redux';
+import {getIncidents} from '../actions/incidentAction';
 
 class QueueIncidents extends Component {
    
@@ -19,46 +20,41 @@ class QueueIncidents extends Component {
                 }
             }]
         }
-
-        let app = fire.database().ref('/incidents');
-        app.on('value', snapshot => {
-            this.getData(snapshot.val());
-            console.log('snapshot', snapshot.val());
-        })
+        this.renderEmergency = this.renderEmergency.bind(this);
     }
 
-    getData = (values) => {
-        let incidentValues = values;
-        let incidentsList = _(incidentValues)
-                            .keys()
-                            .map(incidentKey => {
-                                let cloned = _.clone(incidentValues[incidentKey]);
-                                cloned.key = incidentKey;
-                                return cloned;
-                            })
-                            .value();
-        this.setState({incidentsList: incidentsList});
+    componentDidMount(){
+        this.props.getIncidents();
     }
 
-    render(){
-        let incidentNodes = this.state.incidentsList.map((incidents, key) => {
+    renderEmergency = () => {
+        return _.map(this.props.incidentsList, (incident, key) => {
             return (
                 <div className='item' key={key}>
                     <EmergencyDetails 
-                        incidentType = {incidents.incidentType} 
-                        incidentLocation = {incidents.incidentLocation} 
+                        incidentType = {incident.incidentType} 
+                        incidentLocation = {incident.incidentLocation} 
                     />
                 </div>
             );
         });
-        
+    }
+
+    render(){
         return (
             <div className="hidescrollbar">
                 <div className="ui visible left vertical sidebar menu">
-                        {incidentNodes}
+                        {this.renderEmergency()}
                 </div></div>
         );
     }
 }
 
-export default QueueIncidents;
+function mapStateToProps(state, ownProps){
+    console.log('incidentsList', state.incidents);
+    return {
+        incidentsList: state.incidents
+    }
+}
+
+export default connect(mapStateToProps, {getIncidents})(QueueIncidents);

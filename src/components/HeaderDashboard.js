@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { Menu, Dropdown, Icon, Modal, Form, Button, Radio} from 'semantic-ui-react'
 import fire from '../config/Fire';
+import {connect} from 'react-redux';
+import {saveIncident} from '../actions/incidentAction';
 import '../stylesheet_QueueIncidents.css';
 import PlacesAutocomplete, {
   geocodeByAddress,
@@ -28,7 +30,7 @@ class HeaderDashboard extends Component{
   show = size => () => this.setState({ size, open: true })
   close = () => this.setState({ open: false })
     
-    handleChange = incidentLocation => {
+  handleChange = incidentLocation => {
       this.setState({ incidentLocation });
   };
   
@@ -52,16 +54,15 @@ class HeaderDashboard extends Component{
   submitIncidentHandler = (e) => {
     e.preventDefault();
     
-    let firebaseRef = fire.database().ref('/incidents');
-
-    firebaseRef.push({
-        incidentType: this.state.incidentType,
-        incidentLocation: this.state.incidentLocation,
-        unresponded: true,
-        isResponding: false,
-        isSettled: false,
-        coordinates: {lng: this.state.lng, lat: this.state.lat}
-    });
+    const incident = {
+      incidentType: this.state.incidentType,
+      incidentLocation: this.state.incidentLocation,
+      unresponded: true,
+      isResponding: false,
+      isSettled: false,
+      coordinates: {lng: this.state.lng, lat: this.state.lat}
+    }
+    this.props.saveIncident(incident);
     this.setState({
         incidentType: '',
         incidentLocation: '',
@@ -228,4 +229,10 @@ class HeaderDashboard extends Component{
   }
 }
 
-export default HeaderDashboard;
+function mapStateToProps(state, ownProps){
+  return {
+      incidentsList: state.incidents
+  }
+}
+
+export default connect(mapStateToProps, {saveIncident})(HeaderDashboard);
