@@ -2,28 +2,16 @@ import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import '../stylesheet_QueueIncidents.css';
 import '../Login.css';
-import {  Container, Divider, Form, Grid, Header, Icon,   List, Menu,  Responsive, Segment, Sidebar, Visibility, } from 'semantic-ui-react'
-import fire from '../config/Fire';
-import CircularProgress from "@material-ui/core/CircularProgress"
+import {  Container, Divider, Grid, Header, Icon,   List, Menu,  Responsive, Segment, Sidebar, Visibility, } from 'semantic-ui-react'
 import Button from "@material-ui/core/Button"
-import LoginAction from './LoginAction';
-import { BrowserRouter, Switch, Route, Link, history, withRouter, Redirect} from "react-router-dom";
+import {Link} from "react-router-dom";
 
-
-
-// Heads up!
-// We using React Static to prerender our docs with server side rendering, this is a quite simple solution.
-// For more advanced usage please check Responsive docs under the "Usage" section.
 const getWidth = () => {
   const isSSR = typeof window === 'undefined'
 
   return isSSR ? Responsive.onlyTablet.minWidth : window.innerWidth
 }
 
-/* eslint-disable react/no-multi-comp */
-/* Heads up! HomepageHeading uses inline styling, however it's not the best practice. Use CSS or styled components for
- * such things.
- */
 const HomepageHeading = ({ mobile }) => (
   <Container text >
     {/*<Header
@@ -58,10 +46,6 @@ HomepageHeading.propTypes = {
   mobile: PropTypes.bool,
 }
 
-/* Heads up!
- * Neither Semantic UI nor Semantic UI React offer a responsive navbar, however, it can be implemented easily.
- * It can be more complicated, but you can create really flexible markup.
- */
 class DesktopContainer extends Component {
   state = {
   }

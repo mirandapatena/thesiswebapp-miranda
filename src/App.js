@@ -3,8 +3,7 @@ import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import fire from './config/Fire';
 import withAuthProtection from "./components/WithAuthProtection";
-import { BrowserRouter, Switch, Route, Link, history } from "react-router-dom";
-import _ from 'lodash';
+import { BrowserRouter, Switch, Route,} from "react-router-dom";
 import LoginAction from './components/LoginAction'
 
 const ProtectedDashboard = withAuthProtection("/")(Dashboard);
