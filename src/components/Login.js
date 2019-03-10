@@ -3,7 +3,10 @@ import React, { Component } from 'react'
 import '../stylesheet_QueueIncidents.css';
 import '../Login.css';
 import {  Container, Divider, Grid, Header, Icon,   List, Menu,  Responsive, Segment, Sidebar, Visibility, } from 'semantic-ui-react'
+//import fire from '../config/Fire';
+//import CircularProgress from "@material-ui/core/CircularProgress"
 import Button from "@material-ui/core/Button"
+//import LoginAction from './LoginAction';
 import {Link} from "react-router-dom";
 
 const getWidth = () => {
