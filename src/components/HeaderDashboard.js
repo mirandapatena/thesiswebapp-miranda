@@ -220,7 +220,7 @@ class HeaderDashboard extends Component{
               </Form>
               </Modal.Content>
               <Modal.Actions>
-                  <Button inverted color='gray' onClick={this.submitIncidentHandler}>
+                  <Button inverted color='black' onClick={this.submitIncidentHandler}>
                       Submit
                   </Button>
         </Modal.Actions>
