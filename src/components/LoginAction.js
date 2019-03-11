@@ -2,7 +2,7 @@
 import React, { Component } from 'react'
 import '../stylesheet_QueueIncidents.css';
 import '../Login.css';
-import { Button, Form, Grid, Header, Segment} from 'semantic-ui-react'
+import {Message, Button, Form, Grid, Header, Segment} from 'semantic-ui-react'
 import fire from '../config/Fire';
 import CircularProgress from "@material-ui/core/CircularProgress"
 //import { BrowserRouter, Switch, Route, Link, history } from "react-router-dom";
@@ -45,11 +45,9 @@ class LoginAction extends Component{
         //console.log(user);
         if (user) {
           this.setState({ user });
-          this.setState({authError:false});
           //localStorage.setItem('user', user.uid);
         } else {
           this.setState({ user: null });
-          this.setState({authError:true})
           //localStorage.removeItem('user');
         }
       });
@@ -73,6 +71,7 @@ class LoginAction extends Component{
       let error=false;
       if (email ===''){
         this.setState({emailError: true});
+        console.log("Blank email field");
         error = true;
       } else {
         this.setState({emailError: false});
@@ -80,15 +79,26 @@ class LoginAction extends Component{
 
       if(password===''){
         this.setState({passwordError:true});
+        console.log("Blank password field");
       }else{
         this.setState({passwordError:false});
       }
 
+      if(this.authListener()){
+        this.setState({authError:false})
+      }else{
+        this.setState({authError:true}) 
+        console.log("Authentication Error");
+      }
+
       if(error){
         this.setState({formError: true});
+        console.log("Form error");
       }else{
         this.setState({formError:false});
       }
+
+      
     };
 
     handleChange(e){
@@ -99,6 +109,7 @@ class LoginAction extends Component{
       e.preventDefault();
       fire.auth().signInWithEmailAndPassword(this.state.email.trim(), this.state.password).then((u)=>{
       }).catch((error) => {
+          console.log('Incorrect shit')
           console.log(error);
         });
       console.log('Login');
@@ -135,7 +146,7 @@ class LoginAction extends Component{
               name='email' 
               value={this.state.email} 
               onChange={this.handleChange}
-              error={this.state.emailError}/>
+              error={this.state.emailError||this.state.authError}/>
               <Form.Input
                 fluid
                 icon='lock'
@@ -145,7 +156,7 @@ class LoginAction extends Component{
                 name='password'
                 value={this.state.password}
                 onChange={this.handleChange}
-                error={this.state.passwordError}/>
+                error={this.state.passwordError||this.state.authError}/>
               
               <Button color= 'teal' fluid size='large' onSubmit={this.login}>
               { this.state.authError || this.state.formError || this.state.passwordError || this.state.emailError ? "Login" :
@@ -154,9 +165,14 @@ class LoginAction extends Component{
               "Login")}
               </Button>
               {this.state.emailError||this.state.passwordError?
-                  <Message error header ="INVALID LOGIN" content="Please do not leave any of the fields blank."/>:
-                  this.state.authError?
-                    <Message error header ="AUTHENTICATION ERROR" content="Please double check your e-mail and password."/>:null}
+                  <Message compact error>
+                    <Message.Header>Login Error</Message.Header>
+                    Please do not leave any of the fields blank.</Message>:(
+                      this.state.formError?
+                     < Message compact error>
+                    <Message.Header>Login Error</Message.Header>
+                    Problem with authenticating.</Message>
+                    :null)}
               
             </Segment>
           </Form>
