@@ -2,7 +2,7 @@
 import React, { Component } from 'react'
 import '../stylesheet_QueueIncidents.css';
 import '../Login.css';
-import { Button, Form, Grid, Header, Segment} from 'semantic-ui-react'
+import { Button, Form, Grid, Header, Segment, Message} from 'semantic-ui-react'
 import fire from '../config/Fire';
 import CircularProgress from "@material-ui/core/CircularProgress"
 //import { BrowserRouter, Switch, Route, Link, history } from "react-router-dom";
