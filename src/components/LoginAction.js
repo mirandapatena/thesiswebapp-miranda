@@ -7,6 +7,7 @@ import fire from '../config/Fire';
 import CircularProgress from "@material-ui/core/CircularProgress"
 //import { BrowserRouter, Switch, Route, Link, history } from "react-router-dom";
 
+var errorMsg, errorCode;
 
 class LoginAction extends Component{
     constructor(props){
@@ -39,6 +40,24 @@ class LoginAction extends Component{
       const { completed } = this.state;
       this.setState({ completed: completed >= 100 ? 0 : completed + 1 });
     };
+    
+    login(e) {
+      e.preventDefault();
+      fire.auth().signInWithEmailAndPassword(this.state.email.trim(), this.state.password).catch(function(error) {
+        // Handle Errors here.'
+        this.setState({formError:true});
+         errorCode = error.code;
+        //  if (errorCode === 'auth/invalid-email') {
+        //   console.log('KEENANIAKJDNSKAJSNDThe email is invalid.', error.code);
+        // } else {
+        //   console.log("POTA", error.code);
+        // }
+        console.log("Hello")
+      }
+      );
+      
+      console.log("World")
+    }
   
     authListener() {
       fire.auth().onAuthStateChanged((user) => {
@@ -67,7 +86,6 @@ class LoginAction extends Component{
         this.setState({ submitting: true });
         onSubmit(email, password);
       }
-
       let error=false;
       if (email ===''){
         this.setState({emailError: true});
@@ -85,18 +103,18 @@ class LoginAction extends Component{
       }
 
       if(this.authListener()){
-        this.setState({authError:false})
+        this.setState({authError:true})
       }else{
-        this.setState({authError:true}) 
+        this.setState({authError:false}) 
         console.log("Authentication Error");
       }
 
-      if(error){
-        this.setState({formError: true});
-        console.log("Form error");
-      }else{
-        this.setState({formError:false});
-      }
+    //  switch(errorCode){
+    //    case 'auth/invalid-email': errorMsg = 'Bad email'; break;
+    //    case 'auth/user-not-found': errorMsg = 'User not found'; break;
+    //    case 'auth/wrong-password': errorMsg = 'Invalid pass'; break;
+    //   default: errorMsg='Bad login';
+    //  }
 
       
     };
@@ -104,17 +122,6 @@ class LoginAction extends Component{
     handleChange(e){
       this.setState({[e.target.name]: e.target.value});
     }
-  
-    login(e) {
-      e.preventDefault();
-      fire.auth().signInWithEmailAndPassword(this.state.email.trim(), this.state.password).then((u)=>{
-      }).catch((error) => {
-          console.log('Incorrect shit')
-          console.log(error);
-        });
-      console.log('Login');
-    }
-    
   
     render(){
       return(
@@ -132,7 +139,7 @@ class LoginAction extends Component{
         <Grid.Column style={{ maxWidth: 450 }}>
           
           <Form size='large' onSubmit={(event) => {this.handleSubmit(event);}}
-              error={this.state.emailError || this.state.passwordError || this.state.formError}
+              error={this.state.emailError || this.state.passwordError || this.state.formError||this.state.authError}
               >
             <Segment stacked>
             
@@ -164,15 +171,14 @@ class LoginAction extends Component{
                 <CircularProgress classname={this.progress} style={{color: "#fff"}} color={"inherit"} size={16} variant="determinate" value={this.state.completed} />) :(
               "Login")}
               </Button>
-              {this.state.emailError||this.state.passwordError?
+              {/* {this.state.emailError||this.state.passwordError?
                   <Message compact error>
-                    <Message.Header>Login Error</Message.Header>
-                    Please do not leave any of the fields blank.</Message>:(
-                      this.state.formError?
-                     < Message compact error>
-                    <Message.Header>Login Error</Message.Header>
-                    Problem with authenticating.</Message>
-                    :null)}
+                    <Message.Header>{errorCode}</Message.Header>
+                    Please do not leave any of the fields blank.</Message>
+                      
+                    :<Message.Header>{errorMsg}</Message.Header>
+                    // this.state.formError?<Message compact error><Message.Header>{errorMsg}</Message.Header></Message>:
+                    } */}
               
             </Segment>
           </Form>
