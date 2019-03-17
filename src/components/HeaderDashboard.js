@@ -39,7 +39,6 @@ class HeaderDashboard extends Component{
       geocodeByAddress(incidentLocation)
         .then(results => getLatLng(results[0]))
         .then(latLng => {
-            console.log('Success', latLng);
             this.setState({lng: latLng.lng, lat: latLng.lat});
         })
         .catch(error => console.error('Error', error));

@@ -2,11 +2,7 @@
 import React, { Component } from 'react'
 import '../stylesheet_QueueIncidents.css';
 import '../Login.css';
-<<<<<<< HEAD
-import { Button, Form, Grid, Header, Segment, Message} from 'semantic-ui-react'
-=======
 import {Message, Button, Form, Grid, Header, Segment} from 'semantic-ui-react'
->>>>>>> 6877521761bf8b32bff939900ae495e1b3d83205
 import fire from '../config/Fire';
 import CircularProgress from "@material-ui/core/CircularProgress"
 //import { BrowserRouter, Switch, Route, Link, history } from "react-router-dom";
@@ -171,12 +167,7 @@ class LoginAction extends Component{
               {this.state.emailError||this.state.passwordError?
                   <Message compact error>
                     <Message.Header>Login Error</Message.Header>
-                    Please do not leave any of the fields blank.</Message>:(
-                      this.state.formError?
-                     < Message compact error>
-                    <Message.Header>Login Error</Message.Header>
-                    Problem with authenticating.</Message>
-                    :null)}
+                    Please do not leave any of the fields blank.</Message>:null}
               
             </Segment>
           </Form>
