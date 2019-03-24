@@ -3,6 +3,8 @@ import { Menu, Dropdown, Icon, Modal, Form, Button, Radio} from 'semantic-ui-rea
 import fire from '../config/Fire';
 import {connect} from 'react-redux';
 import {saveIncident} from '../actions/incidentAction';
+import {createUserAccount} from '../functions/createUserAccount';
+import {formatCreateUserInput} from '../functions/formatCreateUserInput';
 import '../stylesheet_QueueIncidents.css';
 import PlacesAutocomplete, {
   geocodeByAddress,
@@ -17,18 +19,31 @@ class HeaderDashboard extends Component{
         
         this.state = {
           open: false,
+          open2: false,
           incidentType: '',
           incidentLocation: '',
           unresponded: null,
           isResponding: null,
-          isSettled: null
+          isSettled: null,
+          firstName: '',
+          lastName: '',
+          userName: '',
+          password: '',
+          email: '',
+          userType: '',
+          contactNumber: '',
+          err: ''
         }
         this.logout = this.logout.bind(this);
+        this.submitCreateAccount = this.submitCreateAccount.bind(this);
     }
 
 
   show = size => () => this.setState({ size, open: true })
   close = () => this.setState({ open: false })
+
+  show2 = size2 => () => this.setState({ size2, open2: true })
+  close2 = () => this.setState({ open2: false })
     
   handleChange = incidentLocation => {
       this.setState({ incidentLocation });
@@ -45,7 +60,7 @@ class HeaderDashboard extends Component{
     };
   
   inputIncidentTypeHandler = (e, {incidentType}) => this.setState({ incidentType})
-
+  
   inputIncidentLocationHandler = (e) => {
     this.setState({ incidentLocation: e.target.value });
   }
@@ -72,7 +87,34 @@ class HeaderDashboard extends Component{
         lat: null
     });
     console.log(this.state.incidentsList);
-}
+  }
+
+  handleCreateAccount = (e) => this.setState({ [e.target.name]: e.target.value });
+  inputUserTypeHandler = (e, {userType}) => this.setState({userType});
+
+  submitCreateAccount = (e) => {
+    e.preventDefault();
+    const account = formatCreateUserInput(
+      this.state.firstName,
+      this.state.lastName,
+      this.state.userName,
+      this.state.password,
+      this.state.email,
+      this.state.userType,
+      this.state.contactNumber
+    );
+    createUserAccount(account);
+    this.setState({
+      firstName: '',
+      lastName: '',
+      userName: '',
+      password: '',
+      email: '',
+      userType: '',
+      contactNumber: ''
+    })
+
+  }
 
   trigger = (
     <span>
@@ -121,6 +163,8 @@ class HeaderDashboard extends Component{
 
   render() {
     const { open, size } = this.state
+    const { open2, size2 } = this.state
+
     return (<div className="menuz">
     {/* Header Menu */}
       <Menu inverted>
@@ -130,6 +174,9 @@ class HeaderDashboard extends Component{
               </Menu.Item>
               <Menu.Item link onClick={this.show('tiny')}>
                  <Icon className="plus" />Add Incident
+              </Menu.Item>
+              <Menu.Item link onClick={this.show2('tiny')}>
+                 <Icon className="plus" />Create User Account
               </Menu.Item>
               <Menu.Item onClick={this.handleItemClick}>
                   {/*Settings*/}
@@ -223,7 +270,113 @@ class HeaderDashboard extends Component{
                       Submit
                   </Button>
         </Modal.Actions>
-      </Modal></div>
+      </Modal>
+      {/*Create Personnel Account Modal*/}
+      <Modal size={size2} open={open2} onClose={this.close2}>
+      <Modal.Header>New User Account </Modal.Header>
+          <Modal.Content>
+              <Form>
+                <Form.Field>
+                  <Form.Input
+                    fluid
+                    placeholder='User Name'
+                    type='text'
+                    name='userName'
+                    value={this.state.userName}
+                    onChange={this.handleCreateAccount}/>
+                </Form.Field>
+                <Form.Field>
+                  <Form.Input
+                    fluid
+                    placeholder='Password'
+                    type='password'
+                    name='password'
+                    value={this.state.password}
+                    onChange={this.handleCreateAccount}/>
+                </Form.Field>
+                <Form.Field>
+                  <Form.Input
+                    fluid
+                    placeholder='First Name'
+                    type='text'
+                    name='firstName'
+                    value={this.state.firstName}
+                    onChange={this.handleCreateAccount}/>
+                </Form.Field>
+                <Form.Field>
+                  <Form.Input
+                    fluid
+                    placeholder='Last Name'
+                    type='text'
+                    name='lastName'
+                    value={this.state.lastName}
+                    onChange={this.handleCreateAccount}/>
+                </Form.Field>
+                <Form.Field>
+                  <Form.Input
+                    fluid
+                    placeholder='Email Address'
+                    type='email'
+                    name='email'
+                    value={this.state.email}
+                    onChange={this.handleCreateAccount}/>
+                </Form.Field>
+                <Form.Field>
+                  <Form.Input
+                    fluid
+                    placeholder='Contact Number'
+                    type='text'
+                    name='contactNumber'
+                    value={this.state.contactNumber}
+                    onChange={this.handleCreateAccount}/>
+                </Form.Field>
+                <Form.Field>
+                  <label>User Type</label>
+                    <Radio
+                      label='Administrator'
+                      userType='Administrator'
+                      checked={this.state.userType === 'Administrator'}
+                      onChange={this.inputUserTypeHandler}
+                    />
+                    <br/>
+                    <Radio
+                      label='Command Center Personnel'
+                      userType='Command Center Personnel'
+                      checked={this.state.userType === 'Command Center Personnel'}
+                      onChange={this.inputUserTypeHandler}
+                    />
+                    <br/>
+                    <Radio
+                      label='Responder'
+                      userType='Responder'
+                      checked={this.state.userType === 'Responder'}
+                      onChange={this.inputUserTypeHandler}
+                    />
+                    <br/>
+                    <Radio
+                      label='Volunteer'
+                      userType='Volunteer'
+                      checked={this.state.userType === 'Volunteer'}
+                      onChange={this.inputUserTypeHandler}
+                    />
+                    <br/>
+                    <Radio
+                      label='Regular User'
+                      userType='Regular User'
+                      checked={this.state.userType === 'Regular User'}
+                      onChange={this.inputUserTypeHandler}
+                    />
+                  </Form.Field>
+              </Form>
+              </Modal.Content>
+              <Modal.Actions>
+                  <Button inverted color='black' onClick={this.submitCreateAccount}>
+                      Create User Account
+                  </Button>
+        </Modal.Actions>
+      </Modal>
+      
+      </div>
     )
   }
 }

@@ -11,7 +11,6 @@ import CircularProgress from "@material-ui/core/CircularProgress"
 class LoginAction extends Component{
     constructor(props){
       super(props);
-      this.login = this.login.bind(this);
       this.handleChange = this.handleChange.bind(this);
       this.state = {
         email: '',
@@ -53,12 +52,8 @@ class LoginAction extends Component{
       });
     }
   
-    handleSignIn = history => (email, password) =>{
-      console.log('as')
-      return fire.auth().signInWithEmailAndPassword(email, password).then (()=>{
-        return history.push("/Dashboard");
-      })
-    }
+  
+
     handleSubmit = e => {
       e.preventDefault();
       const { onSubmit } = this.props;
@@ -104,16 +99,7 @@ class LoginAction extends Component{
     handleChange(e){
       this.setState({[e.target.name]: e.target.value});
     }
-  
-    login(e) {
-      e.preventDefault();
-      fire.auth().signInWithEmailAndPassword(this.state.email.trim(), this.state.password).then((u)=>{
-      }).catch((error) => {
-          console.log('Incorrect shit')
-          console.log(error);
-        });
-      console.log('Login');
-    }
+ 
     
   
     render(){
@@ -158,7 +144,7 @@ class LoginAction extends Component{
                 onChange={this.handleChange}
                 error={this.state.passwordError||this.state.authError}/>
               
-              <Button color= 'teal' fluid size='large' onSubmit={this.login}>
+              <Button color= 'teal' fluid size='large' >
               { this.state.authError || this.state.formError || this.state.passwordError || this.state.emailError ? "Login" :
                 this.state.submitting ? (
                 <CircularProgress classname={this.progress} style={{color: "#fff"}} color={"inherit"} size={16} variant="determinate" value={this.state.completed} />) :(
@@ -168,13 +154,10 @@ class LoginAction extends Component{
                   <Message compact error>
                     <Message.Header>Login Error</Message.Header>
                     Please do not leave any of the fields blank.</Message>:null}
-              
             </Segment>
           </Form>
-          
         </Grid.Column>
       </Grid>
-      
     </div>
       );
     }
