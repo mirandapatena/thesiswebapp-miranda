@@ -4,7 +4,6 @@ import fire from '../config/Fire';
 import {connect} from 'react-redux';
 import {saveIncident} from '../actions/incidentAction';
 import {createUserAccount} from '../functions/createUserAccount';
-import {formatCreateUserInput} from '../functions/formatCreateUserInput';
 import '../stylesheet_QueueIncidents.css';
 import PlacesAutocomplete, {
   geocodeByAddress,
@@ -30,7 +29,7 @@ class HeaderDashboard extends Component{
           userName: '',
           password: '',
           email: '',
-          userType: '',
+          user_type: '',
           contactNumber: '',
           err: ''
         }
@@ -90,29 +89,29 @@ class HeaderDashboard extends Component{
   }
 
   handleCreateAccount = (e) => this.setState({ [e.target.name]: e.target.value });
-  inputUserTypeHandler = (e, {userType}) => this.setState({userType});
+  inputUserTypeHandler = (e, {user_type}) => this.setState({user_type});
 
   submitCreateAccount = (e) => {
     e.preventDefault();
-    const account = formatCreateUserInput(
-      this.state.firstName,
-      this.state.lastName,
-      this.state.userName,
-      this.state.password,
-      this.state.email,
-      this.state.userType,
-      this.state.contactNumber
-    );
+    const account = {
+      firstName: this.state.firstName,
+      lastName: this.state.lastName,
+      userName: this.state.userName,
+      password: this.state.password,
+      email: this.state.email,
+      user_type: this.state.user_type,
+      contactNumber: this.state.contactNumber
+    }
     createUserAccount(account);
-    this.setState({
-      firstName: '',
-      lastName: '',
-      userName: '',
-      password: '',
-      email: '',
-      userType: '',
-      contactNumber: ''
-    })
+    // this.setState({
+    //   firstName: '',
+    //   lastName: '',
+    //   userName: '',
+    //   password: '',
+    //   email: '',
+    //   user_type: '',
+    //   contactNumber: ''
+    // })
 
   }
 
@@ -283,7 +282,7 @@ class HeaderDashboard extends Component{
                     type='text'
                     name='userName'
                     value={this.state.userName}
-                    onChange={this.handleCreateAccount}/>
+                    onChange={e => this.setState({ userName: e.target.value })}/>
                 </Form.Field>
                 <Form.Field>
                   <Form.Input
@@ -292,7 +291,7 @@ class HeaderDashboard extends Component{
                     type='password'
                     name='password'
                     value={this.state.password}
-                    onChange={this.handleCreateAccount}/>
+                    onChange={e => this.setState({ password: e.target.value })}/>
                 </Form.Field>
                 <Form.Field>
                   <Form.Input
@@ -301,7 +300,7 @@ class HeaderDashboard extends Component{
                     type='text'
                     name='firstName'
                     value={this.state.firstName}
-                    onChange={this.handleCreateAccount}/>
+                    onChange={e => this.setState({ firstName: e.target.value })}/>
                 </Form.Field>
                 <Form.Field>
                   <Form.Input
@@ -310,7 +309,7 @@ class HeaderDashboard extends Component{
                     type='text'
                     name='lastName'
                     value={this.state.lastName}
-                    onChange={this.handleCreateAccount}/>
+                    onChange={e => this.setState({ lastName: e.target.value })}/>
                 </Form.Field>
                 <Form.Field>
                   <Form.Input
@@ -319,7 +318,7 @@ class HeaderDashboard extends Component{
                     type='email'
                     name='email'
                     value={this.state.email}
-                    onChange={this.handleCreateAccount}/>
+                    onChange={e => this.setState({ email: e.target.value })}/>
                 </Form.Field>
                 <Form.Field>
                   <Form.Input
@@ -328,42 +327,42 @@ class HeaderDashboard extends Component{
                     type='text'
                     name='contactNumber'
                     value={this.state.contactNumber}
-                    onChange={this.handleCreateAccount}/>
+                    onChange={e => this.setState({ contactNumber: e.target.value })}/>
                 </Form.Field>
                 <Form.Field>
                   <label>User Type</label>
                     <Radio
                       label='Administrator'
-                      userType='Administrator'
-                      checked={this.state.userType === 'Administrator'}
+                      user_type='Administrator'
+                      checked={this.state.user_type === 'Administrator'}
                       onChange={this.inputUserTypeHandler}
                     />
                     <br/>
                     <Radio
                       label='Command Center Personnel'
-                      userType='Command Center Personnel'
-                      checked={this.state.userType === 'Command Center Personnel'}
+                      user_type='Command Center Personnel'
+                      checked={this.state.user_type === 'Command Center Personnel'}
                       onChange={this.inputUserTypeHandler}
                     />
                     <br/>
                     <Radio
                       label='Responder'
-                      userType='Responder'
-                      checked={this.state.userType === 'Responder'}
+                      user_type='Responder'
+                      checked={this.state.user_type === 'Responder'}
                       onChange={this.inputUserTypeHandler}
                     />
                     <br/>
                     <Radio
                       label='Volunteer'
-                      userType='Volunteer'
-                      checked={this.state.userType === 'Volunteer'}
+                      user_type='Volunteer'
+                      checked={this.state.user_type === 'Volunteer'}
                       onChange={this.inputUserTypeHandler}
                     />
                     <br/>
                     <Radio
                       label='Regular User'
-                      userType='Regular User'
-                      checked={this.state.userType === 'Regular User'}
+                      user_type='Regular User'
+                      checked={this.state.user_type === 'Regular User'}
                       onChange={this.inputUserTypeHandler}
                     />
                   </Form.Field>

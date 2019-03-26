@@ -11,18 +11,9 @@ const config = {
 
 };
 const fire = firebase.initializeApp(config);
-// const firebaseRef = firebase.database().ref();
-// const emergency = firebaseRef.child('emergencies');
-
-// emergency.on('child_added', (snapshot) => {
-//   console.log('child_added', snapshot.key, snapshot.val());
-// });
-
-// const addEmergency = emergency.push({
-//   name: 'Keenan Mendiola',
-//   location: 'Mandaue City',
-//   type: 'Death'
-// });
-
-
+export const auth = firebase.auth();
+//create user session
+export const userSession = (action, email, password) => auth[`${action}WithEmailAndPassword`](email, password);
+//destroy current user session
+export const logout = () => auth.signOut();
 export default fire;
