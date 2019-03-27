@@ -21,9 +21,17 @@ class HeaderDashboard extends Component{
           open2: false,
           incidentType: '',
           incidentLocation: '',
-          unresponded: null,
-          isResponding: null,
-          isSettled: null,
+          unresponded: false,
+          isResponding: false,
+          isSettled: false,
+          lat: null,
+          lng: null,
+          incidentPhoto: null,
+          reportedBy: '',
+          timeReceived: null,
+          timeResponded: null,
+          responderResponding: [],
+          volunteerResponding: null,
           firstName: '',
           lastName: '',
           userName: '',
@@ -66,26 +74,31 @@ class HeaderDashboard extends Component{
 
   submitIncidentHandler = (e) => {
     e.preventDefault();
-    
+    const timeReceived = Date.now();
     const incident = {
       incidentType: this.state.incidentType,
       incidentLocation: this.state.incidentLocation,
       unresponded: true,
       isResponding: false,
       isSettled: false,
-      coordinates: {lng: this.state.lng, lat: this.state.lat}
+      coordinates: {lng: this.state.lng, lat: this.state.lat},
+      incidentPhoto: '',
+      reportedBy: 'Command Center Personnel',
+      timeReceived,
+      timeResponded: '',
+      responderResponding: '',
+      volunteerResponding: '',
     }
     this.props.saveIncident(incident);
     this.setState({
         incidentType: '',
         incidentLocation: '',
-        unresponded: null,
-        isResponding: null,
-        isSettled: null,
+        unresponded: false,
+        isResponding: false,
+        isSettled: false,
         lng: null,
-        lat: null
+        lat: null,
     });
-    console.log(this.state.incidentsList);
   }
 
   handleCreateAccount = (e) => this.setState({ [e.target.name]: e.target.value });
@@ -93,26 +106,30 @@ class HeaderDashboard extends Component{
 
   submitCreateAccount = (e) => {
     e.preventDefault();
+    
+    var isMobile = false;
+    if(this.state.user_type === 'Regular User' || this.state.user_type === 'Responder' || this.state.user_type === 'Volunteer'){
+      isMobile = true;
+    }
     const account = {
       firstName: this.state.firstName,
       lastName: this.state.lastName,
-      userName: this.state.userName,
       password: this.state.password,
       email: this.state.email,
       user_type: this.state.user_type,
-      contactNumber: this.state.contactNumber
+      contactNumber: this.state.contactNumber,
+      isMobile
     }
     createUserAccount(account);
-    // this.setState({
-    //   firstName: '',
-    //   lastName: '',
-    //   userName: '',
-    //   password: '',
-    //   email: '',
-    //   user_type: '',
-    //   contactNumber: ''
-    // })
-
+    this.setState({
+      firstName: '',
+      lastName: '',
+      userName: '',
+      password: '',
+      email: '',
+      user_type: '',
+      contactNumber: ''
+    })
   }
 
   trigger = (
@@ -275,25 +292,7 @@ class HeaderDashboard extends Component{
       <Modal.Header>New User Account </Modal.Header>
           <Modal.Content>
               <Form>
-                <Form.Field>
-                  <Form.Input
-                    fluid
-                    placeholder='User Name'
-                    type='text'
-                    name='userName'
-                    value={this.state.userName}
-                    onChange={e => this.setState({ userName: e.target.value })}/>
-                </Form.Field>
-                <Form.Field>
-                  <Form.Input
-                    fluid
-                    placeholder='Password'
-                    type='password'
-                    name='password'
-                    value={this.state.password}
-                    onChange={e => this.setState({ password: e.target.value })}/>
-                </Form.Field>
-                <Form.Field>
+              <Form.Field>
                   <Form.Input
                     fluid
                     placeholder='First Name'
@@ -319,6 +318,15 @@ class HeaderDashboard extends Component{
                     name='email'
                     value={this.state.email}
                     onChange={e => this.setState({ email: e.target.value })}/>
+                </Form.Field>
+                <Form.Field>
+                  <Form.Input
+                    fluid
+                    placeholder='Password'
+                    type='password'
+                    name='password'
+                    value={this.state.password}
+                    onChange={e => this.setState({ password: e.target.value })}/>
                 </Form.Field>
                 <Form.Field>
                   <Form.Input

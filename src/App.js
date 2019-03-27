@@ -6,7 +6,12 @@ import fire from './config/Fire';
 class App extends Component {
   constructor(props){
     super(props);
-    this.state = {user: {}};
+    this.state = {
+      user: {},
+      userID: '',
+      user_type: '',
+      loggedUser: {},
+    };
   }
 
   componentDidMount(){
@@ -15,17 +20,24 @@ class App extends Component {
 
   authListener() {
     fire.auth().onAuthStateChanged((user) => {
-      //console.log(user);
       if (user) {
-        this.setState({ user });
-        //localStorage.setItem('user', user.uid);
+        this.setState({ user, userID: user.uid });
+        this.getUserDetails();
       } else {
         this.setState({ user: null });
-        //localStorage.removeItem('user');
       }
     });
   }
 
+  getUserDetails = () => {
+    fire.database().ref('/users').child(this.state.userID).once("value", snapshot => {
+      this.setState({loggedUser: snapshot.val()});
+    });
+    var loggedUser = this.state.loggedUser;
+    var key = loggedUser;
+    console.log('key', key);
+    console.log('loggedUser', this.state.loggedUser);
+  }
   render() {
     return (
       <div className="App">

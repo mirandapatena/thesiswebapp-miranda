@@ -33,9 +33,6 @@ class EmergencyDetails extends Component{
                         {this.props.incidentLocation}
                     </Card.Description>
                      <br></br>
-                    <Card.Description>
-                        12:00 AM
-                    </Card.Description>
                 </Card.Content>
                 </Card>
             </Card.Group>
@@ -43,7 +40,7 @@ class EmergencyDetails extends Component{
             <Modal size={size} open={open} onClose={this.close}>
                 <Modal.Header>New Emergency</Modal.Header>
                     <Modal.Content>
-                            <p>Reported by: Regular User</p>
+                            <p>Reported by: {this.props.reportedBy}r</p>
                             <p>Type of Incident: {this.props.incidentType}</p>
                             <p>Location of Incident: {this.props.incidentLocation}</p>
                             <p>Photo of Incident:</p>

@@ -14,7 +14,7 @@ export function getIncidents(){
 }
 
 export function saveIncident(incident){
-    console.log(`In saveIncident action ${incident}`)
+    console.log('incident push', incident);
     let app = fire.database().ref('/incidents');
     return dispatch => app.push(incident);
 }

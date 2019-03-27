@@ -11,9 +11,6 @@ const config = {
 
 };
 const fire = firebase.initializeApp(config);
-export const auth = firebase.auth();
 //create user session
-export const userSession = (action, email, password) => auth[`${action}WithEmailAndPassword`](email, password);
 //destroy current user session
-export const logout = () => auth.signOut();
 export default fire;
