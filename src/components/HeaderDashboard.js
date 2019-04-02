@@ -390,7 +390,8 @@ class HeaderDashboard extends Component{
 
 function mapStateToProps(state, ownProps){
   return {
-      incidentsList: state.incidents
+      incidentsList: state.incidents,
+      user: state.user
   }
 }
 

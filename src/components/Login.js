@@ -9,7 +9,10 @@ class Login extends Component{
     this.handleChange = this.handleChange.bind(this);
     this.state = {
       email: '',
-      password: ''
+      password: '',
+      error: {
+        message: ''
+      }
     }
   }
 
@@ -21,8 +24,9 @@ class Login extends Component{
     e.preventDefault();
     fire.auth().signInWithEmailAndPassword(this.state.email.trim(), this.state.password).then((u)=>{
     }).catch((error) => {
+        this.setState({error});
         console.log(error);
-      });
+    });
     console.log('Login');
   }
 
