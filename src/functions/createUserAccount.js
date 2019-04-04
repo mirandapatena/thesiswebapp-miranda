@@ -34,8 +34,11 @@ function saveUserType(user_type, isMobile, uid, credentials = {}){
     lat: ''
   }
   const credentialID = uid;
+  let volunteerCredentials = credentials;
   const db = fire.database();
-
+  let points = computeVolunteerPoints(volunteerCredentials);
+  volunteerCredentials.points = points;
+  
   switch(isMobile){
     case false: switch(user_type){
                   case 'Administrator': 
@@ -56,7 +59,7 @@ function saveUserType(user_type, isMobile, uid, credentials = {}){
                                     db.ref(`${mobileUsers}/${user_type}/${uid}`).update({uid, coordinates});
                                     break;
                   case 'Volunteer': db.ref(`${mobileUsers}/${user_type}/${uid}`).update({uid, coordinates});
-                                    db.ref(`credentials/${credentialID}`).update(credentials);
+                                    db.ref(`credentials/${credentialID}`).update(volunteerCredentials);
                                     break;
 
                   default: console.log(`Error: invalid mobile user type entered ${user_type}`);
@@ -68,3 +71,24 @@ function saveUserType(user_type, isMobile, uid, credentials = {}){
 }
 
 //TODO: compute points for volunteer credentials
+
+function computeVolunteerPoints(credentials){
+  let points = 0;
+  if(!_.isEmpty(credentials.certification)){
+    points = points + 5;
+  }
+  if(!_.isEmpty(credentials.medicalDegree)){
+    points = points + 10;
+  }
+  if(!_.isEmpty(credentials.medicalProfession)){
+    points = points + 15;
+  }
+  if(credentials.isActive){
+    points = points + 15;
+  }
+  if(credentials.durationService !== 0){
+    points = points * credentials.durationService;
+  }
+  return points;
+
+}

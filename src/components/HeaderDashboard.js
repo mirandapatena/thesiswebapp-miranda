@@ -227,7 +227,8 @@ class HeaderDashboard extends Component{
       certification: this.state.certification,
       isActiveVolunteer: this.state.isActiveVolunteer,
       forVA: false,
-      forPI: false
+      forPI: false,
+      durationService: null
     }
 
     if (formValid(this.state)) {
