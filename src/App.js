@@ -41,21 +41,18 @@ class App extends Component {
         this.getUserDetails();
       } else {
         this.setState({ user: null });
-        browserHistory.replace('/login');
+        browserHistory.replace('/');
       }
     });
   }
 
   getUserDetails = () => {
     let userValues = null;
+    console.log('getuserdetails', this.state.userID);
     fire.database().ref('users/'+this.state.userID).once("value", snapshot => {
-      snapshot.forEach(child => {
-        userValues = child.val();
-        this.setState({user_type: userValues.user_type});
-        this.setState({userAccount: userValues});
-        var temp = this.state.userAccount;
-        this.setState({user_type: temp.user_type});
-      });
+      userValues = snapshot.val();
+      this.setState({user_type: userValues.user_type});
+      this.setState({userAccount: userValues});
       this.rerouteUserAccess();
       this.props.logUser(this.state.userAccount);
     });
@@ -83,7 +80,7 @@ class App extends Component {
         <Route exact path='/login' component={Login} />
         <AdministratorRoute exact path='/administrator' component={DashboardAdmin} user_type={this.state.user_type} />
         <CCPersonnelRoute exact path='/ccpersonnel' component={DashboardCCPersonnel} user_type={this.state.user_type} />
-        </Router>
+      </Router>
     );
   }
 }
@@ -99,7 +96,5 @@ function mapDispatchToProps(dispatch){
     logUser: (userAccount) => dispatch(logUser(userAccount))
   }
 }
-// <div className="App">
-//       {this.state.user ? (<Dashboard/>) : (<Login/>)};
-//       </div>
+
 export default connect(mapStateToProps, mapDispatchToProps)(App);

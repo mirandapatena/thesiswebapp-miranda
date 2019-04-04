@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Menu, Dropdown, Icon, Modal, Form, Button, Radio} from 'semantic-ui-react'
+import { Menu, Dropdown, Icon, Modal, Form, Button, Radio, Select} from 'semantic-ui-react'
 import fire from '../config/Fire';
 import {connect} from 'react-redux';
 import {saveIncident} from '../actions/incidentAction';
@@ -9,6 +9,27 @@ import PlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
 } from 'react-places-autocomplete';
+
+const emailRegex = RegExp(
+  /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+);
+
+const formValid = ({ formError, ...rest }) => {
+  let valid = true;
+
+  // validate form errors being empty
+  Object.values(formError).forEach(val => {
+    val.length > 0 && (valid = false)
+  });
+
+  // validate the form was filled out
+  Object.values(rest).forEach(val => {
+    val === null && (valid = false);
+  });
+
+
+  return valid;
+}
 
 class HeaderDashboard extends Component{
   
@@ -21,9 +42,16 @@ class HeaderDashboard extends Component{
           open2: false,
           incidentType: '',
           incidentLocation: '',
-          unresponded: false,
-          isResponding: false,
-          isSettled: false,
+          unresponded: null,
+          isResponding: null,
+          isSettled: null,
+          firstName: '',
+          lastName: '',
+          password: '',
+          email: '',
+          user_type: '',
+          contactNumber: '',
+          err: '',
           lat: null,
           lng: null,
           incidentPhoto: null,
@@ -31,15 +59,21 @@ class HeaderDashboard extends Component{
           timeReceived: null,
           timeResponded: null,
           responderResponding: [],
-          volunteerResponding: null,
-          firstName: '',
-          lastName: '',
-          userName: '',
-          password: '',
-          email: '',
-          user_type: '',
-          contactNumber: '',
-          err: ''
+          volunteerResponding: '',
+          durationService: '',
+          medicalDegree:'',
+          medicalProfession:'',
+          certification:'',
+          isActiveVolunteer:'',
+          formError: {
+            firstName:'',
+            lastName:'',
+            email:'',
+            password:'',
+            contactNumber:'',
+            user_type:''
+        }
+          
         }
         this.logout = this.logout.bind(this);
         this.submitCreateAccount = this.submitCreateAccount.bind(this);
@@ -99,18 +133,84 @@ class HeaderDashboard extends Component{
         lng: null,
         lat: null,
     });
+    console.log(this.state.incidentsList);
   }
 
-  handleCreateAccount = (e) => this.setState({ [e.target.name]: e.target.value });
-  inputUserTypeHandler = (e, {user_type}) => this.setState({user_type});
+  handleCreateAccount = (e) => {
+    e.preventDefault();
+    //this.setState({[e.target.name]: e.target.value});
+    const { name, value } = e.target;
+    let formError = { ...this.state.formError };
+
+      switch (name) {
+      case "firstName":
+        formError.firstName =
+          value.length < 2 ? "First Name should at least 2 characters" : "";
+        break;
+      case "lastName":
+        formError.lastName =
+          value.length < 2 ? "Last Name should at least 2 characters" : "";
+        break;
+      case "email":
+        formError.email = emailRegex.test(value)
+          ? ""
+          : "Please enter a valid email address.";
+        break;
+      case "password":
+        formError.password =
+          value.length < 8 ? "Password should at least 8 characters" : "";
+        break;
+      case "contactNumber":
+        formError.contactNumber =
+          value.length < 11 ? "Contact Number should at least 11 numbers" : "";
+        break; 
+      // case "user_type":
+      //   formError.user_type = this.user_type
+      //     ? ""
+      //     : "Please select user type.";
+      //  break;
+      default:
+        break;
+    }
+       this.setState({ formError, [name]: value }, () => console.log(this.state));
+
+  };
+  
+  inputUserTypeHandler = (e, { value }) => {
+    //this.setState({user_type: e.target.value})
+    this.setState({ user_type: value })
+    //console.log('USRER TPsdfgs', value);
+  };
+
+  inputUserTypeHandler_volunteer = (e, { value }) => {
+    this.setState({ isActiveVolunteer: value })
+  };
+
+  inputUserTypeHandler_medicalDegree = (e, { value}) => {
+    this.setState({medicalDegree: value })
+  };
+
+  inputUserTypeHandler_medicalProfession = (e, { value}) => {
+    this.setState({medicalProfession: value })
+  };
+
+  inputUserTypeHandler_durationService = (e, { value}) => {
+    this.setState({durationService: value })
+  };
+  
+  inputUserTypeHandler_certification = (e, { value}) => {
+    this.setState({certification: value })
+  };
 
   submitCreateAccount = (e) => {
+
     e.preventDefault();
-    
     var isMobile = false;
+    var err = '';
     if(this.state.user_type === 'Regular User' || this.state.user_type === 'Responder' || this.state.user_type === 'Volunteer'){
       isMobile = true;
     }
+
     const account = {
       firstName: this.state.firstName,
       lastName: this.state.lastName,
@@ -120,7 +220,36 @@ class HeaderDashboard extends Component{
       contactNumber: this.state.contactNumber,
       isMobile
     }
-    createUserAccount(account);
+
+    const credentials = {
+      medicalProfession: this.state.medicalProfession,
+      medicalDegree: this.state.medicalDegree,
+      certification: this.state.certification,
+      isActiveVolunteer: this.state.isActiveVolunteer,
+      forVA: false,
+      forPI: false
+    }
+
+    if (formValid(this.state)) {
+      console.log(`
+        --SUBMITTING--
+        First Name: ${this.state.firstName}
+        Last Name: ${this.state.lastName}
+        Email: ${this.state.email}
+        Password: ${this.state.password}
+        Contact Number: ${this.state.contactNumber}
+        User Type: ${this.state.user_type}
+      `);
+    } else {
+      console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
+    }
+    if(account.user_type === 'Volunteer'){
+      err = createUserAccount(account, credentials);
+      this.setState({err: err});
+    }else{
+      err = createUserAccount(account);
+      this.setState({err: err});
+    }
     this.setState({
       firstName: '',
       lastName: '',
@@ -128,8 +257,13 @@ class HeaderDashboard extends Component{
       password: '',
       email: '',
       user_type: '',
-      contactNumber: ''
+      contactNumber: '',
+      medicalProfession: '',
+      medicalDegree: '',
+      certification: '',
+      isActiveVolunteer: ''
     })
+
   }
 
   trigger = (
@@ -144,6 +278,9 @@ class HeaderDashboard extends Component{
     { key: 'settings', text: 'Settings', icon: 'settings' },
     { key: 'sign-out', text: 'Sign Out', icon: 'sign out', onClick: this.logout },
   ]
+  
+  
+
 
   filtertrigger = (
     <span>
@@ -177,9 +314,84 @@ class HeaderDashboard extends Component{
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name })
 
+
   render() {
     const { open, size } = this.state
     const { open2, size2 } = this.state
+    const { formError } = this.state;
+
+
+    const userTypeOptions = [
+    { text: 'Administrator', value: 'Administrator'},
+    { text: 'Command Center Personnel', value: 'Command Center Personnel'},
+    { text: 'Responder', value: 'Responder'},
+    { text: 'Volunteer', value: 'Volunteer'},
+    { text: 'Regular User', value: 'Regular User'}
+  ]
+
+  const activeVolunteerOptions = [
+    { text: 'Yes', value: 'Yes'},
+    { text: 'No', value: 'No'},
+  ]
+
+  const surgeon_medicalDegreeOptions = [
+    { text: 'Bachelor of Medicine and Bachelor of Surgery (MBBS)', value: 'Bachelor of Medicine and Bachelor of Surgery'},
+    { text: 'Master of Medicine (MM, MMed)', value: 'Master of Medicine'},
+    { text: 'Master of Surgery (MS, MSurg, ChM)', value: 'Master of Surgery'},
+    { text: 'Master of Medical Science (MMSc, MMedSc)', value: 'Master of Medical Science'},
+    { text: 'Doctor of Medical Science (DMSc, DMedSc)', value: 'Doctor of Medical Science'},
+    { text: 'Doctor of Surgery (DS, DSurg)', value: 'Doctor of Surgery'},
+    { text: 'Doctor of Medicine (MD)', value: 'Doctor of Medicine'},
+  ]
+
+  const surgeon_certificationOptions = [
+    { text: 'General Surgeon Board Certification', value: 'General Surgeon Board Certification'},
+  ]
+
+  const nurse_medicalDegreeOptions = [
+    { text: 'Bachelor of Science in Nursing (BSN)', value: 'Bachelor of Science in Nursing'},
+    { text: 'Associate Degree in Nursing (ADN)', value: 'Associate Degree in Nursing'},
+  ]
+
+  const nurse_certificationOptions = [
+    { text: 'Maternal and Child Health Nursing', value: 'Maternal and Child Health Nursing'},
+    { text: 'Emergency and Trauma Nursing', value: 'Emergency and Trauma Nursing'},
+    { text: 'Cardiovascular Nursing', value: 'Cardiovascular Nursing'},
+  ]
+
+  const ems_medicalDegreeOptions = [
+    {text: 'Emergency Medical Services NC II', value: 'Emergency Medical Services NC II'},
+  ]
+
+  const ems_certificationOptions = [
+    {text: 'Medical First Responder', value: 'Medical First Responder'},
+    {text: 'Ambulance Care Assistants', value: 'Ambulance Care Assistants'},
+    {text: 'Emergency Medical Technicians', value:'Emergency Medical Technicians'},
+    {text: 'Paramedics', value: 'Paramedics'},
+  ]
+
+
+  const medicalProfessionOptions = [
+    { text: 'Nurse', value: 'Nurse'},
+    { text: 'Surgeon', value: 'Surgeon'},
+    { text: 'Emergency Medical Service Personnel', value: 'Emergency Medical Service Personnel'},
+    // { text: '', value: ''},
+    // { text: '', value: ''},
+    // { text: '', value: ''},
+  ]
+
+  const durationServiceOptions = [
+    {text: '1 year', value: 1},
+    {text: '2 years', value: 2},
+    {text: '3 years', value: 3},
+    {text: '4 years', value: 4},
+    {text: '5 years', value: 5},
+    {text: '6 years', value: 6},
+    {text: '7 years', value: 7},
+    {text: '8 years', value: 8},
+    {text: '9 years', value: 9},
+    {text: '10 years', value: 10},
+  ]
 
     return (<div className="menuz">
     {/* Header Menu */}
@@ -215,6 +427,7 @@ class HeaderDashboard extends Component{
               </Menu.Item>
         </Menu.Menu>
       </Menu>
+
       {/* Add Incident Modal */}
       <Modal size={size} open={open} onClose={this.close}>
       <Modal.Header>New Emergency</Modal.Header>
@@ -282,104 +495,207 @@ class HeaderDashboard extends Component{
               </Form>
               </Modal.Content>
               <Modal.Actions>
-                  <Button inverted color='black' onClick={this.submitIncidentHandler}>
+                  <Button inverted color='gray' onClick={this.submitIncidentHandler}>
                       Submit
                   </Button>
         </Modal.Actions>
       </Modal>
+
       {/*Create Personnel Account Modal*/}
-      <Modal size={size2} open={open2} onClose={this.close2}>
+      <Modal size={size2} open={open2} onClose={this.close2}  onClick={(event) => {this.handleCreateAccount(event);}}noValidate>
       <Modal.Header>New User Account </Modal.Header>
           <Modal.Content>
-              <Form>
-              <Form.Field>
-                  <Form.Input
-                    fluid
-                    placeholder='First Name'
-                    type='text'
-                    name='firstName'
-                    value={this.state.firstName}
-                    onChange={e => this.setState({ firstName: e.target.value })}/>
-                </Form.Field>
-                <Form.Field>
-                  <Form.Input
-                    fluid
-                    placeholder='Last Name'
-                    type='text'
-                    name='lastName'
-                    value={this.state.lastName}
-                    onChange={e => this.setState({ lastName: e.target.value })}/>
-                </Form.Field>
-                <Form.Field>
-                  <Form.Input
-                    fluid
-                    placeholder='Email Address'
-                    type='email'
-                    name='email'
-                    value={this.state.email}
-                    onChange={e => this.setState({ email: e.target.value })}/>
-                </Form.Field>
-                <Form.Field>
-                  <Form.Input
-                    fluid
-                    placeholder='Password'
-                    type='password'
-                    name='password'
-                    value={this.state.password}
-                    onChange={e => this.setState({ password: e.target.value })}/>
-                </Form.Field>
-                <Form.Field>
-                  <Form.Input
-                    fluid
-                    placeholder='Contact Number'
-                    type='text'
-                    name='contactNumber'
-                    value={this.state.contactNumber}
-                    onChange={e => this.setState({ contactNumber: e.target.value })}/>
-                </Form.Field>
-                <Form.Field>
-                  <label>User Type</label>
-                    <Radio
-                      label='Administrator'
-                      user_type='Administrator'
-                      checked={this.state.user_type === 'Administrator'}
-                      onChange={this.inputUserTypeHandler}
+              <Form onClick={this.handleCreateAccount}>
+
+                <Form.Group widths='equal'>
+                  <Form.Field style={{marginBottom: '10px', color: 'red'}} required>
+                    <Form.Input
+                      fluid
+                      placeholder='Email Address'
+                      type='email'
+                      name='email'
+                      noValidate
+                      value={this.state.email}
+                      className={formError.email.length > 0 ? "error" : null}
+                      onChange={this.handleCreateAccount}
                     />
-                    <br/>
-                    <Radio
-                      label='Command Center Personnel'
-                      user_type='Command Center Personnel'
-                      checked={this.state.user_type === 'Command Center Personnel'}
-                      onChange={this.inputUserTypeHandler}
+                      {formError.email.length > 0 && (
+                      <span className="errorMessage">{formError.email}</span>)}
+                  </Form.Field>                  
+                </Form.Group> 
+
+                <Form.Group widths='equal'>
+                  <Form.Field
+                    control={Select}
+                    options={userTypeOptions}                
+                    placeholder='Select User Type'
+                    onChange={this.inputUserTypeHandler}                  
+                    /> 
+
+                  {this.state.user_type === 'Volunteer' ? 
+                    <Form.Field
+                      control={Select}
+                      options={medicalProfessionOptions}                
+                      placeholder='Medical Profession'
+                      search
+                      onChange={this.inputUserTypeHandler_medicalProfession}                  
+                    />: null}  
+               
+                </Form.Group>
+
+                <Form.Group widths='equal'>
+                  <Form.Field style={{marginBottom: '10px', color: 'red'}} required>
+                    <Form.Input
+                      fluid
+                      placeholder='First Name'
+                      type='text'
+                      name='firstName'
+                      noValidate
+                      value={this.state.firstName}
+                      className={formError.firstName.length > 0 ? "error" : null}
+                      onChange={this.handleCreateAccount}
                     />
-                    <br/>
-                    <Radio
-                      label='Responder'
-                      user_type='Responder'
-                      checked={this.state.user_type === 'Responder'}
-                      onChange={this.inputUserTypeHandler}
+                      {formError.firstName.length > 0 && (
+                      <span className="errorMessage">{formError.firstName}</span>)}
+                  </Form.Field>                   
+
+                   {this.state.user_type === 'Volunteer' && this.state.medicalProfession === 'Nurse' ?
+                    <Form.Field
+                      control={Select}
+                      options={nurse_medicalDegreeOptions}                
+                      placeholder='Medical Degree'
+                      search
+                      onChange={this.inputUserTypeHandler_medicalDegree}                  
+                    />:
+
+                   this.state.user_type === 'Volunteer' && this.state.medicalProfession === 'Surgeon' ?
+                    <Form.Field
+                      control={Select}
+                      options={surgeon_medicalDegreeOptions}                
+                      placeholder='Medical Degree'
+                      search
+                      onChange={this.inputUserTypeHandler_medicalDegree}                  
+                    />:(
+
+                    this.state.user_type === 'Volunteer' && this.state.medicalProfession === 'Emergency Medical Service Personnel' ?
+                      <Form.Field
+                      control={Select}
+                      options={ems_medicalDegreeOptions}                
+                      placeholder='Medical Degree'
+                      search
+                      onChange={this.inputUserTypeHandler_medicalDegree}                  
                     />
-                    <br/>
-                    <Radio
-                      label='Volunteer'
-                      user_type='Volunteer'
-                      checked={this.state.user_type === 'Volunteer'}
-                      onChange={this.inputUserTypeHandler}
+                    
+                  : null) }
+
+                </Form.Group>
+                
+                <Form.Group widths='equal'>
+                  <Form.Field style={{marginBottom: '10px', color: 'red'}} required>
+                    <Form.Input
+                      fluid
+                      placeholder='Last Name'
+                      type='text'
+                      name='lastName'
+                      noValidate
+                      value={this.state.lastName}
+                      className={formError.lastName.length > 0 ? "error" : null}
+                      onChange={this.handleCreateAccount}
+                    />  
+                      {formError.lastName.length > 0 && (
+                      <span className="errorMessage">{formError.lastName}</span>)}                  
+                  </Form.Field>  
+
+                  {this.state.user_type === 'Volunteer' && this.state.medicalProfession === 'Nurse'? 
+                    <Form.Field
+                    control={Select}
+                    options={nurse_certificationOptions}                
+                    placeholder='Certification'
+                    search                    
+                    onChange={this.inputUserTypeHandler_certification}                  
+                  />:
+                    
+                    this.state.user_type === 'Volunteer' && this.state.medicalProfession === 'Surgeon'? 
+                    <Form.Field
+                      control={Select}
+                      options={surgeon_certificationOptions}                
+                      placeholder='Certification'
+                      search                    
+                      onChange={this.inputUserTypeHandler_certification}
+                    />:(
+
+                    this.state.user_type === 'Volunteer' && this.state.medicalProfession === 'Emergency Medical Service Personnel' ?
+                      <Form.Field
+                      control={Select}
+                      options={ems_certificationOptions}                
+                      placeholder='Certification'
+                      search
+                      onChange={this.inputUserTypeHandler_certification}                  
                     />
-                    <br/>
-                    <Radio
-                      label='Regular User'
-                      user_type='Regular User'
-                      checked={this.state.user_type === 'Regular User'}
-                      onChange={this.inputUserTypeHandler}
-                    />
+                  : null)}   
+                </Form.Group>
+
+                <Form.Group widths='equal'>
+                  <Form.Field style={{marginBottom: '10px', color: 'red'}} required>
+                      <Form.Input
+                        fluid
+                        placeholder='Contact Number: 09XXXXXXXXX'
+                        type='text'
+                        name='contactNumber'
+                        noValidate
+                        value={this.state.contactNumber}
+                        className={formError.contactNumber.length > 0 ? "error" : null}
+                        onChange={this.handleCreateAccount}
+                      />
+                        {formError.contactNumber.length > 0 && (
+                        <span className="errorMessage">{formError.contactNumber}</span>)}
                   </Form.Field>
+
+                  {this.state.user_type === 'Volunteer' ? 
+                    <Form.Field
+                      control={Select}                  
+                      options={activeVolunteerOptions}                
+                      placeholder='Active Volunteer?'
+                      onChange={this.inputUserTypeHandler_volunteer}                  
+                      />: null}                 
+                </Form.Group >
+
+                <Form.Group widths='equal'>
+                   <Form.Field style={{marginBottom: '10px', color: 'red'}} required>
+                    <Form.Input
+                      fluid
+                      placeholder='Password'
+                      type='password'
+                      name='password'
+                      noValidate
+                      value={this.state.password}
+                      className={formError.password.length > 0 ? "error" : null}
+                      onChange={this.handleCreateAccount}
+                    />                     
+                      {formError.password.length > 0 && (
+                      <span className="errorMessage">{formError.password}</span>)}
+                  </Form.Field>
+
+                    {this.state.user_type === 'Volunteer' ? 
+                      <Form.Field
+                      control={Select}
+                      options={durationServiceOptions}                
+                      placeholder='Duration Service (in years)'
+                      search                    
+                      onChange={this.inputUserTypeHandler_durationService}                  
+                    /> : null}     
+
+                </Form.Group>
+                   
+                 <p style={{color:'white'}}>{this.state.error}</p>
+                  
               </Form>
               </Modal.Content>
               <Modal.Actions>
-                  <Button inverted color='black' onClick={this.submitCreateAccount}>
+                  <Button inverted color='gray' onClick={this.submitCreateAccount}>
                       Create User Account
                   </Button>
+                   
         </Modal.Actions>
       </Modal>
       

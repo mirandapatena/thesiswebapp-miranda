@@ -10,7 +10,8 @@ const config = {
   messagingSenderId: "583480520859"
 
 };
-const fire2 = firebase.initializeApp(config);
+const fire = firebase.initializeApp(config);
+export const fire2 = firebase.initializeApp(config, "Secondary");
 //create user session
 //destroy current user session
-export default fire2;
+export default fire1;

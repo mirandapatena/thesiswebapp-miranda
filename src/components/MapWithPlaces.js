@@ -49,7 +49,7 @@ const MapWithPlaces = compose(
         let lat = parseFloat(place.coordinates.lat, 10);
         let lng = parseFloat(place.coordinates.lng, 10);     
         let incidentLogo = setLogo(place.incidentType, place.unresponded, place.isResponding, place.isSettled);
-
+        console.log('responders', props.responders);
         return (
             <div key = {i}>
                 <Modal size="tiny" trigger={<Marker
@@ -88,7 +88,40 @@ const MapWithPlaces = compose(
 
             </div>
         );
-      })}
+        
+      })
+    }
+      {/*render responders*/}
+      {props.responders &&
+        props.responders.map((responder, i) => {
+          let lat = parseFloat(responder.coordinates.lat, 10);
+          let lng = parseFloat(responder.coordinates.lng, 10);     
+          //let incidentLogo = setLogo(place.incidentType, place.unresponded, place.isResponding, place.isSettled);
+  
+          return (
+              <div key = {i}>
+                  <Modal size="tiny" trigger={<Marker
+                    position={{ lat: lat, lng: lng }}>
+                    
+                    </Marker>}>
+                      <Modal.Header>Responder</Modal.Header>
+                      <Modal.Content>
+                            <p>UID: {responder.uid}</p>
+                        </Modal.Content>
+                        <Modal.Actions>
+                            <Button basic color='green'>
+                                Dispatch Responders
+                            </Button>
+                            <Button basic color='green'>
+                                Request Volunteers
+                            </Button>
+                        </Modal.Actions>
+                  </Modal>
+  
+              </div>
+          );
+        })}
+    
   </GoogleMap>
 ));
 
@@ -121,3 +154,6 @@ const setLogo = (incidentType, unresponded, responding, settled) => {
 }
 
 export default MapWithPlaces;
+
+// lat 10.32477
+// lng 123.93278

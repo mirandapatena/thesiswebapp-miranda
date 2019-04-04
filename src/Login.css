@@ -1,8 +1,8 @@
 /* login form */
 .ui.stacked.segment {       
     padding-bottom: 5em;
-    padding-top: 3em;
-    background-color: #042635;
+    padding-top: 4em;
+    background-color: #524141f1;
 }
 
 .ui.vertical.segment {
@@ -13,22 +13,23 @@
     border-bottom: 40px solid transparent;
 }  
 
-
-
-/* below login form */
-/* .ui[class*="internally celled"].grid {
-    background-color: #042635;
-    color: rgba(255,255,255,.9);
-} */
-
-
-
-.belowLoginForm{
-    color: white;
-    background-color: #042635;
+.catchError{
+    margin-top: 15px;
+    color: whitesmoke;
 }
 
+.catchError_2{
+    color: whitesmoke;
+}
 
+.login-form{
+        /* background-image: url("https://images.pexels.com/photos/34153/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350"); */
+        /* background: url("../src/images/title.jpg"); */
+        background-color: rgba(0, 0, 0, 0.87);
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+}
 
 
 
