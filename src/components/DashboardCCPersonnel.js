@@ -14,7 +14,7 @@ class DashboardCCPersonnel extends Component {
                     <div className="content"> 
                             <div style={{maxHeight:'100%', maxWidth:'100%', }}>
                             <div>Command Center Personnel</div>
-                            <HeaderDashboard/>
+                            <HeaderDashboard user_type='Command Center Personnel'/>
                             </div>
                             <div style={{minHeight: '80vh', display: 'flex', flexFlow: 'column nowrap'}}>
                                 <CityMap/>

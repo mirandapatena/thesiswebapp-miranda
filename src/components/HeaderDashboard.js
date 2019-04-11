@@ -228,7 +228,7 @@ class HeaderDashboard extends Component{
       isActiveVolunteer: this.state.isActiveVolunteer,
       forVA: false,
       forPI: false,
-      durationService: null
+      durationService: this.state.durationService
     }
 
     if (formValid(this.state)) {
@@ -280,9 +280,6 @@ class HeaderDashboard extends Component{
     { key: 'sign-out', text: 'Sign Out', icon: 'sign out', onClick: this.logout },
   ]
   
-  
-
-
   filtertrigger = (
     <span>
       <Icon className='small filter' />Filter
@@ -320,7 +317,12 @@ class HeaderDashboard extends Component{
     const { open, size } = this.state
     const { open2, size2 } = this.state
     const { formError } = this.state;
-
+    let createUserAccountButton;
+    if(this.props.user_type === 'Administrator'){
+      createUserAccountButton = <Menu.Item link onClick={this.show2('tiny')}>
+      <Icon className="plus" />Create User Account
+      </Menu.Item>
+    }
 
     const userTypeOptions = [
     { text: 'Administrator', value: 'Administrator'},
@@ -404,9 +406,7 @@ class HeaderDashboard extends Component{
               <Menu.Item link onClick={this.show('tiny')}>
                  <Icon className="plus" />Add Incident
               </Menu.Item>
-              <Menu.Item link onClick={this.show2('tiny')}>
-                 <Icon className="plus" />Create User Account
-              </Menu.Item>
+              {createUserAccountButton}
               <Menu.Item onClick={this.handleItemClick}>
                   {/*Settings*/}
                   <Dropdown trigger={this.filtertrigger} options={this.filteroptions} icon={null} />

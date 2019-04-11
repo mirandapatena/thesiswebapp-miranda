@@ -59,19 +59,7 @@ class CityMap extends Component {
       regularUsersRef.on('value', snapshot => {
         this.getMobileUserCoordinates(snapshot.val(), 'Regular User');
       });
-      console.log('constructor respondrs', this.state.responders);
-
-      // respondersRef.on('child_added', snapshot => {
-      //   this.getMobileUserCoordinates(snapshot.val(), 'Responder');
-      // });
-
-      // volunteersRef.on('child_added', snapshot => {
-      //   this.getMobileUserCoordinates(snapshot.val(), 'Volunteer');
-      // });
-
-      // regularUsersRef.on('child_added', snapshot => {
-      //   this.getMobileUserCoordinates(snapshot.val(), 'Regular User');
-      // });
+      console.log('constructor respondrs', this.state.volunteers);
   }
 
   getData = (values) => {
@@ -114,8 +102,11 @@ class CityMap extends Component {
   }
   
   render() { 
+    console.log('constructor respondrs', this.state.volunteers);
+
     return(
       <div>
+      {console.log('responder list', this.state.responders)}
         <MapWithPlaces 
           center={{ lat: 10.324646, lng: 123.942197 }}
           zoom={15}

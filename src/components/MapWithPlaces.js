@@ -91,22 +91,22 @@ const MapWithPlaces = compose(
         
       })
     }
-      {/*render responders*/}
-      {props.responders &&
-        props.responders.map((responder, i) => {
-          let lat = parseFloat(responder.coordinates.lat, 10);
-          let lng = parseFloat(responder.coordinates.lng, 10);     
+      {/*render volunteers*/}
+      {props.volunteers &&
+        props.volunteers.map((volunteer, i) => {
+          let lat = parseFloat(volunteer.coordinates.lat, 10);
+          let lng = parseFloat(volunteer.coordinates.lng, 10);     
           //let incidentLogo = setLogo(place.incidentType, place.unresponded, place.isResponding, place.isSettled);
-  
+          console.log('uid', volunteer.uid);
           return (
               <div key = {i}>
                   <Modal size="tiny" trigger={<Marker
                     position={{ lat: lat, lng: lng }}>
                     
                     </Marker>}>
-                      <Modal.Header>Responder</Modal.Header>
+                      <Modal.Header>Volunteer</Modal.Header>
                       <Modal.Content>
-                            <p>UID: {responder.uid}</p>
+                            <p>UID: {volunteer.key}</p>
                         </Modal.Content>
                         <Modal.Actions>
                             <Button basic color='green'>

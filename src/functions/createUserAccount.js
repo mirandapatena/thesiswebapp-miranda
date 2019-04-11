@@ -87,7 +87,7 @@ function computeVolunteerPoints(credentials){
     points = points + 15;
   }
   if(credentials.durationService !== 0){
-    points = points * credentials.durationService;
+    points = points + (credentials.durationService * 2);
   }
   return points;
 
