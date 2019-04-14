@@ -22,7 +22,7 @@ const MapWithPlaces = compose(
     googleMapURL:
       "https://maps.googleapis.com/maps/api/js?key=AIzaSyDnJpxYlDPNrGJSQir9SoWBEbMaFa5Nv5w&libraries=geometry,drawing,places",
     loadingElement: <div style={{ height: `100%` }} />,
-    containerElement: <div style={{ height: "100vh", width: "100%" }} />,
+    containerElement: <div style={{ height: "93vh", width: "100%" }} />,
     mapElement: <div style={{ height: "100%" }} />
   }),
   withStateHandlers(

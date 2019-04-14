@@ -27,15 +27,15 @@ class QueueIncidents extends Component {
         this.props.getIncidents();
     }
 
-    renderEmergency = () => {
+    renderEmergency = () => {        
         return _.map(this.props.incidentsList, (incident, key) => {
-            console.log('que coords', incident.coordinates);
             return (
                 <div className='item' key={key}>
                     <EmergencyDetails 
                         incidentType = {incident.incidentType} 
                         incidentLocation = {incident.incidentLocation}
                         coordinates = {incident.coordinates}
+                        incidentKey = {key}
                     />
                 </div>
             );

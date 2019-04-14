@@ -5,6 +5,7 @@ import {connect} from 'react-redux';
 import {saveIncident} from '../actions/incidentAction';
 import {createUserAccount} from '../functions/createUserAccount';
 import '../stylesheet_QueueIncidents.css';
+import '../HeaderDashboard.css';
 import PlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
@@ -401,28 +402,14 @@ class HeaderDashboard extends Component{
       <Menu inverted>
           <Menu.Menu position='left'>
               <Menu.Item>
-                 App Name with Logo
+                 <span className="appLogo"></span><span style={{marginLeft:"40px"}}>Tabang!</span>
               </Menu.Item>
               <Menu.Item link onClick={this.show('tiny')}>
                  <Icon className="plus" />Add Incident
               </Menu.Item>
               {createUserAccountButton}
-              <Menu.Item onClick={this.handleItemClick}>
-                  {/*Settings*/}
-                  <Dropdown trigger={this.filtertrigger} options={this.filteroptions} icon={null} />
-              </Menu.Item>
           </Menu.Menu>
         <Menu.Menu position='right'>
-              <Menu.Item onClick={this.handleItemClick}>
-                  <Dropdown icon='tasks' className='icon'>
-                      <Dropdown.Menu>
-                      <Dropdown.Header content='Personnel Actions' />
-                      <Dropdown.Divider />
-                          <Dropdown.Item icon='user plus' text='Add Responder' />
-                          <Dropdown.Item icon='user plus' text='Add Volunteer' />
-                    </Dropdown.Menu>
-                  </Dropdown>
-              </Menu.Item>
               <Menu.Item onClick={this.handleItemClick}>
                   <Dropdown trigger={this.trigger} options={this.options} pointing='top left' icon={null} />
               </Menu.Item>

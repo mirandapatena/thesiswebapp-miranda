@@ -13,7 +13,6 @@ class DashboardCCPersonnel extends Component {
                     <QueueIncidents/><div className="hidescrollbar">
                     <div className="content"> 
                             <div style={{maxHeight:'100%', maxWidth:'100%', }}>
-                            <div>Command Center Personnel</div>
                             <HeaderDashboard user_type='Command Center Personnel'/>
                             </div>
                             <div style={{minHeight: '80vh', display: 'flex', flexFlow: 'column nowrap'}}>

@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import { Button, Form, Grid, Header, Segment } from 'semantic-ui-react'
 import CircularProgress from "@material-ui/core/CircularProgress"
 import fire from '../config/Fire';
-import '../Login.css';
+import '../loginForm.css';
 
 class Login extends Component{
   constructor(props){
@@ -63,18 +63,18 @@ class Login extends Component{
   render(){
     return(
       <div className='login-form'>
-    <style>{` 
+    {/* <style>{` 
       body > div,
       body > div > div,
       body > div > div > div.login-form {
         height: 100%;
       }
-    `}</style>
+    `}</style> */}
     <Grid textAlign='center' style={{ height: '100%' }} verticalAlign='middle'>
       <Grid.Column style={{ maxWidth: 450 }}>
       <Segment stacked>
         <Header as='h2' color='red' textAlign='center'>
-          Login
+          Personnel Login
         </Header>
         
         <Form size='large' >
@@ -99,6 +99,7 @@ class Login extends Component{
               error={this.state.passwordError}
               onChange={this.handleChange}
             />
+            <div className="space"></div>
             <Button inverted color= 'red' fluid size='large' onClick={this.login}>
               { this.state.passwordError || this.state.emailError ? "Login" :
                 this.state.submitting ? (
@@ -111,6 +112,7 @@ class Login extends Component{
       </Grid.Column>
     </Grid>
   </div>
+  
     );
   }
   
