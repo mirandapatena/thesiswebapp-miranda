@@ -59,7 +59,6 @@ class CityMap extends Component {
       regularUsersRef.on('value', snapshot => {
         this.getMobileUserCoordinates(snapshot.val(), 'Regular User');
       });
-      console.log('constructor respondrs', this.state.volunteers);
   }
 
   getData = (values) => {
@@ -86,7 +85,6 @@ class CityMap extends Component {
                           })
                           .value();
     this.setMobileList(mobileUsersList, user_type);
-    console.log('mobile users', mobileUsersList);
   }
 
   setMobileList = (mobileUsersList, user_type) => {
@@ -101,9 +99,7 @@ class CityMap extends Component {
     }
   }
   
-  render() { 
-    console.log('constructor respondrs', this.state.volunteers);
-
+  render() {
     return(
       <div>
       {console.log('responder list', this.state.responders)}
@@ -114,6 +110,7 @@ class CityMap extends Component {
           responders = {this.state.responders}
           volunteers = {this.state.volunteers}
           regularUsers = {this.state.regularUsers}
+          //incidentLocation={}
         />
       </div>
     );

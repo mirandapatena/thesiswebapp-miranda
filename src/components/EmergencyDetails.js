@@ -4,8 +4,7 @@ import '../stylesheet_QueueIncidents.css';
 import fire from '../config/Fire';
 import _ from 'lodash';
 import DispatchResponders from './DispatchResponders';
-//import HaversineGeolocation from 'haversine-geolocation';
-let responders;
+
 class EmergencyDetails extends Component{
 
     constructor(props){
@@ -13,13 +12,7 @@ class EmergencyDetails extends Component{
         this.state = {
             open: false,
             open2: false,
-            onlineVolunteer: [{
-                uid: '',
-                coordinates: {
-                    lng: '',
-                    lat: '' 
-                }
-            }],
+            onlineVolunteers: [{}],
             activeResponders: [{}]
         }
         this.getRespondersList = this.getRespondersList.bind(this);
@@ -28,7 +21,6 @@ class EmergencyDetails extends Component{
     show = size => () => {
         this.setState({ size, open: true })
         this.getRespondersList();
-        console.log('Modal pressed');
     }
 
     showActiveRespondersList = size2 => () => {
@@ -51,7 +43,7 @@ class EmergencyDetails extends Component{
             });
         });
     }
-
+    
     extractActiveResponderDetails = (responders) => {
         let activeResponderValues = responders;
         let activeRespondersList = _(activeResponderValues)
@@ -83,6 +75,7 @@ class EmergencyDetails extends Component{
 
     renderRespondersList = () => {
         var respondersList = this.state.activeResponders;
+        console.log('respondesr segsdfgf', respondersList);
         console.log('asdgsdghdhf', respondersList);
         return _.map(respondersList, (responder, key) => {
             console.log('key', responder.key)
@@ -93,77 +86,66 @@ class EmergencyDetails extends Component{
         });
     }
 
-    //<ul>{responder.firstName} {responder.lastName} <Button floated='right' color='black' onClick={this.dispatchResponder(responder.key)}>Dispatch</Button></ul>
-
-    dispatchResponder = (responderKey) => {
-        console.log('responderasdfsgfds', responderKey);
-        var incidentID = this.props.incidentKey;
-        // const dispatchRef = fire.database().ref(`mobileUsers/Responder/${responderKey}`);
-        // dispatchRef.update({incidentID});
+    requestVolunteers = () => {
+        var volunteerNode = fire.database().ref('mobileUsers/Volunteer');
+        var onlineVolunteers = [];
+        var lng = this.props.coordinates.lng;
+        var lat = this.props.coordinates.lat;
+        console.log('request volunteers', typeof this.props.incidentLocation.lng);
+        console.log('request volunteerssagh', this.props.incidentLocation.lng);
+        volunteerNode.once('value', snapshot => {
+            onlineVolunteers = snapshot.val();        
+            console.log('online volunteers', onlineVolunteers);
+            this.setState({onlineVolunteers}, () => {
+                console.log('volunteers node', this.state.onlineVolunteers);
+                this.getNearestVolunteers(lng, lat);
+            });
+        });
     }
-    //<DispatchResponders firstName={responder.firstName} lastName={responder.lastName}/>
-    // locateVolunteers = () => {
-    //     var volunteerNode = fire.database().ref('mobileUsers/Volunteer');
-    //     var onlineVolunteers = [];
-    //     var lng = this.props.coordinates.lng;
-    //     var lat = this.props.coordinates.lat;
-    //     volunteerNode.once('value', snapshot => {
-    //         onlineVolunteers = snapshot.val();        
-    //         console.log('asdfasgfd', onlineVolunteers);
-            
-    //     });
-    //     this.locateNearestVolunteers(onlineVolunteers, lat, lng);
-    // }
 
-    // rad = (x) => {return x*Math.PI/180;}
-    // locateNearestVolunteers = (onlineVolunteers, incidentLat, incidentLng) => {
-    //     console.log('locatenewasdag', onlineVolunteers);
-    //     var radius = 1.5; // sample radius
-    //     var lat = incidentLat;
-    //     var lng = incidentLng;
-    //     var R = 6371; // radius of earth in km
-    //     var userFormat = {
-    //         uid: '',
-    //         coordinates: {
-    //             lng: '',
-    //             lat: ''
-    //         },
-    //         distanceToIncident: ''
-    //     }
-    //     var usersWithDistance = [];
-    //     var onlineVolunteersList = _.values(onlineVolunteers);
-    //     var {new_lat, new_lng} = this.getRadius(500, lng, lat);
-    //     var newCoords = {
-    //         longitude: new_lng,
-    //         latitude: new_lng
-    //     }
-    //     var incidentCoords = {
-    //         latitude: lat,
-    //         longitude: lng
-    //     }
+    getNearestVolunteers = (incidentLng, incidentLat) => {
+        var incidentCoordinates = {
+            longitude: parseFloat(incidentLng),
+            latitude: parseFloat(incidentLat)
+        };
+        var volunteers = this.state.onlineVolunteers;
+        var nearestVolunteer = [];
+        var distance; 
+        var volunteerObject = {};
+        _.map(volunteers, (volunteer, key) => {
+            console.log('volunteer key', key);
+            volunteerObject = volunteer;
+            volunteerObject.uid = key;
+            var volunteerCoordinates = {
+                latitude: parseFloat(volunteer.coordinates.lat),
+                longitude: parseFloat(volunteer.coordinates.lng)
+            }
+            distance = this.computeDistance(incidentCoordinates.latitude, incidentCoordinates.longitude, volunteerCoordinates.latitude, volunteerCoordinates.longitude);
+            if(distance < 500){
+                nearestVolunteer.push(volunteer);
+                console.log('nearest volunteer', nearestVolunteer);
+            }
+        })
+    }
 
-    //     console.log(`New lat: ${new_lat} Old lat: ${lat}`);
-    //     console.log(`New lng: ${new_lng} Old lat: ${lng}`);
-    //     var hav = HaversineGeolocation.getDistanceBetween(incidentCoords, newCoords, 'm');
-    //     console.log(`Haversine ${hav}`);
-        //TODO: add nearest users to stack
-        //create stack of nearest volunteers
-        // sort stack with the volunteer with highest points at the top
-        // prompt volunteer at top of stack
-        // if doest not accept, pop stack
-        //   -prompt next volunteer
-        // if accept, go to volunteer node in mobileUsers in firebase, listen to node for tracking volunteer
-   // }
+    computeDistance = (lat1, lon1, lat2, lon2) => {
+        var R = 6371; // Radius of the earth in km
+        var dLat = this.deg2rad(lat2 - lat1); // deg2rad below
+        var dLon = this.deg2rad(lon2 - lon1);
+        var a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
 
-    // getRadius = (radius, lng, lat) => {
-    //     const meters = radius;
-    //     const coef = meters * 0.0000089;
-    //     const new_lat = lat + coef;
-    //     const new_lng = lng + coef / Math.cos(new_lat * 0.018);
-    //     return {
-    //         new_lat, new_lng
-    //     }
-    // }
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        var d = R * c; // Distance in km
+        return d * 1000;
+      }
+
+      deg2rad = (deg) => {
+        return deg * Math.PI / 180
+      }
+      
 
     render() {
         const { open, size } = this.state;
@@ -197,10 +179,10 @@ class EmergencyDetails extends Component{
                             <p>Photo of Incident:</p>
                     </Modal.Content>
                         <Modal.Actions>
-                            <Button inverted color='gray' onClick={this.showActiveRespondersList('tiny')}>
+                            <Button inverted color='gray' onClick={this.showActiveRespondersList('small')}>
                                 Dispatch Responders
                             </Button>
-                            <Button inverted color='gray'>
+                            <Button inverted color='gray' onClick={this.requestVolunteers}>
                                 Request Volunteers
                             </Button>
                         </Modal.Actions>
@@ -209,7 +191,7 @@ class EmergencyDetails extends Component{
             <Modal size={size2} open={open2} onClose={this.closeActiveRespondersList}>
             <Modal.Header>Active Responders</Modal.Header>
                 <Modal.Content>
-                    <Card.Group>
+                    <Card.Group itemsPerRow={3}>
                         {this.renderRespondersList()}
                     </Card.Group>
                 </Modal.Content>

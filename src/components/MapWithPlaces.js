@@ -15,6 +15,8 @@ import vehicularSettled from '../../src/images/va_fin.png';
 import physicalUnresponded from '../../src/images/pi_new.png';
 import physicalResponding from '../../src/images/pi_otw.png';
 import physicalSettled from '../../src/images/pi_fin.png';
+import volunteerLogo from '../images/tracking_volunteer.png';
+import responderLogo from '../images/tracking_responder.png';
 
 const MapWithPlaces = compose(
   
@@ -59,7 +61,7 @@ const MapWithPlaces = compose(
                     url: incidentLogo,
                     scaledSize: new window.google.maps.Size(50,50) 
                   }}>
-                  <Circle center={{lat: lat, lng: lng}} radius={350} visible={true} 
+                  <Circle center={{lat: lat, lng: lng}} radius={500} visible={true} 
                     options={{
                       strokeColor: '#babfc7',
                       fillColor: '#7d899e',
@@ -97,11 +99,17 @@ const MapWithPlaces = compose(
           let lat = parseFloat(volunteer.coordinates.lat, 10);
           let lng = parseFloat(volunteer.coordinates.lng, 10);     
           //let incidentLogo = setLogo(place.incidentType, place.unresponded, place.isResponding, place.isSettled);
+          let volunteerPin = volunteerLogo;
           console.log('uid', volunteer.uid);
           return (
               <div key = {i}>
                   <Modal size="tiny" trigger={<Marker
-                    position={{ lat: lat, lng: lng }}>
+                    position={{ lat: lat, lng: lng }}
+                    icon={{
+                      url: volunteerPin,
+                      scaledSize: new window.google.maps.Size(35,50) 
+                    }}
+                    >
                     
                     </Marker>}>
                       <Modal.Header>Volunteer</Modal.Header>
@@ -121,6 +129,43 @@ const MapWithPlaces = compose(
               </div>
           );
         })}
+
+        {/*Render Responders*/}
+        {props.responders &&
+          props.responders.map((responder, i) => {
+            let lat = parseFloat(responder.coordinates.lat, 10);
+            let lng = parseFloat(responder.coordinates.lng, 10);     
+            //let incidentLogo = setLogo(place.incidentType, place.unresponded, place.isResponding, place.isSettled);
+            let responderPin = responderLogo;
+            console.log('uid', responder.uid);
+            return (
+                <div key = {i}>
+                    <Modal size="tiny" trigger={<Marker
+                      position={{ lat: lat, lng: lng }}
+                      icon={{
+                        url: responderPin,
+                        scaledSize: new window.google.maps.Size(50,50) 
+                      }}
+                      >
+                      
+                      </Marker>}>
+                        <Modal.Header>Responder</Modal.Header>
+                        <Modal.Content>
+                              <p>UID: {responder.key}</p>
+                          </Modal.Content>
+                          <Modal.Actions>
+                              <Button basic color='green'>
+                                  Dispatch Responders
+                              </Button>
+                              <Button basic color='green'>
+                                  Request Volunteers
+                              </Button>
+                          </Modal.Actions>
+                    </Modal>
+    
+                </div>
+            );
+          })}
     
   </GoogleMap>
 ));
