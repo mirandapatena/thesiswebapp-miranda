@@ -13,7 +13,8 @@ class EmergencyDetails extends Component{
             open: false,
             open2: false,
             onlineVolunteers: [{}],
-            activeResponders: [{}]
+            activeResponders: [{}],
+            nearestVolunteers: [{}]
         }
         this.getRespondersList = this.getRespondersList.bind(this);
     }
@@ -88,19 +89,33 @@ class EmergencyDetails extends Component{
 
     requestVolunteers = () => {
         var volunteerNode = fire.database().ref('mobileUsers/Volunteer');
+        var nearestVolunteers = [];
         var onlineVolunteers = [];
         var lng = this.props.coordinates.lng;
         var lat = this.props.coordinates.lat;
-        console.log('request volunteers', typeof this.props.incidentLocation.lng);
-        console.log('request volunteerssagh', this.props.incidentLocation.lng);
         volunteerNode.once('value', snapshot => {
             onlineVolunteers = snapshot.val();        
             console.log('online volunteers', onlineVolunteers);
             this.setState({onlineVolunteers}, () => {
                 console.log('volunteers node', this.state.onlineVolunteers);
-                this.getNearestVolunteers(lng, lat);
+                nearestVolunteers = this.getNearestVolunteers(lng, lat);
+                this.getBestVolunteer(nearestVolunteers);
             });
         });
+    }
+
+    getBestVolunteer = (nearestVolunteers) => {
+        //get credentials
+        //sort one with most points
+        var credentialsNode = fire.database();
+        var volunteerWithCredentials = [];
+        nearestVolunteers.map((volunteer, key) => {
+            credentialsNode.ref(`credentials/${volunteer.uid}`).once('value', snapshot => {
+                volunteerWithCredentials.push(snapshot.val());
+            });
+        });
+        volunteerWithCredentials.sort((a,b) => (a.points > b.points) ? 1: (a.points === b.points) ?  1 : -1);
+        console.log('sorted', volunteerWithCredentials);
     }
 
     getNearestVolunteers = (incidentLng, incidentLat) => {
@@ -109,7 +124,7 @@ class EmergencyDetails extends Component{
             latitude: parseFloat(incidentLat)
         };
         var volunteers = this.state.onlineVolunteers;
-        var nearestVolunteer = [];
+        var nearestVolunteers = [];
         var distance; 
         var volunteerObject = {};
         _.map(volunteers, (volunteer, key) => {
@@ -122,10 +137,11 @@ class EmergencyDetails extends Component{
             }
             distance = this.computeDistance(incidentCoordinates.latitude, incidentCoordinates.longitude, volunteerCoordinates.latitude, volunteerCoordinates.longitude);
             if(distance < 500){
-                nearestVolunteer.push(volunteer);
-                console.log('nearest volunteer', nearestVolunteer);
+                nearestVolunteers.push(volunteer);
+                console.log('nearest volunteers', nearestVolunteers);
             }
-        })
+        });
+        return nearestVolunteers;
     }
 
     computeDistance = (lat1, lon1, lat2, lon2) => {
@@ -140,13 +156,12 @@ class EmergencyDetails extends Component{
         var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         var d = R * c; // Distance in km
         return d * 1000;
-      }
+    }
 
-      deg2rad = (deg) => {
+    deg2rad = (deg) => {
         return deg * Math.PI / 180
-      }
+    }
       
-
     render() {
         const { open, size } = this.state;
         const {open2, size2} = this.state;
