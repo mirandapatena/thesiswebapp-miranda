@@ -4,12 +4,15 @@ import '../stylesheet_QueueIncidents.css';
 import fire from '../config/Fire';
 import _ from 'lodash';
 import DispatchResponders from './DispatchResponders';
+import {computeDistance} from '../functions/computeDistance';
 
 class EmergencyDetails extends Component{
 
     constructor(props){
         super(props);
         this.state = {
+            firstName: '',
+            lastName: '',
             open: false,
             open2: false,
             onlineVolunteers: [{}],
@@ -17,6 +20,7 @@ class EmergencyDetails extends Component{
             nearestVolunteers: [{}]
         }
         this.getRespondersList = this.getRespondersList.bind(this);
+        this.getReporter();
     }
 
     show = size => () => {
@@ -82,7 +86,6 @@ class EmergencyDetails extends Component{
             console.log('key', responder.key)
             return (
                 <DispatchResponders firstName={responder.firstName} lastName={responder.lastName} id={responder.key} incidentID={this.props.incidentKey}/>
-                
             );
         });
     }
@@ -100,22 +103,48 @@ class EmergencyDetails extends Component{
                 console.log('volunteers node', this.state.onlineVolunteers);
                 nearestVolunteers = this.getNearestVolunteers(lng, lat);
                 this.getBestVolunteer(nearestVolunteers);
+                this.callVolunteer();
             });
         });
     }
 
     getBestVolunteer = (nearestVolunteers) => {
-        //get credentials
-        //sort one with most points
         var credentialsNode = fire.database();
         var volunteerWithCredentials = [];
+        var volunteerNode;
         nearestVolunteers.map((volunteer, key) => {
             credentialsNode.ref(`credentials/${volunteer.uid}`).once('value', snapshot => {
-                volunteerWithCredentials.push(snapshot.val());
+                volunteerNode = snapshot.val();
+                volunteerNode.uid = volunteer.uid
+                volunteerWithCredentials.push(volunteerNode);
+                console.log('volunteer uid', volunteerWithCredentials);
             });
         });
-        volunteerWithCredentials.sort((a,b) => (a.points > b.points) ? 1: (a.points === b.points) ?  1 : -1);
-        console.log('sorted', volunteerWithCredentials);
+        volunteerWithCredentials.sort((a,b) => (a.points > b.points) ? 1: (a.points === b.points) ?  1 : -1); // sort volunteers
+        this.setState({volunteerWithCredentials: volunteerWithCredentials}, () => {
+            console.log('sorted setstate', this.state.volunteerWithCredentials);
+        })
+    }
+
+    callVolunteer = () => {
+        var volunteerNode = fire.database();
+        var selectedVolunteers = this.state.volunteerWithCredentials;
+        var incidentID = this.props.incidentKey
+        var isAccepted = false;
+
+        _.map(selectedVolunteers, (volunteer, key) => {
+            var uid = volunteer.uid;
+            var incidentIDPromise = volunteerNode.ref(`mobileUsers/Volunteer/${uid}`).update({incidentID});
+            incidentIDPromise.then(()=>{
+                console.log('incident id saved');
+                var isAcceptedPromise = volunteerNode.ref(`mobileUsers/Volunteer/${uid}/isAccepted`).once('value', snapshot => {
+                    isAccepted = snapshot.val();
+                });
+                isAcceptedPromise.then(() => {
+                    console.log('isAccepted', isAccepted);
+                });
+            })    
+        });
     }
 
     getNearestVolunteers = (incidentLng, incidentLat) => {
@@ -135,7 +164,7 @@ class EmergencyDetails extends Component{
                 latitude: parseFloat(volunteer.coordinates.lat),
                 longitude: parseFloat(volunteer.coordinates.lng)
             }
-            distance = this.computeDistance(incidentCoordinates.latitude, incidentCoordinates.longitude, volunteerCoordinates.latitude, volunteerCoordinates.longitude);
+            distance = computeDistance(incidentCoordinates.latitude, incidentCoordinates.longitude, volunteerCoordinates.latitude, volunteerCoordinates.longitude);
             if(distance < 500){
                 nearestVolunteers.push(volunteer);
                 console.log('nearest volunteers', nearestVolunteers);
@@ -144,36 +173,50 @@ class EmergencyDetails extends Component{
         return nearestVolunteers;
     }
 
-    computeDistance = (lat1, lon1, lat2, lon2) => {
-        var R = 6371; // Radius of the earth in km
-        var dLat = this.deg2rad(lat2 - lat1); // deg2rad below
-        var dLon = this.deg2rad(lon2 - lon1);
-        var a =
-            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) *
-            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    // computeDistance = (lat1, lon1, lat2, lon2) => {
+    //     var R = 6371; // Radius of the earth in km
+    //     var dLat = this.deg2rad(lat2 - lat1); // deg2rad below
+    //     var dLon = this.deg2rad(lon2 - lon1);
+    //     var a =
+    //         Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    //         Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) *
+    //         Math.sin(dLon / 2) * Math.sin(dLon / 2);
 
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        var d = R * c; // Distance in km
-        return d * 1000;
-    }
+    //     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    //     var d = R * c; // Distance in km
+    //     return d * 1000;
+    // }
 
-    deg2rad = (deg) => {
-        return deg * Math.PI / 180
+    // deg2rad = (deg) => {
+    //     return deg * Math.PI / 180
+    // }
+
+    getReporter = () => {
+        console.log('id lhlhklk', this.props.reportedBy);
+        var user = fire.database().ref(`users/${this.props.reportedBy}`);
+        var firstName, lastName, snap;
+        user.once('value', snapshot => {
+            console.log('snapshot', snapshot);
+            snap = snapshot.val();
+            firstName = snap.firstName;
+            lastName = snap.lastName;
+            this.setState({firstName, lastName}, () => {
+                console.log(`${this.state.firstName} ${this.state.lastName} reported an incident`);
+            });
+        });
     }
       
     render() {
         const { open, size } = this.state;
         const {open2, size2} = this.state;
-        // this.locateVolunteers();
         return (
             <div>
                 <div className="inc_stat"></div> {/*For "if statement" to change icon per type*/}
             <Card.Group>
                 <Card color ='red' onClick={this.show('tiny')}> 
                 <Card.Content>
-                    <Card.Header>{this.props.name}<div className="inc_typ"></div> {/*Incident Type*/}
-                    </Card.Header>
+                   <h4>{this.props.incidentKey}</h4>
+                   <h5>{this.props.incidentType}</h5>
                 </Card.Content>
                 <Card.Content>
                     <Card.Description>
@@ -187,7 +230,7 @@ class EmergencyDetails extends Component{
             <Modal size={size} open={open} onClose={this.close}>
                 <Modal.Header>New Emergency</Modal.Header>
                     <Modal.Content>
-                            <p>Reported by: {this.props.reportedBy}r</p>
+                            <p>Reported by: {this.state.firstName} {this.state.lastName}</p>
                             <p>Type of Incident: {this.props.incidentType}</p>
                             <p>Location of Incident: {this.props.incidentLocation}</p>
                             <p>Coordinates: {this.props.coordinates.lng} {this.props.coordinates.lat}</p>
@@ -216,8 +259,6 @@ class EmergencyDetails extends Component{
       }
   
     }
-
-
 
 EmergencyDetails.defaultProps = {
     name: 'Command Center Personnel',

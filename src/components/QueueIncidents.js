@@ -36,6 +36,7 @@ class QueueIncidents extends Component {
                         incidentLocation = {incident.incidentLocation}
                         coordinates = {incident.coordinates}
                         incidentKey = {key}
+                        reportedBy = {incident.reportedBy}
                     />
                 </div>
             );
@@ -55,7 +56,7 @@ class QueueIncidents extends Component {
 function mapStateToProps(state, ownProps){
     console.log('incidentsList', state.incidents);
     return {
-        incidentsList: state.incidents
+        incidentsList: state.incidents,
     }
 }
 

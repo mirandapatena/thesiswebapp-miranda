@@ -108,6 +108,7 @@ class HeaderDashboard extends Component{
   }
 
   submitIncidentHandler = (e) => {
+    console.log('uid reported', this.props.user.uid);
     e.preventDefault();
     const timeReceived = Date.now();
     const incident = {
@@ -118,11 +119,19 @@ class HeaderDashboard extends Component{
       isSettled: false,
       coordinates: {lng: this.state.lng, lat: this.state.lat},
       incidentPhoto: '',
-      reportedBy: 'Command Center Personnel',
+      reportedBy: this.props.user.uid,
       timeReceived,
       timeResponded: '',
+      timeSettle: '',
       responderResponding: '',
       volunteerResponding: '',
+      destinationPlaceId: '',
+      isRequestingResponders: false,
+      isRequestingVolunteers: false,
+      isRespondingResponder: false,
+      unrespondedResponder: true,
+      isRespondingVolunteer: false,
+      unrespondedVolunteer: true
     }
     this.props.saveIncident(incident);
     this.setState({
@@ -695,7 +704,7 @@ class HeaderDashboard extends Component{
 function mapStateToProps(state, ownProps){
   return {
       incidentsList: state.incidents,
-      user: state.user
+      user: state.userAccount
   }
 }
 

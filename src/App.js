@@ -47,12 +47,13 @@ class App extends Component {
   }
 
   getUserDetails = () => {
-    let userValues = null;
+    let userAccount;
     console.log('getuserdetails', this.state.userID);
     fire.database().ref('users/'+this.state.userID).once("value", snapshot => {
-      userValues = snapshot.val();
-      this.setState({user_type: userValues.user_type});
-      this.setState({userAccount: userValues});
+      userAccount = snapshot.val();
+      userAccount.uid = this.state.userID;
+      this.setState({user_type: userAccount.user_type});
+      this.setState({userAccount: userAccount});
       this.rerouteUserAccess();
       this.props.logUser(this.state.userAccount);
     });

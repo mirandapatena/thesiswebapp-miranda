@@ -38,6 +38,11 @@ function saveUserType(user_type, isMobile, uid, credentials = {}){
   const db = fire.database();
   let points = computeVolunteerPoints(volunteerCredentials);
   volunteerCredentials.points = points;
+  let mobileNode = {
+    coordinates,
+    incidentID: '',
+    isAccepted: false
+  }
   
   switch(isMobile){
     case false: switch(user_type){
@@ -53,12 +58,12 @@ function saveUserType(user_type, isMobile, uid, credentials = {}){
               break;
     case true: switch(user_type){
                   case 'Responder': 
-                                    db.ref(`${mobileUsers}/${user_type}/${uid}`).update({uid, coordinates});
+                                    db.ref(`${mobileUsers}/${user_type}/${uid}`).update(mobileNode);
                                     break;
                   case 'Regular User': 
-                                    db.ref(`${mobileUsers}/${user_type}/${uid}`).update({uid, coordinates});
+                                    db.ref(`${mobileUsers}/${user_type}/${uid}`).update(mobileNode);
                                     break;
-                  case 'Volunteer': db.ref(`${mobileUsers}/${user_type}/${uid}`).update({uid, coordinates});
+                  case 'Volunteer': db.ref(`${mobileUsers}/${user_type}/${uid}`).update(mobileNode);
                                     db.ref(`credentials/${credentialID}`).update(volunteerCredentials);
                                     break;
 
