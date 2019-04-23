@@ -18,7 +18,7 @@ class DispatchResponders extends Component{
                                 <Card.Meta>{this.props.lastName}</Card.Meta>
                             </Card.Content>                        
                             <Card.Content extra> 
-                              <Button attached='bottom' color='gray' onClick={this.dispatchResponder}>
+                              <Button attached='bottom' color='red' onClick={this.dispatchResponder}>
                                 Dispatch
                               </Button>
                           </Card.Content>

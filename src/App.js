@@ -7,6 +7,7 @@ import AdministratorRoute from './components/AdministratorRoute';
 import CCPersonnelRoute from './components/CCPersonnelRoute';
 import {connect} from 'react-redux';
 import logUser from './actions/logUser';
+import logUID from './actions/logUID';
 import fire from './config/Fire';
 import {Router, Route, browserHistory} from 'react-router';
 
@@ -56,6 +57,7 @@ class App extends Component {
       this.setState({userAccount: userAccount});
       this.rerouteUserAccess();
       this.props.logUser(this.state.userAccount);
+      this.props.logUID(this.state.userID);
     });
   }
 
@@ -88,13 +90,15 @@ class App extends Component {
 
 function mapStateToProps(state, ownProps){
   return {
-      user: state.user
+      user: state.user,
+      uid: state.uid
   }
 }
 
 function mapDispatchToProps(dispatch){
   return{
-    logUser: (userAccount) => dispatch(logUser(userAccount))
+    logUser: (userAccount) => dispatch(logUser(userAccount)),
+    logUID: (uid) => dispatch(logUID(uid))
   }
 }
 

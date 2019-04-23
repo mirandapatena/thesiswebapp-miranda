@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Menu, Dropdown, Icon, Modal, Form, Button, Radio, Select} from 'semantic-ui-react'
+import { Menu, Dropdown, Icon, Modal, Form, Button, Radio, Select, Table, Header, Image} from 'semantic-ui-react'
 import fire from '../config/Fire';
 import {connect} from 'react-redux';
 import {saveIncident} from '../actions/incidentAction';
@@ -8,11 +8,23 @@ import '../stylesheet_QueueIncidents.css';
 import '../HeaderDashboard.css';
 import PlacesAutocomplete, {
   geocodeByAddress,
-  getLatLng,
+  getLatLng, geoc
 } from 'react-places-autocomplete';
 
 const emailRegex = RegExp(
-  /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+  /^[a-zA-Z0-9._-]+@[a-zA-Z]+(?:\.[a-zA-Z]+)*$/
+);
+
+const contactNumberRegex = RegExp(
+  /^(09|\+639)\d{9}$/
+);
+
+const firstNameRegex = RegExp(
+  /^[a-zA-ZñÑ.,'-\s]+$/
+);
+
+const lastNameRegex = RegExp(
+  /^[a-zA-ZñÑ.,'-\s]+$/
 );
 
 const formValid = ({ formError, ...rest }) => {
@@ -34,58 +46,82 @@ const formValid = ({ formError, ...rest }) => {
 
 class HeaderDashboard extends Component{
   
-    constructor(props){
+  constructor(props){
+    
+      super(props);
       
-        super(props);
+      this.state = {
+        open: false,
+        open2: false,
+        incidentType: '',
+        incidentLocation: '',
+        unresponded: null,
+        isResponding: null,
+        isSettled: null,
+        firstName: '',
+        lastName: '',
+        password: '',
+        email: '',
+        user_type: '',
+        contactNumber: '',
+        err: '',
+        lat: null,
+        lng: null,
+        incidentPhoto: null,
+        reportedBy: '',
+        timeReceived: null,
+        timeResponded: null,
+        responderResponding: [],
+        volunteerResponding: '',
+        durationService: '',
+        medicalDegree:'',
+        medicalProfession:'',
+        certification:'',
+        isActiveVolunteer:'',
+        formError: {
+          firstName:'',
+          lastName:'',
+          email:'',
+          password:'',
+          contactNumber:'',
+          user_type:''
+      }
         
-        this.state = {
-          open: false,
-          open2: false,
-          incidentType: '',
-          incidentLocation: '',
-          unresponded: null,
-          isResponding: null,
-          isSettled: null,
-          firstName: '',
-          lastName: '',
-          password: '',
-          email: '',
-          user_type: '',
-          contactNumber: '',
-          err: '',
-          lat: null,
-          lng: null,
-          incidentPhoto: null,
-          reportedBy: '',
-          timeReceived: null,
-          timeResponded: null,
-          responderResponding: [],
-          volunteerResponding: '',
-          durationService: '',
-          medicalDegree:'',
-          medicalProfession:'',
-          certification:'',
-          isActiveVolunteer:'',
-          formError: {
-            firstName:'',
-            lastName:'',
-            email:'',
-            password:'',
-            contactNumber:'',
-            user_type:''
-        }
-          
-        }
-        this.logout = this.logout.bind(this);
-        this.submitCreateAccount = this.submitCreateAccount.bind(this);
-    }
+      }
+      this.logout = this.logout.bind(this);
+      this.submitCreateAccount = this.submitCreateAccount.bind(this);
+  }
 
 
   show = size => () => this.setState({ size, open: true })
-  close = () => this.setState({ open: false })
+  close = () => this.setState(
+    { open: false, incidentType: '', incidentLocation: '' })
 
   show2 = size2 => () => this.setState({ size2, open2: true })
-  close2 = () => this.setState({ open2: false })
+  close2 = () => this.setState({ open2: false, firstName: '',
+  lastName: '',
+  password: '',
+  // confirmPassword: '',
+  email: '',
+  user_type: '',
+  contactNumber: '',formError: {
+    firstName:'',
+    lastName:'',
+    email:'',
+    password:'',
+    // confirmPassword: '',
+    contactNumber:'',
+    user_type:''
+} })
+
+  showAccountLists = size3 => () => this.setState({ size3, open3: true, open4:false, open5:false })
+  close3 = () => this.setState({ open3: false, open4: false, open5: false })
+
+  showVolunteerLists = size4 => () => this.setState({ size4, open4: true, open3:false, open5:false })
+  close4 = () => this.setState({ open3: false, open4: false, open5: false })
+
+  showRegularUserLists = size5 => () => this.setState({ size5, open5: true, open3:false, open4:false })
+  close5 = () => this.setState({ open3: false, open4: false, open5: false })
     
   handleChange = incidentLocation => {
       this.setState({ incidentLocation });
@@ -93,95 +129,97 @@ class HeaderDashboard extends Component{
   
 
   handleSelect = incidentLocation => {
-      geocodeByAddress(incidentLocation)
-        .then(results => getLatLng(results[0]))
-        .then(latLng => {
-            this.setState({lng: latLng.lng, lat: latLng.lat});
-        })
-        .catch(error => console.error('Error', error));
-    };
-  
-  inputIncidentTypeHandler = (e, {incidentType}) => this.setState({ incidentType})
-  
-  inputIncidentLocationHandler = (e) => {
-    this.setState({ incidentLocation: e.target.value });
-  }
+    geocodeByAddress(incidentLocation)
+      .then(results => getLatLng(results[0]))
+      .then(latLng => {
+          this.setState({lng: latLng.lng, lat: latLng.lat});
+      })
+      .catch(error => console.error('Error', error));
+  };
 
-  submitIncidentHandler = (e) => {
-    console.log('uid reported', this.props.user.uid);
-    e.preventDefault();
-    const timeReceived = Date.now();
-    const incident = {
-      incidentType: this.state.incidentType,
-      incidentLocation: this.state.incidentLocation,
-      unresponded: true,
+inputIncidentTypeHandler = (e, {incidentType}) => this.setState({ incidentType})
+
+inputIncidentLocationHandler = (e) => {
+  this.setState({ incidentLocation: e.target.value });
+}
+
+submitIncidentHandler = (e) => {
+  // console.log('uid reported', this.props.user.uid);
+  e.preventDefault();
+  const timeReceived = Date.now();
+  const incident = {
+    incidentType: this.state.incidentType,
+    incidentLocation: this.state.incidentLocation,
+    unresponded: true,
+    isResponding: false,
+    isSettled: false,
+    coordinates: {lng: this.state.lng, lat: this.state.lat},
+    incidentPhoto: '',
+    reportedBy: this.props.uid.uid,
+    timeReceived,
+    timeResponded: '',
+    timeSettle: '',
+    responderResponding: '',
+    volunteerResponding: '',
+    destinationPlaceId: '',
+    isRequestingResponders: false,
+    isRequestingVolunteers: false,
+    isRespondingResponder: false,
+    unrespondedResponder: true,
+    isRespondingVolunteer: false,
+    unrespondedVolunteer: true
+  }
+  this.props.saveIncident(incident);
+  this.setState({
+      incidentType: '',
+      incidentLocation: '',
+      unresponded: false,
       isResponding: false,
       isSettled: false,
-      coordinates: {lng: this.state.lng, lat: this.state.lat},
-      incidentPhoto: '',
-      reportedBy: this.props.user.uid,
-      timeReceived,
-      timeResponded: '',
-      timeSettle: '',
-      responderResponding: '',
-      volunteerResponding: '',
-      destinationPlaceId: '',
-      isRequestingResponders: false,
-      isRequestingVolunteers: false,
-      isRespondingResponder: false,
-      unrespondedResponder: true,
-      isRespondingVolunteer: false,
-      unrespondedVolunteer: true
-    }
-    this.props.saveIncident(incident);
-    this.setState({
-        incidentType: '',
-        incidentLocation: '',
-        unresponded: false,
-        isResponding: false,
-        isSettled: false,
-        lng: null,
-        lat: null,
-    });
-    console.log(this.state.incidentsList);
-  }
+      lng: null,
+      lat: null,
+  });
+  console.log(this.state.incidentsList);
+}
 
   handleCreateAccount = (e) => {
     e.preventDefault();
     //this.setState({[e.target.name]: e.target.value});
     const { name, value } = e.target;
+
     let formError = { ...this.state.formError };
 
       switch (name) {
+
       case "firstName":
-        formError.firstName =
-          value.length < 2 ? "First Name should at least 2 characters" : "";
+        formError.firstName = firstNameRegex.test(value) ? "" : "Please enter a valid name.";
         break;
+
       case "lastName":
-        formError.lastName =
-          value.length < 2 ? "Last Name should at least 2 characters" : "";
+        formError.lastName = lastNameRegex.test(value) ? "" : "Please enter a valid name.";
         break;
+
       case "email":
-        formError.email = emailRegex.test(value)
-          ? ""
-          : "Please enter a valid email address.";
+        formError.email = emailRegex.test(value)? "" : "Please enter a valid email address.";
         break;
+
       case "password":
-        formError.password =
-          value.length < 8 ? "Password should at least 8 characters" : "";
+        formError.password = value.length < 8 ? "Password should at least 8 characters" : "";
         break;
+
+      // case "confirmPassword":
+      //   formError.confirmPassword = value.length < 8 ? "Password should at least 8 characters" : "";
+      //   break;
+
       case "contactNumber":
-        formError.contactNumber =
-          value.length < 11 ? "Contact Number should at least 11 numbers" : "";
-        break; 
-      // case "user_type":
-      //   formError.user_type = this.user_type
-      //     ? ""
-      //     : "Please select user type.";
-      //  break;
+        formError.contactNumber = contactNumberRegex.test(value)? "": "Please enter a valid number.";
+        break;
+
       default:
         break;
     }
+
+    
        this.setState({ formError, [name]: value }, () => console.log(this.state));
 
   };
@@ -225,6 +263,7 @@ class HeaderDashboard extends Component{
       firstName: this.state.firstName,
       lastName: this.state.lastName,
       password: this.state.password,
+      // confirmPassword: this.state.confirmPassword,
       email: this.state.email,
       user_type: this.state.user_type,
       contactNumber: this.state.contactNumber,
@@ -251,8 +290,6 @@ class HeaderDashboard extends Component{
         Contact Number: ${this.state.contactNumber}
         User Type: ${this.state.user_type}
       `);
-    } else {
-      console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
     }
     if(account.user_type === 'Volunteer'){
       err = createUserAccount(account, credentials);
@@ -266,6 +303,7 @@ class HeaderDashboard extends Component{
       lastName: '',
       userName: '',
       password: '',
+      // confirmPassword: '',
       email: '',
       user_type: '',
       contactNumber: '',
@@ -300,19 +338,6 @@ class HeaderDashboard extends Component{
     <span></span>
   )
     //Filter Incident Option
-  filteroptions = [{
-    key: 'filter',
-    text: (
-      <span><strong>
-        Filter Queue by Incident Status
-      </strong></span>
-    ),
-    disabled: true,
-  },
-  { key: 'exclamation', text: 'Unresponded' },
-  { key: 'car', text: 'Responding' },
-  { key: 'thumbs up', text: 'Settled', }
-  ];
    
   logout() {
     fire.auth().signOut();
@@ -322,17 +347,31 @@ class HeaderDashboard extends Component{
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name })
 
+  showResponder(){
+
+  }
 
   render() {
+    // var user = this.props.user.userAccount;
+    // var uid = user.uid;
+    console.log('this.props.uid', this.props.uid.uid);
     const { open, size } = this.state
     const { open2, size2 } = this.state
+    const { open3, size3 } = this.state
+    const { open4, size4 } = this.state
+    const { open5, size5 } = this.state
     const { formError } = this.state;
     let createUserAccountButton;
+    let accountLists;
     if(this.props.user_type === 'Administrator'){
       createUserAccountButton = <Menu.Item link onClick={this.show2('tiny')}>
-      <Icon className="plus" />Create User Account
+      <Icon className="add user" />Create User Account
       </Menu.Item>
+       accountLists = <Menu.Item link onClick={this.showAccountLists('tiny')}>
+       <Icon className="list" />Account Lists
+       </Menu.Item>
     }
+  
 
     const userTypeOptions = [
     { text: 'Administrator', value: 'Administrator'},
@@ -406,7 +445,9 @@ class HeaderDashboard extends Component{
     {text: '10 years', value: 10},
   ]
 
-    return (<div className="menuz">
+    return (
+    
+    <div>
     {/* Header Menu */}
       <Menu inverted>
           <Menu.Menu position='left'>
@@ -417,6 +458,7 @@ class HeaderDashboard extends Component{
                  <Icon className="plus" />Add Incident
               </Menu.Item>
               {createUserAccountButton}
+              {accountLists}
           </Menu.Menu>
         <Menu.Menu position='right'>
               <Menu.Item onClick={this.handleItemClick}>
@@ -492,7 +534,7 @@ class HeaderDashboard extends Component{
               </Form>
               </Modal.Content>
               <Modal.Actions>
-                  <Button inverted color='gray' onClick={this.submitIncidentHandler}>
+                  <Button color='red' onClick={this.submitIncidentHandler}>
                       Submit
                   </Button>
         </Modal.Actions>
@@ -505,7 +547,7 @@ class HeaderDashboard extends Component{
               <Form onClick={this.handleCreateAccount}>
 
                 <Form.Group widths='equal'>
-                  <Form.Field style={{marginBottom: '10px', color: 'red'}} required>
+                  <Form.Field style={{marginBottom: '10px', color: 'whitesmoke'}} required>
                     <Form.Input
                       fluid
                       placeholder='Email Address'
@@ -515,10 +557,23 @@ class HeaderDashboard extends Component{
                       value={this.state.email}
                       className={formError.email.length > 0 ? "error" : null}
                       onChange={this.handleCreateAccount}
+                      required
                     />
                       {formError.email.length > 0 && (
                       <span className="errorMessage">{formError.email}</span>)}
-                  </Form.Field>                  
+                  </Form.Field>   
+
+                 {this.state.user_type === 'Volunteer' ? 
+                    <Form.Field
+                      control={Select}
+                      options={medicalProfessionOptions}                
+                      placeholder='Medical Profession'
+                      search
+                      onChange={this.inputUserTypeHandler_medicalProfession}
+                      required                  
+                    />: null}  
+
+
                 </Form.Group> 
 
                 <Form.Group widths='equal'>
@@ -526,82 +581,59 @@ class HeaderDashboard extends Component{
                     control={Select}
                     options={userTypeOptions}                
                     placeholder='Select User Type'
-                    onChange={this.inputUserTypeHandler}                  
+                    onChange={this.inputUserTypeHandler}    
+                    required              
                     /> 
 
-                  {this.state.user_type === 'Volunteer' ? 
+                  {this.state.user_type === 'Volunteer' && this.state.medicalProfession === 'Nurse' ?
                     <Form.Field
                       control={Select}
-                      options={medicalProfessionOptions}                
-                      placeholder='Medical Profession'
+                      options={nurse_medicalDegreeOptions}                
+                      placeholder='Medical Degree'
                       search
-                      onChange={this.inputUserTypeHandler_medicalProfession}                  
-                    />: null}  
-               
+                      onChange={this.inputUserTypeHandler_medicalDegree}   
+                      required               
+                    />: null } 
+
+                   {this.state.user_type === 'Volunteer' && this.state.medicalProfession === 'Surgeon' ?
+                    <Form.Field
+                      control={Select}
+                      options={surgeon_medicalDegreeOptions}                
+                      placeholder='Medical Degree'
+                      search
+                      onChange={this.inputUserTypeHandler_medicalDegree}    
+                      required              
+                    />: null } 
+
+                    {this.state.user_type === 'Volunteer' && this.state.medicalProfession === 'Emergency Medical Service Personnel' ?
+                      <Form.Field
+                      control={Select}
+                      options={ems_medicalDegreeOptions}                
+                      placeholder='Medical Degree'
+                      search
+                      onChange={this.inputUserTypeHandler_medicalDegree}      
+                      required            
+                    />
+                    
+                  : null }               
                 </Form.Group>
 
                 <Form.Group widths='equal'>
-                  <Form.Field style={{marginBottom: '10px', color: 'red'}} required>
+                  <Form.Field style={{marginBottom: '10px', color: 'whitesmoke'}} required>
                     <Form.Input
                       fluid
-                      placeholder='First Name'
+                      placeholder='First Name (at least 2 characters)'
                       type='text'
                       name='firstName'
                       noValidate
                       value={this.state.firstName}
                       className={formError.firstName.length > 0 ? "error" : null}
                       onChange={this.handleCreateAccount}
+                      required
                     />
                       {formError.firstName.length > 0 && (
                       <span className="errorMessage">{formError.firstName}</span>)}
-                  </Form.Field>                   
-
-                   {this.state.user_type === 'Volunteer' && this.state.medicalProfession === 'Nurse' ?
-                    <Form.Field
-                      control={Select}
-                      options={nurse_medicalDegreeOptions}                
-                      placeholder='Medical Degree'
-                      search
-                      onChange={this.inputUserTypeHandler_medicalDegree}                  
-                    />:
-
-                   this.state.user_type === 'Volunteer' && this.state.medicalProfession === 'Surgeon' ?
-                    <Form.Field
-                      control={Select}
-                      options={surgeon_medicalDegreeOptions}                
-                      placeholder='Medical Degree'
-                      search
-                      onChange={this.inputUserTypeHandler_medicalDegree}                  
-                    />:(
-
-                    this.state.user_type === 'Volunteer' && this.state.medicalProfession === 'Emergency Medical Service Personnel' ?
-                      <Form.Field
-                      control={Select}
-                      options={ems_medicalDegreeOptions}                
-                      placeholder='Medical Degree'
-                      search
-                      onChange={this.inputUserTypeHandler_medicalDegree}                  
-                    />
-                    
-                  : null) }
-
-                </Form.Group>
-                
-                <Form.Group widths='equal'>
-                  <Form.Field style={{marginBottom: '10px', color: 'red'}} required>
-                    <Form.Input
-                      fluid
-                      placeholder='Last Name'
-                      type='text'
-                      name='lastName'
-                      noValidate
-                      value={this.state.lastName}
-                      className={formError.lastName.length > 0 ? "error" : null}
-                      onChange={this.handleCreateAccount}
-                    />  
-                      {formError.lastName.length > 0 && (
-                      <span className="errorMessage">{formError.lastName}</span>)}                  
-                  </Form.Field>  
+                  </Form.Field>     
 
                   {this.state.user_type === 'Volunteer' && this.state.medicalProfession === 'Nurse'? 
                     <Form.Field
@@ -609,7 +641,8 @@ class HeaderDashboard extends Component{
                     options={nurse_certificationOptions}                
                     placeholder='Certification'
                     search                    
-                    onChange={this.inputUserTypeHandler_certification}                  
+                    onChange={this.inputUserTypeHandler_certification}    
+                    required              
                   />:
                     
                     this.state.user_type === 'Volunteer' && this.state.medicalProfession === 'Surgeon'? 
@@ -619,6 +652,7 @@ class HeaderDashboard extends Component{
                       placeholder='Certification'
                       search                    
                       onChange={this.inputUserTypeHandler_certification}
+                      required
                     />:(
 
                     this.state.user_type === 'Volunteer' && this.state.medicalProfession === 'Emergency Medical Service Personnel' ?
@@ -627,25 +661,28 @@ class HeaderDashboard extends Component{
                       options={ems_certificationOptions}                
                       placeholder='Certification'
                       search
-                      onChange={this.inputUserTypeHandler_certification}                  
+                      onChange={this.inputUserTypeHandler_certification}    
+                      required              
                     />
                   : null)}   
-                </Form.Group>
 
+                </Form.Group>
+                
                 <Form.Group widths='equal'>
-                  <Form.Field style={{marginBottom: '10px', color: 'red'}} required>
-                      <Form.Input
-                        fluid
-                        placeholder='Contact Number: 09XXXXXXXXX'
-                        type='text'
-                        name='contactNumber'
-                        noValidate
-                        value={this.state.contactNumber}
-                        className={formError.contactNumber.length > 0 ? "error" : null}
-                        onChange={this.handleCreateAccount}
-                      />
-                        {formError.contactNumber.length > 0 && (
-                        <span className="errorMessage">{formError.contactNumber}</span>)}
+                  <Form.Field style={{marginBottom: '10px', color: 'whitesmoke'}} required>
+                    <Form.Input
+                      fluid
+                      placeholder='Last Name (at least 2 characters)'
+                      type='text'
+                      name='lastName'
+                      noValidate
+                      value={this.state.lastName}
+                      className={formError.lastName.length > 0 ? "error" : null}
+                      onChange={this.handleCreateAccount}
+                      required
+                    />  
+                      {formError.lastName.length > 0 && (
+                      <span className="errorMessage">{formError.lastName}</span>)}                  
                   </Form.Field>
 
                   {this.state.user_type === 'Volunteer' ? 
@@ -653,12 +690,13 @@ class HeaderDashboard extends Component{
                       control={Select}                  
                       options={activeVolunteerOptions}                
                       placeholder='Active Volunteer?'
-                      onChange={this.inputUserTypeHandler_volunteer}                  
-                      />: null}                 
-                </Form.Group >
+                      onChange={this.inputUserTypeHandler_volunteer}
+                      required                  
+                      />: null} 
+                </Form.Group>
 
                 <Form.Group widths='equal'>
-                   <Form.Field style={{marginBottom: '10px', color: 'red'}} required>
+                <Form.Field style={{marginBottom: '10px', color: 'whitesmoke'}} required>
                     <Form.Input
                       fluid
                       placeholder='Password'
@@ -668,43 +706,387 @@ class HeaderDashboard extends Component{
                       value={this.state.password}
                       className={formError.password.length > 0 ? "error" : null}
                       onChange={this.handleCreateAccount}
+                      required
                     />                     
                       {formError.password.length > 0 && (
                       <span className="errorMessage">{formError.password}</span>)}
                   </Form.Field>
-
-                    {this.state.user_type === 'Volunteer' ? 
+                  {/* <Form.Field style={{marginBottom: '10px', color: 'whitesmoke'}} required>
+                      <Form.Input
+                        fluid
+                        placeholder='Contact Number (09XXXXXXXXX)'
+                        type='text'
+                        name='contactNumber'
+                        pattern='[0-9]*'
+                        inputmode='numeric'
+                        noValidate
+                        value={this.state.contactNumber}
+                        className={formError.contactNumber.length > 0 ? "error" : null}
+                        onChange={this.handleCreateAccount}
+                        required
+                      />
+                        {formError.contactNumber.length > 0 && (
+                        <span className="errorMessage">{formError.contactNumber}</span>)}
+                  </Form.Field> */}
+                
+                {this.state.user_type === 'Volunteer' ? 
                       <Form.Field
                       control={Select}
                       options={durationServiceOptions}                
                       placeholder='Duration Service (in years)'
                       search                    
                       onChange={this.inputUserTypeHandler_durationService}                  
-                    /> : null}     
+                      required
+                    /> : null}                  
+                </Form.Group >
+
+                <Form.Group widths='equal'>
+                <Form.Field style={{marginBottom: '10px', color: 'whitesmoke'}} required>
+                      <Form.Input
+                        fluid
+                        placeholder='Contact Number (09XXXXXXXXX)'
+                        type='text'
+                        name='contactNumber'
+                        pattern='[0-9]*'
+                        inputmode='numeric'
+                        noValidate
+                        value={this.state.contactNumber}
+                        className={formError.contactNumber.length > 0 ? "error" : null}
+                        onChange={this.handleCreateAccount}
+                        required
+                      />
+                        {formError.contactNumber.length > 0 && (
+                        <span className="errorMessage">{formError.contactNumber}</span>)}
+                  </Form.Field>
+
+                   {/* <Form.Field style={{marginBottom: '10px', color: 'whitesmoke'}} required>
+                    <Form.Input
+                      fluid
+                      placeholder='Password'
+                      type='password'
+                      name='password'
+                      noValidate
+                      value={this.state.password}
+                      className={formError.password.length > 0 ? "error" : null}
+                      onChange={this.handleCreateAccount}
+                      required
+                    />                     
+                      {formError.password.length > 0 && (
+                      <span className="errorMessage">{formError.password}</span>)}
+                  </Form.Field> */}
+
+                  {/* <Form.Field style={{marginBottom: '10px', color: 'whitesmoke'}} required>
+                    <Form.Input
+                      fluid
+                      placeholder='Confirm Password'
+                      type='password'
+                      name='confirmPassword'
+                      noValidate
+                      value={this.state.confirmPassword}
+                      className={formError.confirmPassword.length > 0 ? "error" : null}
+                      onChange={this.handleCreateAccount}
+                      required
+                    />                     
+                      {formError.confirmPassword.length > 0 && (
+                      <span className="errorMessage">{formError.confirmPassword}</span>)}
+                  </Form.Field> */}
+   
 
                 </Form.Group>
                    
-                 <p style={{color:'white'}}>{this.state.error}</p>
+                 <p style={{color:'white'}}>{this.state.err}</p>
                   
               </Form>
               </Modal.Content>
               <Modal.Actions>
-                  <Button inverted color='gray' onClick={this.submitCreateAccount}>
+                  <Button color='red' onClick={this.submitCreateAccount}>
                       Create User Account
                   </Button>
                    
         </Modal.Actions>
       </Modal>
       
+      {/* Responder Account Lists */}
+      <Modal size={size3} open={open3} onClose={this.close3}>
+      
+      <div style={{backgroundColor:"#5c7788"}}>
+        <Button.Group>
+        <Button color='blue' size='small' onClick={this.showAccountLists('tiny')}>
+          Responder
+        </Button>
+        <Button color='white' size='small' onClick={this.showVolunteerLists('tiny')}>
+          Volunteer
+        </Button>
+        <Button color='red' size='small' onClick={this.showRegularUserLists('tiny')}>
+          Regular User
+        </Button>
+        </Button.Group>
+      </div>
+
+      <Modal.Content>              
+      <Table celled>
+          <Table.Header>
+            <Table.Row>
+              <Table.HeaderCell>Users</Table.HeaderCell>
+              <Table.HeaderCell>Status</Table.HeaderCell>
+            </Table.Row>
+          </Table.Header>
+
+          <Table.Body>
+
+            <Table.Row>
+              <Table.Cell>
+                <Header as='h4' image>
+                  <Image src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' rounded size='mini' />
+                  <Header.Content>
+                    Lena 
+                    <Header.Subheader>Doe</Header.Subheader>
+                  </Header.Content>
+                </Header>
+              </Table.Cell>
+                <Table.Cell>
+                <Button compact animated='fade' color='green'>
+                  <Button.Content visible>Unverified</Button.Content>
+                  <Button.Content hidden>
+                    Verify
+                  </Button.Content>
+                </Button>
+                </Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>
+                <Header as='h4' image>
+                  <Image src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' rounded size='mini' />
+                  <Header.Content>
+                    Matthew
+                    <Header.Subheader>Doe</Header.Subheader>
+                  </Header.Content>
+                </Header>
+              </Table.Cell>
+              <Table.Cell>
+              <Icon name='checkmark' /><b>Verified</b>
+              </Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>
+                <Header as='h4' image>
+                  <Image src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' rounded size='mini' />
+                  <Header.Content>
+                    Jane 
+                    <Header.Subheader>Doe</Header.Subheader>
+                  </Header.Content>
+                </Header>
+              </Table.Cell>
+                <Table.Cell>
+                  <Button compact animated='fade' color='green'>
+                    <Button.Content visible>Unverified</Button.Content>
+                    <Button.Content hidden>
+                      Verify
+                    </Button.Content>
+                  </Button>
+                </Table.Cell>
+            </Table.Row>
+
+          </Table.Body>
+        </Table>          
+
+      </Modal.Content>
+
+      </Modal>
+
+      {/* Volunteer Account Lists */}
+      <Modal size={size4} open={open4} onClose={this.close4}>
+      <div style={{backgroundColor:"#5c7788"}}>
+        <Button.Group>
+        <Button color='blue' size='small' onClick={this.showAccountLists('tiny')}>
+          Responder
+        </Button>
+        <Button color='white' size='small' onClick={this.showVolunteerLists('tiny')}>
+          Volunteer
+        </Button>
+        <Button color='red' size='small' onClick={this.showRegularUserLists('tiny')}>
+          Regular User
+        </Button>
+        </Button.Group>
+      </div>
+
+      <Modal.Content>
+
+      <Table celled>
+          <Table.Header>
+            <Table.Row>
+              <Table.HeaderCell>Users</Table.HeaderCell>
+              <Table.HeaderCell>Status</Table.HeaderCell>
+            </Table.Row>
+          </Table.Header>
+
+          <Table.Body>
+
+            <Table.Row>
+              <Table.Cell>
+                <Header as='h4' image>
+                  <Image src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' rounded size='mini' />
+                  <Header.Content>
+                    Lany
+                    <Header.Subheader>Doe</Header.Subheader>
+                  </Header.Content>
+                </Header>
+              </Table.Cell>
+                <Table.Cell>
+                <Icon name='checkmark' /><b>Verified</b>
+                </Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>
+                <Header as='h4' image>
+                  <Image src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' rounded size='mini' />
+                  <Header.Content>
+                    Mat
+                    <Header.Subheader>Doe</Header.Subheader>
+                  </Header.Content>
+                </Header>
+              </Table.Cell>
+              <Table.Cell>
+              <Icon name='checkmark' /><b>Verified</b>
+              </Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>
+                <Header as='h4' image>
+                  <Image src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' rounded size='mini' />
+                  <Header.Content>
+                    Jenny 
+                    <Header.Subheader>Doe</Header.Subheader>
+                  </Header.Content>
+                </Header>
+              </Table.Cell>
+                <Table.Cell>
+                <Icon name='checkmark' /><b>Verified</b>
+                </Table.Cell>
+            </Table.Row>
+
+          </Table.Body>
+        </Table> 
+
+      </Modal.Content>
+      </Modal>
+
+      {/* Regular User Account Lists */}
+      <Modal size={size5} open={open5} onClose={this.close5}>
+      <div style={{backgroundColor:"#5c7788"}}>
+        <Button.Group>
+        <Button color='blue' size='small' onClick={this.showAccountLists('tiny')}>
+          Responder
+        </Button>
+        <Button color='white' size='small' onClick={this.showVolunteerLists('tiny')}>
+          Volunteer
+        </Button>
+        <Button color='red' size='small' onClick={this.showRegularUserLists('tiny')}>
+          Regular User
+        </Button>
+        </Button.Group>
+      </div>
+
+      <Modal.Content>
+         
+        <Table celled>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Users</Table.HeaderCell>
+                <Table.HeaderCell>Status</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+
+            <Table.Body>
+
+              <Table.Row>
+                <Table.Cell>
+                  <Header as='h4' image>
+                    <Image src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' rounded size='mini' />
+                    <Header.Content>
+                      Leny
+                      <Header.Subheader>Doe</Header.Subheader>
+                    </Header.Content>
+                  </Header>
+                </Table.Cell>
+                  <Table.Cell>
+                    <Button compact animated='fade' color='green'>
+                      <Button.Content visible>Unverified</Button.Content>
+                      <Button.Content hidden>
+                        Verify
+                      </Button.Content>
+                    </Button>
+                  </Table.Cell>
+              </Table.Row>
+              <Table.Row>
+                <Table.Cell>
+                  <Header as='h4' image>
+                    <Image src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' rounded size='mini' />
+                    <Header.Content>
+                      Mac
+                      <Header.Subheader>Doe</Header.Subheader>
+                    </Header.Content>
+                  </Header>
+                </Table.Cell>
+                <Table.Cell>
+                <Icon name='checkmark' /><b>Verified</b>
+                </Table.Cell>
+              </Table.Row>
+              <Table.Row>
+                <Table.Cell>
+                  <Header as='h4' image>
+                    <Image src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' rounded size='mini' />
+                    <Header.Content>
+                      Johnny 
+                      <Header.Subheader>Doe</Header.Subheader>
+                    </Header.Content>
+                  </Header>
+                </Table.Cell>
+                  <Table.Cell>
+                    <Button compact animated='fade' color='green'>
+                        <Button.Content visible>Unverified</Button.Content>
+                        <Button.Content hidden>
+                          Verify
+                        </Button.Content>
+                    </Button>
+                  </Table.Cell>
+              </Table.Row>
+              <Table.Row>
+                <Table.Cell>
+                  <Header as='h4' image>
+                    <Image src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' rounded size='mini' />
+                    <Header.Content>
+                      Cersei
+                      <Header.Subheader>Doe</Header.Subheader>
+                    </Header.Content>
+                  </Header>
+                </Table.Cell>
+                  <Table.Cell>
+                    <Button compact animated='fade' color='green'>
+                      <Button.Content visible>Unverified</Button.Content>
+                      <Button.Content hidden>
+                        Verify
+                      </Button.Content>
+                    </Button>
+                  </Table.Cell>
+              </Table.Row>
+
+            </Table.Body>
+          </Table> 
+
+      </Modal.Content>
+      </Modal>
+
       </div>
     )
   }
 }
 
-function mapStateToProps(state, ownProps){
+function mapStateToProps(state){
   return {
       incidentsList: state.incidents,
-      user: state.userAccount
+      user: state.user,
+      uid: state.uid
   }
 }
 

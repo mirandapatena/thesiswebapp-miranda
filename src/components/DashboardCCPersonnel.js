@@ -11,7 +11,7 @@ class DashboardCCPersonnel extends Component {
             <div className="ui visible">
                 <div className="ui bottom attached segment pushable" style={{maxHeight:'100vh', minHeight: '100vh', display: 'compact', flexFlow: 'column nowrap'}}>
                     <QueueIncidents/><div className="hidescrollbar">
-                    <div className="content"> 
+                    <div style={{paddingLeft:"258px"}}> 
                             <div style={{maxHeight:'100%', maxWidth:'100%', }}>
                             <HeaderDashboard user_type='Command Center Personnel'/>
                             </div>

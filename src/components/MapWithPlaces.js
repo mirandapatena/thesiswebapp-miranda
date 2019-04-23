@@ -73,16 +73,16 @@ const MapWithPlaces = compose(
                   </Marker>}>
                     <Modal.Header>New Emergency</Modal.Header>
                     <Modal.Content>
-                          <p>Reported by: Regular User</p>
-                          <p>Type of Incident: {place.incidentType}</p>
-                          <p>Location of Incident: {place.incidentLocation}</p>
-                          <p>Photo of Incident:</p>
+                          <p><b>Reported by:</b> Regular User</p>
+                          <p><b>Type of Incident:</b> {place.incidentType}</p>
+                          <p><b>Location of Incident:</b> {place.incidentLocation}</p>
+                          <p><b>Photo of Incident:</b></p>
                       </Modal.Content>
                       <Modal.Actions>
-                          <Button basic color='green'>
+                          <Button color='red' >
                               Dispatch Responders
                           </Button>
-                          <Button basic color='green'>
+                          <Button color='blue'>
                               Request Volunteers
                           </Button>
                       </Modal.Actions>
@@ -117,13 +117,13 @@ const MapWithPlaces = compose(
                             <p>UID: {volunteer.key}</p>
                         </Modal.Content>
                         <Modal.Actions>
-                            <Button basic color='green'>
-                                Dispatch Responders
-                            </Button>
-                            <Button basic color='green'>
-                                Request Volunteers
-                            </Button>
-                        </Modal.Actions>
+                          <Button color='red' >
+                              Dispatch Responders
+                          </Button>
+                          <Button color='blue'>
+                              Request Volunteers
+                          </Button>
+                      </Modal.Actions>
                   </Modal>
   
               </div>
@@ -154,13 +154,13 @@ const MapWithPlaces = compose(
                               <p>UID: {responder.key}</p>
                           </Modal.Content>
                           <Modal.Actions>
-                              <Button basic color='green'>
-                                  Dispatch Responders
-                              </Button>
-                              <Button basic color='green'>
-                                  Request Volunteers
-                              </Button>
-                          </Modal.Actions>
+                            <Button color='red'>
+                                Dispatch Responders
+                            </Button>
+                            <Button color='blue'>
+                                Request Volunteers
+                            </Button>
+                        </Modal.Actions>
                     </Modal>
     
                 </div>

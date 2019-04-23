@@ -23,6 +23,11 @@ class Login extends Component{
     this.setState({[e.target.name]: e.target.value});
   }
 
+  progress = () => {
+    const { completed } = this.state;
+    this.setState({ completed: completed >= 100 ? 0 : completed + 1 });
+  };
+
   login(e) {
     e.preventDefault();
 

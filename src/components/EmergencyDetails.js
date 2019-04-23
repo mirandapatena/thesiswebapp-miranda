@@ -4,7 +4,8 @@ import '../stylesheet_QueueIncidents.css';
 import fire from '../config/Fire';
 import _ from 'lodash';
 import DispatchResponders from './DispatchResponders';
-import {computeDistance} from '../functions/computeDistance';
+import {callVolunteer} from '../functions/callVolunteer';
+import {getNearestMobileUsers} from '../functions/getNearestVolunteers';
 
 class EmergencyDetails extends Component{
 
@@ -15,12 +16,34 @@ class EmergencyDetails extends Component{
             lastName: '',
             open: false,
             open2: false,
+            open3: false,
             onlineVolunteers: [{}],
             activeResponders: [{}],
-            nearestVolunteers: [{}]
+            nearestVolunteers: [{}],
+            isRequestingResponders: false,
+            isRequestingVolunteers: false
         }
         this.getRespondersList = this.getRespondersList.bind(this);
         this.getReporter();
+
+        var isRequestingResponders = fire.database().ref(`incidents/${this.props.incidentKey}/isRequestingResponders`);
+        var isRequestingVolunteers = fire.database().ref(`incidents/${this.props.incidentKey}/isRequestingVolunteers`);
+        var requestResponders;
+        var requestVolunteers;
+        isRequestingResponders.on('value', snapshot => {
+            requestResponders = snapshot.val();
+            this.setState({isRequestingResponders: requestResponders});
+            if(requestResponders){
+                //request responders;
+            }
+        });
+        isRequestingVolunteers.on('value', snapshot => {
+            requestVolunteers = snapshot.val();
+            this.setState({isRequestingVolunteers: requestVolunteers});
+            if(requestVolunteers){
+                //request volunteers
+            }
+        });
     }
 
     show = size => () => {
@@ -29,12 +52,21 @@ class EmergencyDetails extends Component{
     }
 
     showActiveRespondersList = size2 => () => {
-        this.setState({ size2, open2: true, open: false }); 
+        this.setState({ size2, open2: true, open: false , open3: false}); 
+    }
+
+    showActiveVolunteersList = size3 => () => {
+        this.setState({size3, open3: true, open: false, open2: false});
     }
 
     close = () => this.setState({ open: false });
     closeActiveRespondersList = () => this.setState({ open2: false });
-   
+    closeActiveVolunteersList = () => this.setState({ open3: false });
+
+    requestVolunteersListener(){
+        
+
+    }
     getRespondersList = () => {
         let activeResponders;
         let activeRespondersList;
@@ -80,8 +112,7 @@ class EmergencyDetails extends Component{
 
     renderRespondersList = () => {
         var respondersList = this.state.activeResponders;
-        console.log('respondesr segsdfgf', respondersList);
-        console.log('asdgsdghdhf', respondersList);
+        
         return _.map(respondersList, (responder, key) => {
             console.log('key', responder.key)
             return (
@@ -101,9 +132,9 @@ class EmergencyDetails extends Component{
             console.log('online volunteers', onlineVolunteers);
             this.setState({onlineVolunteers}, () => {
                 console.log('volunteers node', this.state.onlineVolunteers);
-                nearestVolunteers = this.getNearestVolunteers(lng, lat);
+                nearestVolunteers = getNearestMobileUsers(lng, lat, this.state.onlineVolunteers);
                 this.getBestVolunteer(nearestVolunteers);
-                this.callVolunteer();
+                callVolunteer(this.state.volunteerWithCredentials, this.props.incidentKey);
             });
         });
     }
@@ -126,71 +157,6 @@ class EmergencyDetails extends Component{
         })
     }
 
-    callVolunteer = () => {
-        var volunteerNode = fire.database();
-        var selectedVolunteers = this.state.volunteerWithCredentials;
-        var incidentID = this.props.incidentKey
-        var isAccepted = false;
-
-        _.map(selectedVolunteers, (volunteer, key) => {
-            var uid = volunteer.uid;
-            var incidentIDPromise = volunteerNode.ref(`mobileUsers/Volunteer/${uid}`).update({incidentID});
-            incidentIDPromise.then(()=>{
-                console.log('incident id saved');
-                var isAcceptedPromise = volunteerNode.ref(`mobileUsers/Volunteer/${uid}/isAccepted`).once('value', snapshot => {
-                    isAccepted = snapshot.val();
-                });
-                isAcceptedPromise.then(() => {
-                    console.log('isAccepted', isAccepted);
-                });
-            })    
-        });
-    }
-
-    getNearestVolunteers = (incidentLng, incidentLat) => {
-        var incidentCoordinates = {
-            longitude: parseFloat(incidentLng),
-            latitude: parseFloat(incidentLat)
-        };
-        var volunteers = this.state.onlineVolunteers;
-        var nearestVolunteers = [];
-        var distance; 
-        var volunteerObject = {};
-        _.map(volunteers, (volunteer, key) => {
-            console.log('volunteer key', key);
-            volunteerObject = volunteer;
-            volunteerObject.uid = key;
-            var volunteerCoordinates = {
-                latitude: parseFloat(volunteer.coordinates.lat),
-                longitude: parseFloat(volunteer.coordinates.lng)
-            }
-            distance = computeDistance(incidentCoordinates.latitude, incidentCoordinates.longitude, volunteerCoordinates.latitude, volunteerCoordinates.longitude);
-            if(distance < 500){
-                nearestVolunteers.push(volunteer);
-                console.log('nearest volunteers', nearestVolunteers);
-            }
-        });
-        return nearestVolunteers;
-    }
-
-    // computeDistance = (lat1, lon1, lat2, lon2) => {
-    //     var R = 6371; // Radius of the earth in km
-    //     var dLat = this.deg2rad(lat2 - lat1); // deg2rad below
-    //     var dLon = this.deg2rad(lon2 - lon1);
-    //     var a =
-    //         Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    //         Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) *
-    //         Math.sin(dLon / 2) * Math.sin(dLon / 2);
-
-    //     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    //     var d = R * c; // Distance in km
-    //     return d * 1000;
-    // }
-
-    // deg2rad = (deg) => {
-    //     return deg * Math.PI / 180
-    // }
-
     getReporter = () => {
         console.log('id lhlhklk', this.props.reportedBy);
         var user = fire.database().ref(`users/${this.props.reportedBy}`);
@@ -205,43 +171,72 @@ class EmergencyDetails extends Component{
             });
         });
     }
-      
+    getRequestVolunteerDisplay = () => {
+        if(this.state.isRequestingVolunteers){
+            return 'Request Additional Volunteers';
+        }else{
+            return 'Request Volunteer';
+        }
+    }
+
+    getRequestResponderDisplay = () => {
+        if(this.state.isRequestingResponders){
+            return 'Request Additional Responders';
+        }else{
+            return 'Dispatch Responders';
+        }
+    }
+
+    alertRequest = () => {
+       if(this.state.isRequestingResponders){
+           return 'asgsdhdrthdf';
+       }
+       return 'dshdutsdyrstertrjyr';
+    }
     render() {
         const { open, size } = this.state;
         const {open2, size2} = this.state;
+        const { open3, size3 } = this.state;
+
+
+       
+        // this.locateVolunteers();
         return (
             <div>
-                <div className="inc_stat"></div> {/*For "if statement" to change icon per type*/}
+            <div className="inc_stat"></div> {/*For "if statement" to change icon per type*/}
             <Card.Group>
                 <Card color ='red' onClick={this.show('tiny')}> 
-                <Card.Content>
-                   <h4>{this.props.incidentKey}</h4>
-                   <h5>{this.props.incidentType}</h5>
-                </Card.Content>
-                <Card.Content>
-                    <Card.Description>
-                        {this.props.incidentLocation}
-                    </Card.Description>
-                     <br></br>
-                </Card.Content>
+                    <Card.Content>
+                    <h4>{this.props.incidentKey}</h4>
+                    {this.state.isRequestingVolunteers === true ? <h5>RAV</h5> : ''}
+                    {this.state.isRequestingResponders === true ? <h5>RAR</h5> : ''}
+                    </Card.Content>
+                    <Card.Content>
+                    <h5>{this.props.incidentType}</h5>
+                        <Card.Description>
+                            {this.props.incidentLocation}
+                        </Card.Description>
+                        <br></br>
+                    </Card.Content>
                 </Card>
             </Card.Group>
             
             <Modal size={size} open={open} onClose={this.close}>
                 <Modal.Header>New Emergency</Modal.Header>
                     <Modal.Content>
-                            <p>Reported by: {this.state.firstName} {this.state.lastName}</p>
-                            <p>Type of Incident: {this.props.incidentType}</p>
-                            <p>Location of Incident: {this.props.incidentLocation}</p>
-                            <p>Coordinates: {this.props.coordinates.lng} {this.props.coordinates.lat}</p>
-                            <p>Photo of Incident:</p>
+                            <p><b>Reported by:</b> {this.state.firstName} {this.state.lastName}</p>
+                            <p><b>Type of Incident:</b> {this.props.incidentType}</p>
+                            <p><b>Location of Incident:</b> {this.props.incidentLocation}</p>
+                            <p><b>Coordinates:</b> {this.props.coordinates.lng} {this.props.coordinates.lat}</p>
+                            <p><b>Photo of Incident:</b></p>
                     </Modal.Content>
                         <Modal.Actions>
-                            <Button inverted color='gray' onClick={this.showActiveRespondersList('small')}>
-                                Dispatch Responders
+                            <Button color='red' onClick={this.showActiveRespondersList('small')}>
+                                {this.state.isRequestingResponders === true ? 'Request Additional Responders' : 'Dispatch Responders'}
                             </Button>
-                            <Button inverted color='gray' onClick={this.requestVolunteers}>
-                                Request Volunteers
+                            {/*this.requestVolunteers */}
+                            <Button color='blue' onClick={this.showActiveVolunteersList('small')}>
+                                {this.state.isRequestingVolunteers === true ? 'Request Additional Volunteers' : 'Request Volunteers'}
                             </Button>
                         </Modal.Actions>
             </Modal>
@@ -254,17 +249,18 @@ class EmergencyDetails extends Component{
                     </Card.Group>
                 </Modal.Content>
             </Modal>
+
+            <Modal size={size3} open={open3} onClose={this.closeActiveVolunteersList}>
+            <Modal.Header>Active Volunteers</Modal.Header>
+                <Modal.Content>
+                    <Card.Group itemsPerRow={3}>
+                        {this.renderRespondersList()}
+                    </Card.Group>
+                </Modal.Content>
+            </Modal>
         </div>
         );
       }
   
     }
-
-EmergencyDetails.defaultProps = {
-    name: 'Command Center Personnel',
-    accountID : 12345,
-    timeReported: new Date(),
-    incidentType: 'Police Emergency',
-    incidentLocation: 'Mandaue City'
-}
 export default EmergencyDetails;

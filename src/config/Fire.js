@@ -12,4 +12,6 @@ const config = {
 };
 const fire = firebase.initializeApp(config);
 export const fire2 = firebase.initializeApp(config, 'Secondary');
+//create user session
+//destroy current user session
 export default fire;

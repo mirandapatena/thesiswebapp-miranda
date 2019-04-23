@@ -22,6 +22,7 @@ export function createUserAccount (account, credentials = {}){
     promise.catch(e=>{
       var err = e.message;
       console.log(err);
+      alert(err);
       return err;
     });
 }
@@ -38,11 +39,6 @@ function saveUserType(user_type, isMobile, uid, credentials = {}){
   const db = fire.database();
   let points = computeVolunteerPoints(volunteerCredentials);
   volunteerCredentials.points = points;
-  let mobileNode = {
-    coordinates,
-    incidentID: '',
-    isAccepted: false
-  }
   
   switch(isMobile){
     case false: switch(user_type){
@@ -58,12 +54,12 @@ function saveUserType(user_type, isMobile, uid, credentials = {}){
               break;
     case true: switch(user_type){
                   case 'Responder': 
-                                    db.ref(`${mobileUsers}/${user_type}/${uid}`).update(mobileNode);
+                                    db.ref(`${mobileUsers}/${user_type}/${uid}`).update({uid, coordinates});
                                     break;
                   case 'Regular User': 
-                                    db.ref(`${mobileUsers}/${user_type}/${uid}`).update(mobileNode);
+                                    db.ref(`${mobileUsers}/${user_type}/${uid}`).update({uid, coordinates});
                                     break;
-                  case 'Volunteer': db.ref(`${mobileUsers}/${user_type}/${uid}`).update(mobileNode);
+                  case 'Volunteer': db.ref(`${mobileUsers}/${user_type}/${uid}`).update({uid, coordinates});
                                     db.ref(`credentials/${credentialID}`).update(volunteerCredentials);
                                     break;
 
