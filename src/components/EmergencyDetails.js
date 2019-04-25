@@ -34,16 +34,10 @@ class EmergencyDetails extends Component{
         isRequestingResponders.on('value', snapshot => {
             requestResponders = snapshot.val();
             this.setState({isRequestingResponders: requestResponders});
-            if(requestResponders){
-                //request responders;
-            }
         });
         isRequestingVolunteers.on('value', snapshot => {
             requestVolunteers = snapshot.val();
             this.setState({isRequestingVolunteers: requestVolunteers});
-            if(requestVolunteers){
-                //request volunteers
-            }
         });
     }
 

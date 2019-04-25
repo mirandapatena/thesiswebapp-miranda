@@ -10,24 +10,26 @@ export function getNearestMobileUsers(incidentLng, incidentLat, mobileUsers, use
     var distance; 
     var userObject = {};
     console.log('shittt');
+    console.log('mobile users', mobileUsers);
     _.map(mobileUsers, (user, key) => {
         userObject = user;
-        userObject.uid = key;
-        var userCoordinates = {
-            latitude: parseFloat(user.coordinates.lat),
-            longitude: parseFloat(user.coordinates.lng)
-        }
-        distance = computeDistance(incidentCoordinates.latitude, incidentCoordinates.longitude, userCoordinates.latitude, userCoordinates.longitude);
-        userObject.distance = distance;
-        if(user_type === 'Volunteer'){
-            if(distance < 500){
-                nearestUsers.push(userObject);
-                console.log('nearest volunteerss', userObject);
+        if(!user.isAccepted){
+            userObject.uid = key;
+            var userCoordinates = {
+                latitude: parseFloat(user.coordinates.lat),
+                longitude: parseFloat(user.coordinates.lng)
             }
-        }else if(user_type === 'Responder'){
-            nearestUsers.push(user);
+            distance = computeDistance(incidentCoordinates.latitude, incidentCoordinates.longitude, userCoordinates.latitude, userCoordinates.longitude);
+            userObject.distance = distance;
+            if(user_type === 'Volunteer'){
+                if(distance < 500){
+                    nearestUsers.push(userObject);
+                    console.log('nearest volunteerss', userObject);
+                }
+            }else if(user_type === 'Responder'){
+                nearestUsers.push(user);
+            }
         }
-        
     });
     return nearestUsers;
 }
