@@ -1,23 +1,30 @@
 import fire from '../config/Fire';
 import _ from 'lodash';
+import {getVolunteerProfiles} from './getVolunteerProfiles';
+import { computeDistance } from './computeDistance';
 
-export function callVolunteer(volunteerWithCredentials, incidentKey){
+export function callVolunteer(volunteerWithCredentials, incidentKey, incidentCoords){
     var volunteerNode = fire.database();
     var selectedVolunteers = volunteerWithCredentials;
     var incidentID = incidentKey
     var isAccepted = false;
-
+    var volunteerProfile = {};
+    var volunteerList = [];
     _.map(selectedVolunteers, (volunteer, key) => {
-        // var uid = volunteer.uid;
-        // var incidentIDPromise = volunteerNode.ref(`mobileUsers/Volunteer/${uid}`).update({incidentID});
-        // incidentIDPromise.then(()=>{
-        //     console.log('incident id saved');
-        //     var isAcceptedPromise = volunteerNode.ref(`mobileUsers/Volunteer/${uid}/isAccepted`).once('value', snapshot => {
-        //         isAccepted = snapshot.val();
-        //     });
-        //     isAcceptedPromise.then(() => {
-        //         console.log('isAccepted', isAccepted);
-        //     });
-        // })    
+        console.log('volunteersfasd', volunteer);
+        var volunteerProfileNode = fire.database().ref(`users/${volunteer.uid}`);
+        var volunteerNodePromise = volunteerProfileNode.once('value', snapshot => {
+            volunteerProfile = snapshot.val();
+            volunteer.firstName = volunteerProfile.firstName;
+            volunteer.lastName = volunteerProfile.lastName;
+            volunteer.email = volunteerProfile.email;
+            volunteer.contactNumber = volunteerProfile.contactNumber;
+            console.log('profile', volunteerProfile);
+        });
+        volunteerNodePromise.then(()=>{
+            volunteerList.push(volunteer);
+        });
     });
+    return volunteerList;
 }
+

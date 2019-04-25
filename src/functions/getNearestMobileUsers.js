@@ -1,7 +1,7 @@
 import {computeDistance} from './computeDistance';
 import _ from 'lodash';
 
-export function getNearestMobileUsers(incidentLng, incidentLat, mobileUsers){
+export function getNearestMobileUsers(incidentLng, incidentLat, mobileUsers, user_type){
     var incidentCoordinates = {
         longitude: parseFloat(incidentLng),
         latitude: parseFloat(incidentLat)
@@ -9,6 +9,7 @@ export function getNearestMobileUsers(incidentLng, incidentLat, mobileUsers){
     var nearestUsers = [];
     var distance; 
     var userObject = {};
+    console.log('shittt');
     _.map(mobileUsers, (user, key) => {
         userObject = user;
         userObject.uid = key;
@@ -17,10 +18,16 @@ export function getNearestMobileUsers(incidentLng, incidentLat, mobileUsers){
             longitude: parseFloat(user.coordinates.lng)
         }
         distance = computeDistance(incidentCoordinates.latitude, incidentCoordinates.longitude, userCoordinates.latitude, userCoordinates.longitude);
-        if(distance < 500){
+        userObject.distance = distance;
+        if(user_type === 'Volunteer'){
+            if(distance < 500){
+                nearestUsers.push(userObject);
+                console.log('nearest volunteerss', userObject);
+            }
+        }else if(user_type === 'Responder'){
             nearestUsers.push(user);
-            console.log('nearest volunteers', nearestUsers);
         }
+        
     });
     return nearestUsers;
 }

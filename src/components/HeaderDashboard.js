@@ -1,15 +1,15 @@
 import React, { Component } from 'react'
-import { Menu, Dropdown, Icon, Modal, Form, Button, Radio, Select, Table, Header, Image} from 'semantic-ui-react'
+import { Menu, Dropdown, Icon, Modal, Form, Button, Radio, Select } from 'semantic-ui-react'
 import fire from '../config/Fire';
 import {connect} from 'react-redux';
 import {saveIncident} from '../actions/incidentAction';
 import {createUserAccount} from '../functions/createUserAccount';
+import ResponderAccountLists from './ResponderAccountLists';
+import VolunteerAccountLists from './VolunteerAccountLists';
+import RegularUserAccountLists from './RegularUserAccountLists';
 import '../stylesheet_QueueIncidents.css';
 import '../HeaderDashboard.css';
-import PlacesAutocomplete, {
-  geocodeByAddress,
-  getLatLng, geoc
-} from 'react-places-autocomplete';
+import PlacesAutocomplete, {geocodeByAddress, getLatLng, geocodeByPlaceId} from 'react-places-autocomplete';
 
 const emailRegex = RegExp(
   /^[a-zA-Z0-9._-]+@[a-zA-Z]+(?:\.[a-zA-Z]+)*$/
@@ -64,7 +64,7 @@ class HeaderDashboard extends Component{
         email: '',
         user_type: '',
         contactNumber: '',
-        err: '',
+        // err: '',
         lat: null,
         lng: null,
         incidentPhoto: null,
@@ -99,12 +99,9 @@ class HeaderDashboard extends Component{
 
   show2 = size2 => () => this.setState({ size2, open2: true })
   close2 = () => this.setState({ open2: false, firstName: '',
-  lastName: '',
-  password: '',
-  // confirmPassword: '',
-  email: '',
-  user_type: '',
-  contactNumber: '',formError: {
+  lastName: '', password: '', email: '', user_type: '', contactNumber: '',
+  durationService: '', medicalDegree:'', medicalProfession:'', certification:'', isActiveVolunteer:'',
+  formError: {
     firstName:'',
     lastName:'',
     email:'',
@@ -128,7 +125,11 @@ class HeaderDashboard extends Component{
   };
   
 
-  handleSelect = incidentLocation => {
+  handleSelect = (incidentLocation, destinationPlaceId) => {
+    geocodeByPlaceId(destinationPlaceId)
+    .then(results => console.log(results))
+    .catch(error => console.error(error));
+    
     geocodeByAddress(incidentLocation)
       .then(results => getLatLng(results[0]))
       .then(latLng => {
@@ -137,56 +138,56 @@ class HeaderDashboard extends Component{
       .catch(error => console.error('Error', error));
   };
 
-inputIncidentTypeHandler = (e, {incidentType}) => this.setState({ incidentType})
+  inputIncidentTypeHandler = (e, {incidentType}) => this.setState({ incidentType})
 
-inputIncidentLocationHandler = (e) => {
-  this.setState({ incidentLocation: e.target.value });
-}
-
-submitIncidentHandler = (e) => {
-  // console.log('uid reported', this.props.user.uid);
-  e.preventDefault();
-  const timeReceived = Date.now();
-  const incident = {
-    incidentType: this.state.incidentType,
-    incidentLocation: this.state.incidentLocation,
-    unresponded: true,
-    isResponding: false,
-    isSettled: false,
-    coordinates: {lng: this.state.lng, lat: this.state.lat},
-    incidentPhoto: '',
-    reportedBy: this.props.uid.uid,
-    timeReceived,
-    timeResponded: '',
-    timeSettle: '',
-    responderResponding: '',
-    volunteerResponding: '',
-    destinationPlaceId: '',
-    isRequestingResponders: false,
-    isRequestingVolunteers: false,
-    isRespondingResponder: false,
-    unrespondedResponder: true,
-    isRespondingVolunteer: false,
-    unrespondedVolunteer: true
+  inputIncidentLocationHandler = (e) => {
+    this.setState({ incidentLocation: e.target.value });
   }
-  this.props.saveIncident(incident);
-  this.setState({
-      incidentType: '',
-      incidentLocation: '',
-      unresponded: false,
+
+  submitIncidentHandler = (e) => {
+    // console.log('uid reported', this.props.user.uid);
+    e.preventDefault();
+    const timeReceived = Date.now();
+    const incident = {
+      incidentType: this.state.incidentType,
+      incidentLocation: this.state.incidentLocation,
+      unresponded: true,
       isResponding: false,
       isSettled: false,
-      lng: null,
-      lat: null,
-  });
-  console.log(this.state.incidentsList);
-}
+      coordinates: {lng: this.state.lng, lat: this.state.lat},
+      incidentPhoto: '',
+      reportedBy: this.props.uid.uid,
+      timeReceived,
+      timeResponded: '',
+      timeSettle: '',
+      responderResponding: '',
+      volunteerResponding: '',
+      destinationPlaceId: '',
+      isRequestingResponders: false,
+      isRequestingVolunteers: false,
+      isRespondingResponder: false,
+      unrespondedResponder: true,
+      isRespondingVolunteer: false,
+      unrespondedVolunteer: true
+    }
+    this.props.saveIncident(incident);
+    this.setState({
+        incidentType: '',
+        incidentLocation: '',
+        unresponded: false,
+        isResponding: false,
+        isSettled: false,
+        lng: null,
+        lat: null,
+    });
+    console.log(this.state.incidentsList);
+  }
 
   handleCreateAccount = (e) => {
     e.preventDefault();
     //this.setState({[e.target.name]: e.target.value});
     const { name, value } = e.target;
-
+    
     let formError = { ...this.state.formError };
 
       switch (name) {
@@ -347,14 +348,25 @@ submitIncidentHandler = (e) => {
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name })
 
-  showResponder(){
+  renderResponderAccountLists = () => {
+    return(
+      <ResponderAccountLists/>
+    )
+  }
 
+  renderVolunteerAccountLists = () => {
+    return(
+      <VolunteerAccountLists/>
+    )
+  }
+
+  renderRegularUserAccountLists = () => {
+    return(
+      <RegularUserAccountLists/>
+    )
   }
 
   render() {
-    // var user = this.props.user.userAccount;
-    // var uid = user.uid;
-    console.log('this.props.uid', this.props.uid.uid);
     const { open, size } = this.state
     const { open2, size2 } = this.state
     const { open3, size3 } = this.state
@@ -422,14 +434,10 @@ submitIncidentHandler = (e) => {
     {text: 'Paramedics', value: 'Paramedics'},
   ]
 
-
   const medicalProfessionOptions = [
     { text: 'Nurse', value: 'Nurse'},
     { text: 'Surgeon', value: 'Surgeon'},
     { text: 'Emergency Medical Service Personnel', value: 'Emergency Medical Service Personnel'},
-    // { text: '', value: ''},
-    // { text: '', value: ''},
-    // { text: '', value: ''},
   ]
 
   const durationServiceOptions = [
@@ -446,7 +454,7 @@ submitIncidentHandler = (e) => {
   ]
 
     return (
-    
+
     <div>
     {/* Header Menu */}
       <Menu inverted>
@@ -534,11 +542,12 @@ submitIncidentHandler = (e) => {
               </Form>
               </Modal.Content>
               <Modal.Actions>
-                  <Button color='red' onClick={this.submitIncidentHandler}>
+                  <Form.Button color='red' onClick={this.submitIncidentHandler} disabled={!this.state.incidentLocation || !this.state.incidentType}>
                       Submit
-                  </Button>
+                  </Form.Button>
         </Modal.Actions>
       </Modal>
+      {/* Add Incident Modal */}
 
       {/*Create Personnel Account Modal*/}
       <Modal size={size2} open={open2} onClose={this.close2}  onClick={(event) => {this.handleCreateAccount(event);}}noValidate>
@@ -711,23 +720,6 @@ submitIncidentHandler = (e) => {
                       {formError.password.length > 0 && (
                       <span className="errorMessage">{formError.password}</span>)}
                   </Form.Field>
-                  {/* <Form.Field style={{marginBottom: '10px', color: 'whitesmoke'}} required>
-                      <Form.Input
-                        fluid
-                        placeholder='Contact Number (09XXXXXXXXX)'
-                        type='text'
-                        name='contactNumber'
-                        pattern='[0-9]*'
-                        inputmode='numeric'
-                        noValidate
-                        value={this.state.contactNumber}
-                        className={formError.contactNumber.length > 0 ? "error" : null}
-                        onChange={this.handleCreateAccount}
-                        required
-                      />
-                        {formError.contactNumber.length > 0 && (
-                        <span className="errorMessage">{formError.contactNumber}</span>)}
-                  </Form.Field> */}
                 
                 {this.state.user_type === 'Volunteer' ? 
                       <Form.Field
@@ -758,40 +750,7 @@ submitIncidentHandler = (e) => {
                         {formError.contactNumber.length > 0 && (
                         <span className="errorMessage">{formError.contactNumber}</span>)}
                   </Form.Field>
-
-                   {/* <Form.Field style={{marginBottom: '10px', color: 'whitesmoke'}} required>
-                    <Form.Input
-                      fluid
-                      placeholder='Password'
-                      type='password'
-                      name='password'
-                      noValidate
-                      value={this.state.password}
-                      className={formError.password.length > 0 ? "error" : null}
-                      onChange={this.handleCreateAccount}
-                      required
-                    />                     
-                      {formError.password.length > 0 && (
-                      <span className="errorMessage">{formError.password}</span>)}
-                  </Form.Field> */}
-
-                  {/* <Form.Field style={{marginBottom: '10px', color: 'whitesmoke'}} required>
-                    <Form.Input
-                      fluid
-                      placeholder='Confirm Password'
-                      type='password'
-                      name='confirmPassword'
-                      noValidate
-                      value={this.state.confirmPassword}
-                      className={formError.confirmPassword.length > 0 ? "error" : null}
-                      onChange={this.handleCreateAccount}
-                      required
-                    />                     
-                      {formError.confirmPassword.length > 0 && (
-                      <span className="errorMessage">{formError.confirmPassword}</span>)}
-                  </Form.Field> */}
    
-
                 </Form.Group>
                    
                  <p style={{color:'white'}}>{this.state.err}</p>
@@ -799,283 +758,89 @@ submitIncidentHandler = (e) => {
               </Form>
               </Modal.Content>
               <Modal.Actions>
-                  <Button color='red' onClick={this.submitCreateAccount}>
+                  <Form.Button color='red' onClick={this.submitCreateAccount} 
+                    disabled={!this.state.email || !this.state.firstName || !this.state.lastName 
+                              || !this.state.user_type || !this.state.password || !this.state.contactNumber 
+                              || this.state.user_type === 'Volunteer'?
+                              !this.state.medicalDegree || !this.state.medicalProfession || !this.state.certification 
+                              || !this.state.isActiveVolunteer || !this.state.durationService:null               
+                            } 
+                  >
                       Create User Account
-                  </Button>
+                  </Form.Button>
                    
         </Modal.Actions>
       </Modal>
-      
+      {/*Create Personnel Account Modal*/}
+
       {/* Responder Account Lists */}
       <Modal size={size3} open={open3} onClose={this.close3}>
-      
-      <div style={{backgroundColor:"#5c7788"}}>
-        <Button.Group>
-        <Button color='blue' size='small' onClick={this.showAccountLists('tiny')}>
-          Responder
-        </Button>
-        <Button color='white' size='small' onClick={this.showVolunteerLists('tiny')}>
-          Volunteer
-        </Button>
-        <Button color='red' size='small' onClick={this.showRegularUserLists('tiny')}>
-          Regular User
-        </Button>
-        </Button.Group>
-      </div>
-
-      <Modal.Content>              
-      <Table celled>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell>Users</Table.HeaderCell>
-              <Table.HeaderCell>Status</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-
-          <Table.Body>
-
-            <Table.Row>
-              <Table.Cell>
-                <Header as='h4' image>
-                  <Image src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' rounded size='mini' />
-                  <Header.Content>
-                    Lena 
-                    <Header.Subheader>Doe</Header.Subheader>
-                  </Header.Content>
-                </Header>
-              </Table.Cell>
-                <Table.Cell>
-                <Button compact animated='fade' color='green'>
-                  <Button.Content visible>Unverified</Button.Content>
-                  <Button.Content hidden>
-                    Verify
-                  </Button.Content>
-                </Button>
-                </Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>
-                <Header as='h4' image>
-                  <Image src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' rounded size='mini' />
-                  <Header.Content>
-                    Matthew
-                    <Header.Subheader>Doe</Header.Subheader>
-                  </Header.Content>
-                </Header>
-              </Table.Cell>
-              <Table.Cell>
-              <Icon name='checkmark' /><b>Verified</b>
-              </Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>
-                <Header as='h4' image>
-                  <Image src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' rounded size='mini' />
-                  <Header.Content>
-                    Jane 
-                    <Header.Subheader>Doe</Header.Subheader>
-                  </Header.Content>
-                </Header>
-              </Table.Cell>
-                <Table.Cell>
-                  <Button compact animated='fade' color='green'>
-                    <Button.Content visible>Unverified</Button.Content>
-                    <Button.Content hidden>
-                      Verify
-                    </Button.Content>
-                  </Button>
-                </Table.Cell>
-            </Table.Row>
-
-          </Table.Body>
-        </Table>          
-
-      </Modal.Content>
+        
+        <div style={{backgroundColor:"#5c7788"}}>
+            <Button.Group>
+              <Button color='blue' size='small' onClick={this.showAccountLists('tiny')}>
+                Responder
+              </Button>
+              <Button color='white' size='small' onClick={this.showVolunteerLists('tiny')}>
+                  Volunteer
+              </Button>
+              <Button color='red' size='small' onClick={this.showRegularUserLists('tiny')}>
+                Regular User
+              </Button>
+          </Button.Group>
+        </div>    
+        
+        <Modal.Content>
+          {this.renderResponderAccountLists()}
+        </Modal.Content>
 
       </Modal>
+      {/* Responder Account Lists */}
 
       {/* Volunteer Account Lists */}
       <Modal size={size4} open={open4} onClose={this.close4}>
-      <div style={{backgroundColor:"#5c7788"}}>
-        <Button.Group>
-        <Button color='blue' size='small' onClick={this.showAccountLists('tiny')}>
-          Responder
-        </Button>
-        <Button color='white' size='small' onClick={this.showVolunteerLists('tiny')}>
-          Volunteer
-        </Button>
-        <Button color='red' size='small' onClick={this.showRegularUserLists('tiny')}>
-          Regular User
-        </Button>
-        </Button.Group>
-      </div>
+        <div style={{backgroundColor:"#5c7788"}}>
+            <Button.Group>
+              <Button color='blue' size='small' onClick={this.showAccountLists('tiny')}>
+                Responder
+              </Button>
+              <Button color='white' size='small' onClick={this.showVolunteerLists('tiny')}>
+                  Volunteer
+              </Button>
+              <Button color='red' size='small' onClick={this.showRegularUserLists('tiny')}>
+                Regular User
+              </Button>
+          </Button.Group>
+        </div>
 
-      <Modal.Content>
-
-      <Table celled>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell>Users</Table.HeaderCell>
-              <Table.HeaderCell>Status</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-
-          <Table.Body>
-
-            <Table.Row>
-              <Table.Cell>
-                <Header as='h4' image>
-                  <Image src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' rounded size='mini' />
-                  <Header.Content>
-                    Lany
-                    <Header.Subheader>Doe</Header.Subheader>
-                  </Header.Content>
-                </Header>
-              </Table.Cell>
-                <Table.Cell>
-                <Icon name='checkmark' /><b>Verified</b>
-                </Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>
-                <Header as='h4' image>
-                  <Image src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' rounded size='mini' />
-                  <Header.Content>
-                    Mat
-                    <Header.Subheader>Doe</Header.Subheader>
-                  </Header.Content>
-                </Header>
-              </Table.Cell>
-              <Table.Cell>
-              <Icon name='checkmark' /><b>Verified</b>
-              </Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>
-                <Header as='h4' image>
-                  <Image src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' rounded size='mini' />
-                  <Header.Content>
-                    Jenny 
-                    <Header.Subheader>Doe</Header.Subheader>
-                  </Header.Content>
-                </Header>
-              </Table.Cell>
-                <Table.Cell>
-                <Icon name='checkmark' /><b>Verified</b>
-                </Table.Cell>
-            </Table.Row>
-
-          </Table.Body>
-        </Table> 
-
-      </Modal.Content>
+        <Modal.Content>
+          {this.renderVolunteerAccountLists()}
+        </Modal.Content>
       </Modal>
+      {/* Volunteer Account Lists */}
 
       {/* Regular User Account Lists */}
       <Modal size={size5} open={open5} onClose={this.close5}>
-      <div style={{backgroundColor:"#5c7788"}}>
-        <Button.Group>
-        <Button color='blue' size='small' onClick={this.showAccountLists('tiny')}>
-          Responder
-        </Button>
-        <Button color='white' size='small' onClick={this.showVolunteerLists('tiny')}>
-          Volunteer
-        </Button>
-        <Button color='red' size='small' onClick={this.showRegularUserLists('tiny')}>
-          Regular User
-        </Button>
-        </Button.Group>
-      </div>
+        <div style={{backgroundColor:"#5c7788"}}>
+          <Button.Group>
+          <Button color='blue' size='small' onClick={this.showAccountLists('tiny')}>
+            Responder
+          </Button>
+          <Button color='white' size='small' onClick={this.showVolunteerLists('tiny')}>
+            Volunteer
+          </Button>
+          <Button color='red' size='small' onClick={this.showRegularUserLists('tiny')}>
+            Regular User
+          </Button>
+          </Button.Group>
+        </div>
 
-      <Modal.Content>
-         
-        <Table celled>
-            <Table.Header>
-              <Table.Row>
-                <Table.HeaderCell>Users</Table.HeaderCell>
-                <Table.HeaderCell>Status</Table.HeaderCell>
-              </Table.Row>
-            </Table.Header>
+        <Modal.Content>
+          {this.renderRegularUserAccountLists()}                            
+        </Modal.Content>
 
-            <Table.Body>
-
-              <Table.Row>
-                <Table.Cell>
-                  <Header as='h4' image>
-                    <Image src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' rounded size='mini' />
-                    <Header.Content>
-                      Leny
-                      <Header.Subheader>Doe</Header.Subheader>
-                    </Header.Content>
-                  </Header>
-                </Table.Cell>
-                  <Table.Cell>
-                    <Button compact animated='fade' color='green'>
-                      <Button.Content visible>Unverified</Button.Content>
-                      <Button.Content hidden>
-                        Verify
-                      </Button.Content>
-                    </Button>
-                  </Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>
-                  <Header as='h4' image>
-                    <Image src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' rounded size='mini' />
-                    <Header.Content>
-                      Mac
-                      <Header.Subheader>Doe</Header.Subheader>
-                    </Header.Content>
-                  </Header>
-                </Table.Cell>
-                <Table.Cell>
-                <Icon name='checkmark' /><b>Verified</b>
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>
-                  <Header as='h4' image>
-                    <Image src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' rounded size='mini' />
-                    <Header.Content>
-                      Johnny 
-                      <Header.Subheader>Doe</Header.Subheader>
-                    </Header.Content>
-                  </Header>
-                </Table.Cell>
-                  <Table.Cell>
-                    <Button compact animated='fade' color='green'>
-                        <Button.Content visible>Unverified</Button.Content>
-                        <Button.Content hidden>
-                          Verify
-                        </Button.Content>
-                    </Button>
-                  </Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>
-                  <Header as='h4' image>
-                    <Image src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' rounded size='mini' />
-                    <Header.Content>
-                      Cersei
-                      <Header.Subheader>Doe</Header.Subheader>
-                    </Header.Content>
-                  </Header>
-                </Table.Cell>
-                  <Table.Cell>
-                    <Button compact animated='fade' color='green'>
-                      <Button.Content visible>Unverified</Button.Content>
-                      <Button.Content hidden>
-                        Verify
-                      </Button.Content>
-                    </Button>
-                  </Table.Cell>
-              </Table.Row>
-
-            </Table.Body>
-          </Table> 
-
-      </Modal.Content>
       </Modal>
+      {/* Regular User Account Lists */}
 
       </div>
     )

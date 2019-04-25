@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
-import { Button, Card, Modal, List } from 'semantic-ui-react';
+import { Button, Card, Modal } from 'semantic-ui-react';
 import '../stylesheet_QueueIncidents.css';
 import fire from '../config/Fire';
 import _ from 'lodash';
 import DispatchResponders from './DispatchResponders';
 import {callVolunteer} from '../functions/callVolunteer';
-import {getNearestMobileUsers} from '../functions/getNearestVolunteers';
+import {getNearestMobileUsers} from '../functions/getNearestMobileUsers';
+import DispatchMobileUser from './DispatchMobileUser';
 
 class EmergencyDetails extends Component{
 
@@ -49,6 +50,7 @@ class EmergencyDetails extends Component{
     show = size => () => {
         this.setState({ size, open: true })
         this.getRespondersList();
+        this.requestVolunteers();
     }
 
     showActiveRespondersList = size2 => () => {
@@ -63,19 +65,18 @@ class EmergencyDetails extends Component{
     closeActiveRespondersList = () => this.setState({ open2: false });
     closeActiveVolunteersList = () => this.setState({ open3: false });
 
-    requestVolunteersListener(){
-        
-
-    }
     getRespondersList = () => {
         let activeResponders;
+        let respdondersList = [];
         let activeRespondersList;
         const respondersRef = fire.database().ref('mobileUsers/Responder');
         respondersRef.once('value', snapshot => {
             activeResponders = snapshot.val();
             var respondersList = this.extractActiveResponderDetails(activeResponders);
-            activeRespondersList = this.getUsersProfiles(respondersList);
-            this.setState({activeResponders: activeRespondersList}, () => {
+            console.log('respondesr list', respondersList);
+            activeRespondersList = getNearestMobileUsers(this.props.coordinates.lng, this.props.coordinates.lat, respondersList, 'Responder');
+            respdondersList = this.getUsersProfiles(activeRespondersList);
+            this.setState({activeResponders: respdondersList}, () => {
                 console.log('new state', this.state.activeResponders);
             });
         });
@@ -97,12 +98,22 @@ class EmergencyDetails extends Component{
     getUsersProfiles = (userList) => {
         let userProfile = {};
         let userProfiles = [];
+        let temp;
         userList.forEach((user) => {
             console.log('responder keys', user.key);
             var userAccountRef = fire.database().ref(`users/${user.key}`);
             userAccountRef.once('value', snapshot => {
-                userProfile = snapshot.val();
-                userProfile.key = user.key;
+                temp = snapshot.val();
+                // user.firstName = userProfile.firstName;
+                // user.lastName = userProfile.lastName;
+                // user
+                // userProfile.key = user.key;
+                userProfile = user;
+                userProfile.uid = user.key;
+                userProfile.firstName = temp.firstName;
+                userProfile.lastName = temp.lastName;
+                userProfile.email = temp.email;
+                userProfile.contactNumber = temp.contactNumber;
                 userProfiles.push(userProfile);
                 console.log('user profile', userProfile);
             });
@@ -116,7 +127,7 @@ class EmergencyDetails extends Component{
         return _.map(respondersList, (responder, key) => {
             console.log('key', responder.key)
             return (
-                <DispatchResponders firstName={responder.firstName} lastName={responder.lastName} id={responder.key} incidentID={this.props.incidentKey}/>
+                <DispatchMobileUser firstName={responder.firstName} lastName={responder.lastName} id={responder.uid} incidentID={this.props.incidentKey} distance={responder.distance} contactNumber={responder.contactNumber} email={responder.email} user_type='Responder'/>
             );
         });
     }
@@ -125,6 +136,7 @@ class EmergencyDetails extends Component{
         var volunteerNode = fire.database().ref('mobileUsers/Volunteer');
         var nearestVolunteers = [];
         var onlineVolunteers = [];
+        var volunteersList = [];
         var lng = this.props.coordinates.lng;
         var lat = this.props.coordinates.lat;
         volunteerNode.once('value', snapshot => {
@@ -132,10 +144,24 @@ class EmergencyDetails extends Component{
             console.log('online volunteers', onlineVolunteers);
             this.setState({onlineVolunteers}, () => {
                 console.log('volunteers node', this.state.onlineVolunteers);
-                nearestVolunteers = getNearestMobileUsers(lng, lat, this.state.onlineVolunteers);
+                nearestVolunteers = getNearestMobileUsers(lng, lat, this.state.onlineVolunteers, 'Volunteer');
+                console.log('asdgsdgsryhasdfa', nearestVolunteers);
                 this.getBestVolunteer(nearestVolunteers);
-                callVolunteer(this.state.volunteerWithCredentials, this.props.incidentKey);
+                volunteersList = callVolunteer(this.state.volunteerWithCredentials, this.props.incidentKey, this.props.coordinates);
+                this.setState({onlineVolunteers: volunteersList});
+                //this.renderVolunteersList();
             });
+        });
+    }
+
+    renderVolunteersList = () => {
+        var volunteerList = this.state.onlineVolunteers;
+        console.log('asdfasgsdgfsdfasg');
+        return _.map(volunteerList, (volunteer, key) => {
+            return (
+                <DispatchMobileUser firstName={volunteer.firstName} lastName={volunteer.lastName} id={volunteer.uid} incidentID={this.props.incidentKey}
+                distance={volunteer.distance} user_type='Volunteer' email={volunteer.email} contactNumber={volunteer.contactNumber}/>
+            );
         });
     }
 
@@ -144,9 +170,11 @@ class EmergencyDetails extends Component{
         var volunteerWithCredentials = [];
         var volunteerNode;
         nearestVolunteers.map((volunteer, key) => {
+            console.log('volunteer distance', volunteer.distance);
             credentialsNode.ref(`credentials/${volunteer.uid}`).once('value', snapshot => {
                 volunteerNode = snapshot.val();
                 volunteerNode.uid = volunteer.uid
+                volunteerNode.distance = volunteer.distance;
                 volunteerWithCredentials.push(volunteerNode);
                 console.log('volunteer uid', volunteerWithCredentials);
             });
@@ -171,6 +199,7 @@ class EmergencyDetails extends Component{
             });
         });
     }
+
     getRequestVolunteerDisplay = () => {
         if(this.state.isRequestingVolunteers){
             return 'Request Additional Volunteers';
@@ -186,13 +215,7 @@ class EmergencyDetails extends Component{
             return 'Dispatch Responders';
         }
     }
-
-    alertRequest = () => {
-       if(this.state.isRequestingResponders){
-           return 'asgsdhdrthdf';
-       }
-       return 'dshdutsdyrstertrjyr';
-    }
+    
     render() {
         const { open, size } = this.state;
         const {open2, size2} = this.state;
@@ -254,7 +277,7 @@ class EmergencyDetails extends Component{
             <Modal.Header>Active Volunteers</Modal.Header>
                 <Modal.Content>
                     <Card.Group itemsPerRow={3}>
-                        {this.renderRespondersList()}
+                        {this.renderVolunteersList()}
                     </Card.Group>
                 </Modal.Content>
             </Modal>
@@ -263,4 +286,14 @@ class EmergencyDetails extends Component{
       }
   
     }
+
+
+
+EmergencyDetails.defaultProps = {
+    name: 'Command Center Personnel',
+    accountID : 12345,
+    timeReported: new Date(),
+    incidentType: 'Police Emergency',
+    incidentLocation: 'Mandaue City'
+}
 export default EmergencyDetails;
