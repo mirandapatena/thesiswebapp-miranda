@@ -10,6 +10,14 @@ import RegularUserAccountLists from './RegularUserAccountLists';
 import '../stylesheet_QueueIncidents.css';
 import '../HeaderDashboard.css';
 import PlacesAutocomplete, {geocodeByAddress, getLatLng, geocodeByPlaceId} from 'react-places-autocomplete';
+import vehicularUnresponded from '../../src/images/va_new.png';
+// import vehicularResponding from '../../src/images/va_otw.png';
+// import vehicularSettled from '../../src/images/va_fin.png';
+// import physicalUnresponded from '../../src/images/pi_new.png';
+// import physicalResponding from '../../src/images/pi_otw.png';
+// import physicalSettled from '../../src/images/pi_fin.png';
+// import volunteerLogo from '../images/tracking_volunteer.png';
+// import responderLogo from '../images/tracking_responder.png';
 
 const emailRegex = RegExp(
   /^([a-zA-Z0-9_.\-]+)@([a-zA-Z]+)\.([a-zA-Z]{2,5})$/

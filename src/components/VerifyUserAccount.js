@@ -11,7 +11,7 @@ class VerifyUserAccount extends Component{
         var isVerified = true;
         var deleteNode = fire.database().ref(`unverifiedMobileUsers/${this.props.uid}`);
         var userNode = fire.database().ref(`users/${this.props.uid}`);
-        userNode.update({isVerified}).then(()=>{
+        userNode.update({isVerified: true}).then(()=>{
             console.log(`${this.props.uid} account verified`);
             deleteNode.remove().then(()=>{
                 console.log(`${this.props.uid} node in unverifiedMobileUsers node removed`);
@@ -30,7 +30,7 @@ class VerifyUserAccount extends Component{
                             </Header>
                         </Table.Cell>
                         <Table.Cell>
-                            <Button compact animated='fade' color='green'>
+                            <Button color='green' onClick={this.verifyUser}>
                                 Verify
                             </Button>
                         </Table.Cell>
