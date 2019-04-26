@@ -3,9 +3,10 @@ import QueueIncidents from './QueueIncidents';
 import CityMap from './CityMap';
 import HeaderDashboard from './HeaderDashboard';
 import '../stylesheet_QueueIncidents.css';
+import fire from '../config/Fire';
 
 class DashboardAdmin extends Component {
-
+    
     render(){
         return (
             <div className="ui visible">

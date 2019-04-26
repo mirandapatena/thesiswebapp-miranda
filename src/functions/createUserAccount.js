@@ -55,11 +55,14 @@ function saveUserType(user_type, isMobile, uid, credentials = {}){
     case true: switch(user_type){
                   case 'Responder': 
                                     db.ref(`${mobileUsers}/${user_type}/${uid}`).update({uid, coordinates});
+                                    db.ref(`unverifiedMobileUsers/${uid}`).update({user_type});
                                     break;
                   case 'Regular User': 
                                     db.ref(`${mobileUsers}/${user_type}/${uid}`).update({uid, coordinates});
+                                    db.ref(`unverifiedMobileUsers/${uid}`).update({user_type});
                                     break;
                   case 'Volunteer': db.ref(`${mobileUsers}/${user_type}/${uid}`).update({uid, coordinates});
+                                    db.ref(`unverifiedMobileUsers/${uid}`).update({user_type});
                                     db.ref(`credentials/${credentialID}`).update(volunteerCredentials);
                                     break;
 

@@ -3,8 +3,7 @@ import { Button, Card, Modal } from 'semantic-ui-react';
 import '../stylesheet_QueueIncidents.css';
 import fire from '../config/Fire';
 import _ from 'lodash';
-import DispatchResponders from './DispatchResponders';
-import {callVolunteer} from '../functions/callVolunteer';
+ import {callVolunteer} from '../functions/callVolunteer';
 import {getNearestMobileUsers} from '../functions/getNearestMobileUsers';
 import DispatchMobileUser from './DispatchMobileUser';
 
@@ -41,6 +40,9 @@ class EmergencyDetails extends Component{
         });
     }
 
+    componentDidMount(){
+        
+    }
     show = size => () => {
         this.setState({ size, open: true })
         this.getRespondersList();

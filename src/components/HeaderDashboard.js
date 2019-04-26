@@ -268,7 +268,8 @@ class HeaderDashboard extends Component{
       email: this.state.email,
       user_type: this.state.user_type,
       contactNumber: this.state.contactNumber,
-      isMobile
+      isMobile,
+      isVerified: false
     }
 
     const credentials = {
