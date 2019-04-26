@@ -29,7 +29,7 @@ class Login extends Component{
   };
 
   login(e) {
-    e.preventDefault();
+    e.preventDefault()
 
     const auth = fire.auth();
 
@@ -111,7 +111,10 @@ class Login extends Component{
                 <CircularProgress classname={this.progress} style={{color: "#fff"}} color={"inherit"} size={16} variant="determinate" value={this.state.completed} />) :(
               "Login")}
             </Button>
-            <p className='catchError'>{this.state.err}</p>
+              <p className='catchError'>{this.state.err}</p>
+            {this.state.emailError||this.state.passwordError?
+              <p className='catchError'>Please do not leave any of the fields blank.</p>:null
+          }
         </Form>
         </Segment>
       </Grid.Column>

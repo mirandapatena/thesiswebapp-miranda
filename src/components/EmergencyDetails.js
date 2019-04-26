@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import { Button, Card, Modal } from 'semantic-ui-react';
+import { Button, Card, Modal, Table } from 'semantic-ui-react';
 import '../stylesheet_QueueIncidents.css';
 import fire from '../config/Fire';
 import _ from 'lodash';
- import {callVolunteer} from '../functions/callVolunteer';
+import {callVolunteer} from '../functions/callVolunteer';
 import {getNearestMobileUsers} from '../functions/getNearestMobileUsers';
 import DispatchMobileUser from './DispatchMobileUser';
 
@@ -40,9 +40,11 @@ class EmergencyDetails extends Component{
         });
     }
 
-    componentDidMount(){
-        
-    }
+    // componentDidMount(){
+    //     this.requestVolunteers();
+    //     this.requestResponders();
+    // }
+
     show = size => () => {
         this.setState({ size, open: true })
         this.getRespondersList();
@@ -71,6 +73,7 @@ class EmergencyDetails extends Component{
             var respondersList = this.extractActiveResponderDetails(activeResponders);
             console.log('respondesr list', respondersList);
             activeRespondersList = getNearestMobileUsers(this.props.coordinates.lng, this.props.coordinates.lat, respondersList, 'Responder');
+            activeRespondersList.sort((a,b) => (a.distance > b.distance) ? 1: (a.distance === b.distance) ?  1 : -1);
             respdondersList = this.getUsersProfiles(activeRespondersList);
             this.setState({activeResponders: respdondersList}, () => {
                 console.log('new state', this.state.activeResponders);
@@ -225,13 +228,15 @@ class EmergencyDetails extends Component{
             <div className="inc_stat"></div> {/*For "if statement" to change icon per type*/}
             <Card.Group>
                 <Card color ='red' onClick={this.show('tiny')}> 
-                    <Card.Content>
-                    <h4>{this.props.incidentKey}</h4>
+                    <Card.Header>
+                    <p className='incidentStyleType'><b>{this.props.incidentType}</b></p>
+                    <p className='incidentContent'>{this.props.incidentKey}</p>
                     {this.state.isRequestingVolunteers === true ? <h5>RAV</h5> : ''}
                     {this.state.isRequestingResponders === true ? <h5>RAR</h5> : ''}
-                    </Card.Content>
+                    </Card.Header>
                     <Card.Content>
-                    <h5>{this.props.incidentType}</h5>
+                    <p className='incidentReportedBy'><b>Reported By:</b> {this.state.firstName} {this.state.lastName}</p>
+                    
                         <Card.Description>
                             {this.props.incidentLocation}
                         </Card.Description>
@@ -263,18 +268,45 @@ class EmergencyDetails extends Component{
             <Modal size={size2} open={open2} onClose={this.closeActiveRespondersList}>
             <Modal.Header>Active Responders</Modal.Header>
                 <Modal.Content>
-                    <Card.Group itemsPerRow={3}>
+                    {/* <Card.Group itemsPerRow={3}>
                         {this.renderRespondersList()}
-                    </Card.Group>
+                    </Card.Group> */}
+                    <Table>
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.HeaderCell>Responders</Table.HeaderCell>
+                                <Table.HeaderCell>Responder Details</Table.HeaderCell>
+                                <Table.HeaderCell>Dispatch</Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Header>
+
+                        <Table.Body>
+                            {this.renderRespondersList()}
+                        </Table.Body>
+                    </Table>
                 </Modal.Content>
             </Modal>
 
             <Modal size={size3} open={open3} onClose={this.closeActiveVolunteersList}>
             <Modal.Header>Active Volunteers</Modal.Header>
                 <Modal.Content>
-                    <Card.Group itemsPerRow={3}>
+                    {/* <Card.Group itemsPerRow={3}>
                         {this.renderVolunteersList()}
-                    </Card.Group>
+                    </Card.Group> */}
+                    <Table>
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.HeaderCell>Volunteer</Table.HeaderCell>
+                                <Table.HeaderCell>Volunteer Details</Table.HeaderCell>
+                                <Table.HeaderCell>Dispatch</Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Header>
+
+                        <Table.Body>
+                            {this.renderVolunteersList()}
+                        </Table.Body>    
+                    </Table>
+
                 </Modal.Content>
             </Modal>
         </div>

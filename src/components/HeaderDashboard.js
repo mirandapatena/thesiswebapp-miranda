@@ -12,7 +12,7 @@ import '../HeaderDashboard.css';
 import PlacesAutocomplete, {geocodeByAddress, getLatLng, geocodeByPlaceId} from 'react-places-autocomplete';
 
 const emailRegex = RegExp(
-  /^[a-zA-Z0-9._-]+@[a-zA-Z]+(?:\.[a-zA-Z]+)*$/
+  /^([a-zA-Z0-9_.\-]+)@([a-zA-Z]+)\.([a-zA-Z]{2,5})$/
 );
 
 const contactNumberRegex = RegExp(
@@ -213,7 +213,7 @@ class HeaderDashboard extends Component{
       //   break;
 
       case "contactNumber":
-        formError.contactNumber = contactNumberRegex.test(value)? "": "Please enter a valid number.";
+        formError.contactNumber = contactNumberRegex.test(value)? "": "Please enter a valid number (09XXXXXXXX or +639XXXXXXXX)";
         break;
 
       default:
@@ -600,7 +600,6 @@ class HeaderDashboard extends Component{
                       control={Select}
                       options={nurse_medicalDegreeOptions}                
                       placeholder='Medical Degree'
-                      search
                       onChange={this.inputUserTypeHandler_medicalDegree}   
                       required               
                     />: null } 
@@ -610,7 +609,6 @@ class HeaderDashboard extends Component{
                       control={Select}
                       options={surgeon_medicalDegreeOptions}                
                       placeholder='Medical Degree'
-                      search
                       onChange={this.inputUserTypeHandler_medicalDegree}    
                       required              
                     />: null } 
@@ -620,7 +618,6 @@ class HeaderDashboard extends Component{
                       control={Select}
                       options={ems_medicalDegreeOptions}                
                       placeholder='Medical Degree'
-                      search
                       onChange={this.inputUserTypeHandler_medicalDegree}      
                       required            
                     />
@@ -649,8 +646,7 @@ class HeaderDashboard extends Component{
                     <Form.Field
                     control={Select}
                     options={nurse_certificationOptions}                
-                    placeholder='Certification'
-                    search                    
+                    placeholder='Certification'           
                     onChange={this.inputUserTypeHandler_certification}    
                     required              
                   />:
@@ -659,8 +655,7 @@ class HeaderDashboard extends Component{
                     <Form.Field
                       control={Select}
                       options={surgeon_certificationOptions}                
-                      placeholder='Certification'
-                      search                    
+                      placeholder='Certification'           
                       onChange={this.inputUserTypeHandler_certification}
                       required
                     />:(
@@ -670,7 +665,6 @@ class HeaderDashboard extends Component{
                       control={Select}
                       options={ems_certificationOptions}                
                       placeholder='Certification'
-                      search
                       onChange={this.inputUserTypeHandler_certification}    
                       required              
                     />
@@ -737,7 +731,7 @@ class HeaderDashboard extends Component{
                 <Form.Field style={{marginBottom: '10px', color: 'whitesmoke'}} required>
                       <Form.Input
                         fluid
-                        placeholder='Contact Number (09XXXXXXXXX)'
+                        placeholder='Contact Number: 09XXXXXXXXX'
                         type='text'
                         name='contactNumber'
                         pattern='[0-9]*'
@@ -762,8 +756,10 @@ class HeaderDashboard extends Component{
                   <Form.Button color='red' onClick={this.submitCreateAccount} 
                     disabled={!this.state.email || !this.state.firstName || !this.state.lastName 
                               || !this.state.user_type || !this.state.password || !this.state.contactNumber 
-                              || this.state.user_type === 'Volunteer'?
-                              !this.state.medicalDegree || !this.state.medicalProfession || !this.state.certification 
+                              || this.state.formError.email || this.state.formError.firstName || this.state.formError.lastName
+                              || this.state.formError.password || this.state.formError.contactNumber 
+                              || this.state.user_type === 'Volunteer'?!this.state.medicalDegree 
+                              || !this.state.medicalProfession || !this.state.certification 
                               || !this.state.isActiveVolunteer || !this.state.durationService:null               
                             } 
                   >

@@ -6,12 +6,18 @@ import fire from '../config/Fire';
 
 class VerifyUserAccount extends Component{
 
-    // verifyUser = () => {
-    //     console.log('vertu asd', this.props.uid);
-    //     var isVerified = true;
-    //     var userNode = fire.database().ref(`users/${this.props.uid}`);
-    //     userNode.update({isVerified});
-    // }
+    verifyUser = () => {
+        console.log('vertu asd', this.props.uid);
+        var isVerified = true;
+        var deleteNode = fire.database().ref(`unverifiedMobileUsers/${this.props.uid}`);
+        var userNode = fire.database().ref(`users/${this.props.uid}`);
+        userNode.update({isVerified}).then(()=>{
+            console.log(`${this.props.uid} account verified`);
+            deleteNode.remove().then(()=>{
+                console.log(`${this.props.uid} node in unverifiedMobileUsers node removed`);
+            });
+        })
+    }
     render(){
         return(
                     <Table.Row>
@@ -25,8 +31,7 @@ class VerifyUserAccount extends Component{
                         </Table.Cell>
                         <Table.Cell>
                             <Button compact animated='fade' color='green'>
-                                <Button.Content visible>Unverified</Button.Content>
-                                <Button.Content hidden>Verify</Button.Content>
+                                Verify
                             </Button>
                         </Table.Cell>
                     </Table.Row>

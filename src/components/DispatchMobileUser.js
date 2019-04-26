@@ -1,9 +1,33 @@
 import React, {Component} from 'react';
-import { Image, Card, Button} from 'semantic-ui-react';
+import { Image, Table, Header, Button} from 'semantic-ui-react';
 import _ from 'lodash';
 import fire from '../config/Fire';
 class DispatchMobileUser extends Component{
-    
+
+    constructor(props){
+        super(props);
+        this.state = {
+            isButtonDisabled: false
+        }
+
+        var isAccepted = fire.database().ref(`mobileUsers/Responder/${this.props.id}/isAccepted`);
+        console.log("sakto ni na user id?", this.props.id);
+        var isACCEPTED;
+        isAccepted.on('value', snapshot => {
+            isACCEPTED = snapshot.val();
+
+            console.log("hoy",isACCEPTED)     
+            this.setState({isAccepted: isACCEPTED});
+            console.log('isSETTLEDDD SHIT',isACCEPTED);
+
+            if(isACCEPTED === true){
+            this.setState({isButtonDisabled:true});
+            console.log('pISTI KA LESTER',this.state.isButtonDisabled);
+        }
+        });
+        
+    }
+
     dispatchMobileUser = () => {
         var incidentID = this.props.incidentID;
         var user_type = this.props.user_type
@@ -14,22 +38,31 @@ class DispatchMobileUser extends Component{
     
     render(){
         return( 
-                    <Card fluid color='red'>
-                            <Card.Content>
-                                <Image floated='right' size='mini' src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' />
-                                <Card.Header>{this.props.firstName}</Card.Header>
-                                <Card.Meta>{this.props.lastName}</Card.Meta>
-                                <Card.Meta>{this.props.distance} m away</Card.Meta>
-                                <Card.Meta>{this.props.email}</Card.Meta>
-                                <Card.Meta>{this.props.contactNumber}</Card.Meta>
-                            </Card.Content>                        
-                            <Card.Content extra> 
-                              <Button attached='bottom' color='red' onClick={this.dispatchMobileUser}>
-                                Dispatch
-                              </Button>
-                          </Card.Content>
-                    </Card>
-        );
+            <Table.Row>
+                <Table.Cell>
+                    <Header as='h4' image><Image src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' rounded size='mini'/>
+                        <Header.Content>
+                            <p className='colorBlue'>{this.props.firstName} {this.props.lastName}</p>
+                            <Header.Subheader></Header.Subheader>
+                            <Header.Subheader><p className='colorRed'>{this.props.distance} m away</p></Header.Subheader>
+                        </Header.Content>
+                    </Header>
+                </Table.Cell>
+                <Table.Cell>
+                    <Header>
+                        <Header.Content>
+                            <Header.Subheader><p className='colorBlue'><b>Email:</b> {this.props.email}</p></Header.Subheader>
+                            <Header.Subheader><p className='colorBlue'><b>Contact Number:</b> {this.props.contactNumber}</p></Header.Subheader>
+                        </Header.Content>
+                    </Header>
+                </Table.Cell>
+                <Table.Cell>
+                    <Button attached='bottom' color='red' onClick={this.dispatchMobileUser} disabled={this.state.isButtonDisabled}>
+                        Dispatch
+                    </Button>
+                </Table.Cell>
+            </Table.Row>
+        );  
     }
 
 }

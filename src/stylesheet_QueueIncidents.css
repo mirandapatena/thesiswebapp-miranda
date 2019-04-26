@@ -234,6 +234,36 @@ ul, menu, dir {
 
 }
 
+.colorRed{
+  color: #d61717;
+  margin: 0px;
+}
+
+.colorBlue{
+  color: #16426a;
+  margin: 0px;
+}
+
+.incidentStyleType{
+  color: #16426a;
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 5px;
+  padding-top: 10px;
+}
+
+.incidentContent{
+  color: #16426a;
+  font-size: 16px;
+  text-align: center;
+  padding-bottom: 10px;
+}
+
+.incidentReportedBy{
+  font-size: 16px;
+  color: #16426a;
+}
+
 
 /* .ui.center.aligned.header, .ui.centered.header {
   padding-bottom: 1em;
