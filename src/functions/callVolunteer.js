@@ -13,18 +13,17 @@ export function callVolunteer(volunteerWithCredentials, incidentKey, incidentCoo
     _.map(selectedVolunteers, (volunteer, key) => {
         console.log('volunteersfasd', volunteer);
         var volunteerProfileNode = fire.database().ref(`users/${volunteer.uid}`);
-        var volunteerNodePromise = volunteerProfileNode.once('value', snapshot => {
+        var volunteerNodePromise = volunteerProfileNode.on('value', snapshot => {
             volunteerProfile = snapshot.val();
             volunteer.firstName = volunteerProfile.firstName;
             volunteer.lastName = volunteerProfile.lastName;
             volunteer.email = volunteerProfile.email;
             volunteer.contactNumber = volunteerProfile.contactNumber;
             console.log('profile', volunteerProfile);
-        });
-        volunteerNodePromise.then(()=>{
             volunteerList.push(volunteer);
         });
     });
+    console.log('call volunteer', volunteerList);
     return volunteerList;
 }
 

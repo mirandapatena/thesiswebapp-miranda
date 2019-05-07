@@ -22,7 +22,7 @@ class VolunteerAccountLists extends Component{
             this.setState({volunteers: snapshot.val()}, () => {
                 console.log('unverified volunteers', this.state.volunteers);
                 _.map(this.state.volunteers, (volunteer, key) => {
-                    fire.database().ref(`users/${key}`).once('value', snapshot => {
+                    fire.database().ref(`users/${key}`).on('value', snapshot => {
                         tempObject = snapshot.val();
                         tempObject.key = snapshot.key;
                         list.push(tempObject);

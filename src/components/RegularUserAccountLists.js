@@ -30,7 +30,8 @@ class RegularUserAccountLists extends Component{
                             console.log('Unverified Regular Users Profiles', this.state.regularUsersProfiles);
                         });
                     })
-                })
+                });
+                
             });
         });
     }

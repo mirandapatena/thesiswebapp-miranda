@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Button, Card, Modal, Table } from 'semantic-ui-react';
+import { Button, Card, Modal, Table, Icon } from 'semantic-ui-react';
 import '../stylesheet_QueueIncidents.css';
 import fire from '../config/Fire';
 import _ from 'lodash';
@@ -18,6 +18,7 @@ class EmergencyDetails extends Component{
             open2: false,
             open3: false,
             onlineVolunteers: [{}],
+            respondersList: [{}],
             activeResponders: [{}],
             nearestVolunteers: [{}],
             isRequestingResponders: false,
@@ -25,7 +26,13 @@ class EmergencyDetails extends Component{
         }
         this.getRespondersList = this.getRespondersList.bind(this);
         this.getReporter();
+        
 
+
+        
+    }
+
+    componentDidMount(){
         var isRequestingResponders = fire.database().ref(`incidents/${this.props.incidentKey}/isRequestingResponders`);
         var isRequestingVolunteers = fire.database().ref(`incidents/${this.props.incidentKey}/isRequestingVolunteers`);
         var requestResponders;
@@ -40,15 +47,10 @@ class EmergencyDetails extends Component{
         });
     }
 
-    // componentDidMount(){
-    //     this.requestVolunteers();
-    //     this.requestResponders();
-    // }
-
     show = size => () => {
-        this.setState({ size, open: true })
         this.getRespondersList();
-        this.requestVolunteers();
+        this.setState({ size, open: true })
+        //this.requestVolunteers();
     }
 
     showActiveRespondersList = size2 => () => {
@@ -63,6 +65,17 @@ class EmergencyDetails extends Component{
     closeActiveRespondersList = () => this.setState({ open2: false });
     closeActiveVolunteersList = () => this.setState({ open3: false });
 
+    // getVolunteersList = () => {
+    //     let activeVolunteers;
+    //     let volunteersList = [];
+    //     let activeRespondersList;
+    //     const volunteerRef = fire.database().ref('mobileUsers/Responder');
+    //     volunteerRef.once('value', snapshot => {
+    //         activeVolunteers = snapshot.val();
+    //         var volunteerList = 
+    //     });
+    // }
+
     getRespondersList = () => {
         let activeResponders;
         let respdondersList = [];
@@ -70,13 +83,11 @@ class EmergencyDetails extends Component{
         const respondersRef = fire.database().ref('mobileUsers/Responder');
         respondersRef.once('value', snapshot => {
             activeResponders = snapshot.val();
-            var respondersList = this.extractActiveResponderDetails(activeResponders);
-            console.log('respondesr list', respondersList);
-            activeRespondersList = getNearestMobileUsers(this.props.coordinates.lng, this.props.coordinates.lat, respondersList, 'Responder');
-            activeRespondersList.sort((a,b) => (a.distance > b.distance) ? 1: (a.distance === b.distance) ?  1 : -1);
-            respdondersList = this.getUsersProfiles(activeRespondersList);
-            this.setState({activeResponders: respdondersList}, () => {
-                console.log('new state', this.state.activeResponders);
+            this.setState({respondersList: this.extractActiveResponderDetails(activeResponders)}, () => {
+                activeRespondersList = getNearestMobileUsers(this.props.coordinates.lng, this.props.coordinates.lat, this.state.respondersList, 'Responder');
+                this.setState({activeResponders: this.getUsersProfiles(activeRespondersList)}, () => {
+                    console.log('new state', this.state.activeResponders);
+                });
             });
         });
     }
@@ -108,12 +119,16 @@ class EmergencyDetails extends Component{
                 // user
                 // userProfile.key = user.key;
                 userProfile = user;
-                userProfile.uid = user.key;
-                userProfile.firstName = temp.firstName;
-                userProfile.lastName = temp.lastName;
-                userProfile.email = temp.email;
-                userProfile.contactNumber = temp.contactNumber;
-                userProfiles.push(userProfile);
+                console.log('get user profiles', user.isAccepted);
+                if(!user.isAccepted){
+                    userProfile.uid = user.key;
+                    userProfile.firstName = temp.firstName;
+                    userProfile.lastName = temp.lastName;
+                    userProfile.email = temp.email;
+                    userProfile.contactNumber = temp.contactNumber;
+                    userProfiles.push(userProfile);
+                }
+                
                 console.log('user profile', userProfile);
             });
         });
@@ -121,10 +136,9 @@ class EmergencyDetails extends Component{
     }
 
     renderRespondersList = () => {
-        var respondersList = this.state.activeResponders;
-        
-        return _.map(respondersList, (responder, key) => {
-            console.log('key', responder.key)
+        //var respondersList = this.state.activeResponders;
+        //console.log('responders lista', respondersList);
+        return _.map(this.state.activeResponders, (responder, key) => {
             return (
                 <DispatchMobileUser firstName={responder.firstName} lastName={responder.lastName} id={responder.uid} incidentID={this.props.incidentKey} distance={responder.distance} contactNumber={responder.contactNumber} email={responder.email} user_type='Responder'/>
             );
@@ -229,18 +243,23 @@ class EmergencyDetails extends Component{
             <Card.Group>
                 <Card color ='red' onClick={this.show('tiny')}> 
                     <Card.Header>
-                    <p className='incidentStyleType'><b>{this.props.incidentType}</b></p>
-                    <p className='incidentContent'>{this.props.incidentKey}</p>
-                    {this.state.isRequestingVolunteers === true ? <h5>RAV</h5> : ''}
-                    {this.state.isRequestingResponders === true ? <h5>RAR</h5> : ''}
+                        <p className='incidentStyleType'><b>{this.props.incidentType}</b></p>
+                        <p className='incidentContent'>{this.props.incidentKey}</p>
                     </Card.Header>
                     <Card.Content>
-                    <p className='incidentReportedBy'><b>Reported By:</b> {this.state.firstName} {this.state.lastName}</p>
-                    
+                        <p className='incidentReportedBy'><b>Reported By:</b> {this.state.firstName} {this.state.lastName}</p>
                         <Card.Description>
-                            {this.props.incidentLocation}
-                        </Card.Description>
+                            <b>{this.props.incidentLocation}</b>
+                        </Card.Description> 
                         <br></br>
+                    {this.state.isRequestingVolunteers === true ?
+                        <Card.Description extra style={{paddingBottom:'3px', paddingTop: '3px', color: 'red', borderTop:'0px solid!important', fontSize:'12px'}}>
+                            <p className='card-extra'>Requesting Additional Volunteer <Icon name='warning circle'/></p>
+                        </Card.Description>:null}
+                    {this.state.isRequestingResponders === true ?
+                        <Card.Description extra style={{paddingBottom:'3px', paddingTop: '3px', color: 'red', borderTop:'0px solid!important', fontSize:'12px'}}>
+                            <p>Requesting Additional Responder <Icon name='warning circle'/></p>
+                        </Card.Description>:null}
                     </Card.Content>
                 </Card>
             </Card.Group>
@@ -296,7 +315,7 @@ class EmergencyDetails extends Component{
                     <Table>
                         <Table.Header>
                             <Table.Row>
-                                <Table.HeaderCell>Volunteer</Table.HeaderCell>
+                                <Table.HeaderCell>Volunteers</Table.HeaderCell>
                                 <Table.HeaderCell>Volunteer Details</Table.HeaderCell>
                                 <Table.HeaderCell>Dispatch</Table.HeaderCell>
                             </Table.Row>

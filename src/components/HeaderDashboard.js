@@ -1,5 +1,6 @@
+/*global google*/
 import React, { Component } from 'react'
-import { Menu, Dropdown, Icon, Modal, Form, Button, Radio, Select } from 'semantic-ui-react'
+import { Menu, Dropdown, Icon, Modal, Form, Button, Radio, Select, Image } from 'semantic-ui-react'
 import fire from '../config/Fire';
 import {connect} from 'react-redux';
 import {saveIncident} from '../actions/incidentAction';
@@ -11,13 +12,14 @@ import '../stylesheet_QueueIncidents.css';
 import '../HeaderDashboard.css';
 import PlacesAutocomplete, {geocodeByAddress, getLatLng, geocodeByPlaceId} from 'react-places-autocomplete';
 import vehicularUnresponded from '../../src/images/va_new.png';
-// import vehicularResponding from '../../src/images/va_otw.png';
-// import vehicularSettled from '../../src/images/va_fin.png';
-// import physicalUnresponded from '../../src/images/pi_new.png';
-// import physicalResponding from '../../src/images/pi_otw.png';
-// import physicalSettled from '../../src/images/pi_fin.png';
-// import volunteerLogo from '../images/tracking_volunteer.png';
-// import responderLogo from '../images/tracking_responder.png';
+import vehicularResponding from '../../src/images/va_otw.png';
+import vehicularSettled from '../../src/images/va_fin.png';
+import physicalUnresponded from '../../src/images/pi_new.png';
+import physicalResponding from '../../src/images/pi_otw.png';
+import physicalSettled from '../../src/images/pi_fin.png';
+import volunteerLogo from '../images/tracking_volunteer.png';
+import responderLogo from '../images/tracking_responder.png';
+
 
 const emailRegex = RegExp(
   /^([a-zA-Z0-9_.\-]+)@([a-zA-Z]+)\.([a-zA-Z]{2,5})$/
@@ -52,6 +54,7 @@ const formValid = ({ formError, ...rest }) => {
   return valid;
 }
 
+
 class HeaderDashboard extends Component{
   
   constructor(props){
@@ -63,6 +66,8 @@ class HeaderDashboard extends Component{
         open2: false,
         incidentType: '',
         incidentLocation: '',
+        destinationPlaceId:'',
+        errorAddress:'',
         unresponded: null,
         isResponding: null,
         isSettled: null,
@@ -75,6 +80,7 @@ class HeaderDashboard extends Component{
         // err: '',
         lat: null,
         lng: null,
+        errorMessage: '',
         incidentPhoto: null,
         reportedBy: '',
         timeReceived: null,
@@ -103,21 +109,14 @@ class HeaderDashboard extends Component{
 
   show = size => () => this.setState({ size, open: true })
   close = () => this.setState(
-    { open: false, incidentType: '', incidentLocation: '' })
+    { open: false, incidentType: '', incidentLocation: '', errorMessage:'', errorAddress:'' })
 
   show2 = size2 => () => this.setState({ size2, open2: true })
-  close2 = () => this.setState({ open2: false, firstName: '',
-  lastName: '', password: '', email: '', user_type: '', contactNumber: '',
-  durationService: '', medicalDegree:'', medicalProfession:'', certification:'', isActiveVolunteer:'',
-  formError: {
-    firstName:'',
-    lastName:'',
-    email:'',
-    password:'',
-    // confirmPassword: '',
-    contactNumber:'',
-    user_type:''
-} })
+  close2 = () => this.setState({ open2: false, firstName: '', lastName: '', password: '', email: '',
+                                 user_type: '', contactNumber: '', durationService: '', medicalDegree:'',
+                                 medicalProfession:'', certification:'', isActiveVolunteer:'',
+                                 formError: { firstName:'', lastName:'', email:'', password:'', 
+                                 contactNumber:'', user_type:''} })
 
   showAccountLists = size3 => () => this.setState({ size3, open3: true, open4:false, open5:false })
   close3 = () => this.setState({ open3: false, open4: false, open5: false })
@@ -127,23 +126,48 @@ class HeaderDashboard extends Component{
 
   showRegularUserLists = size5 => () => this.setState({ size5, open5: true, open3:false, open4:false })
   close5 = () => this.setState({ open3: false, open4: false, open5: false })
-    
-  handleChange = incidentLocation => {
-      this.setState({ incidentLocation });
+
+  handleChange = (incidentLocation, destinationPlaceId)  => {
+      this.setState({ incidentLocation, destinationPlaceId, errorMessage: '', errorAddress:'' });
   };
-  
 
   handleSelect = (incidentLocation, destinationPlaceId) => {
     geocodeByPlaceId(destinationPlaceId)
-    .then(results => console.log(results))
+    .then(results => {geocodeByPlaceId(results[0].place_id)
+    // .then(placeId => {
+        this.setState({destinationPlaceId});
+        console.log('destinationPlaceId:',destinationPlaceId)
+        console.log(results)
+    })
     .catch(error => console.error(error));
+
     
     geocodeByAddress(incidentLocation)
       .then(results => getLatLng(results[0]))
       .then(latLng => {
           this.setState({lng: latLng.lng, lat: latLng.lat});
+          console.log('Incident Location:',incidentLocation)
       })
-      .catch(error => console.error('Error', error));
+      .catch(errorAddress => {
+        var errorAddress;
+        console.log('Invalid Address!', errorAddress);
+        this.setState({errorAddress:errorAddress}) // eslint-disable-line no-console
+      });
+  };
+
+  handleCloseClick = () => {
+    this.setState({
+      incidentLocation: '',
+      latitude: null,
+      longitude: null,
+    });
+  };
+
+  handleError = (status, clearSuggestions) => {
+    console.log('Error from Google Maps API', status); // eslint-disable-line no-console
+    this.setState({ errorMessage: status }, () => {
+      clearSuggestions();
+    });
   };
 
   inputIncidentTypeHandler = (e, {incidentType}) => this.setState({ incidentType})
@@ -155,7 +179,7 @@ class HeaderDashboard extends Component{
   submitIncidentHandler = (e) => {
     // console.log('uid reported', this.props.user.uid);
     e.preventDefault();
-    const timeReceived = Date.now();
+    const timeReceived = Date(Date.now());
     const incident = {
       incidentType: this.state.incidentType,
       incidentLocation: this.state.incidentLocation,
@@ -170,7 +194,7 @@ class HeaderDashboard extends Component{
       timeSettle: '',
       responderResponding: '',
       volunteerResponding: '',
-      destinationPlaceId: '',
+      destinationPlaceId: this.state.destinationPlaceId,
       isRequestingResponders: false,
       isRequestingVolunteers: false,
       isRespondingResponder: false,
@@ -182,6 +206,7 @@ class HeaderDashboard extends Component{
     this.setState({
         incidentType: '',
         incidentLocation: '',
+        destinationPlaceId: '',
         unresponded: false,
         isResponding: false,
         isSettled: false,
@@ -338,16 +363,6 @@ class HeaderDashboard extends Component{
     { key: 'sign-out', text: 'Sign Out', icon: 'sign out', onClick: this.logout },
   ]
   
-  filtertrigger = (
-    <span>
-      <Icon className='small filter' />Filter
-    </span>
-  )
-    //Personnel Actions Trigger
-  act_trigger = (
-    <span></span>
-  )
-    //Filter Incident Option
    
   logout() {
     fire.auth().signOut();
@@ -374,6 +389,8 @@ class HeaderDashboard extends Component{
       <RegularUserAccountLists/>
     )
   }
+  
+  
 
   render() {
     const { open, size } = this.state
@@ -384,6 +401,15 @@ class HeaderDashboard extends Component{
     const { formError } = this.state;
     let createUserAccountButton;
     let accountLists;
+
+    const {errorMessage} = this.state;
+
+    const searchOptions = {
+      location: new google.maps.LatLng(10.324646, 123.942197),
+      radius: 4,
+      types: ['establishment']
+    }
+
     if(this.props.user_type === 'Administrator'){
       createUserAccountButton = <Menu.Item link onClick={this.show2('tiny')}>
       <Icon className="add user" />Create User Account
@@ -402,65 +428,65 @@ class HeaderDashboard extends Component{
     { text: 'Regular User', value: 'Regular User'}
   ]
 
-  const activeVolunteerOptions = [
-    { text: 'Yes', value: 'Yes'},
-    { text: 'No', value: 'No'},
-  ]
+    const activeVolunteerOptions = [
+      { text: 'Yes', value: 'Yes'},
+      { text: 'No', value: 'No'},
+    ]
 
-  const surgeon_medicalDegreeOptions = [
-    { text: 'Bachelor of Medicine and Bachelor of Surgery (MBBS)', value: 'Bachelor of Medicine and Bachelor of Surgery'},
-    { text: 'Master of Medicine (MM, MMed)', value: 'Master of Medicine'},
-    { text: 'Master of Surgery (MS, MSurg, ChM)', value: 'Master of Surgery'},
-    { text: 'Master of Medical Science (MMSc, MMedSc)', value: 'Master of Medical Science'},
-    { text: 'Doctor of Medical Science (DMSc, DMedSc)', value: 'Doctor of Medical Science'},
-    { text: 'Doctor of Surgery (DS, DSurg)', value: 'Doctor of Surgery'},
-    { text: 'Doctor of Medicine (MD)', value: 'Doctor of Medicine'},
-  ]
+    const surgeon_medicalDegreeOptions = [
+      { text: 'Bachelor of Medicine and Bachelor of Surgery (MBBS)', value: 'Bachelor of Medicine and Bachelor of Surgery'},
+      { text: 'Master of Medicine (MM, MMed)', value: 'Master of Medicine'},
+      { text: 'Master of Surgery (MS, MSurg, ChM)', value: 'Master of Surgery'},
+      { text: 'Master of Medical Science (MMSc, MMedSc)', value: 'Master of Medical Science'},
+      { text: 'Doctor of Medical Science (DMSc, DMedSc)', value: 'Doctor of Medical Science'},
+      { text: 'Doctor of Surgery (DS, DSurg)', value: 'Doctor of Surgery'},
+      { text: 'Doctor of Medicine (MD)', value: 'Doctor of Medicine'},
+    ]
 
-  const surgeon_certificationOptions = [
-    { text: 'General Surgeon Board Certification', value: 'General Surgeon Board Certification'},
-  ]
+    const surgeon_certificationOptions = [
+      { text: 'General Surgeon Board Certification', value: 'General Surgeon Board Certification'},
+    ]
 
-  const nurse_medicalDegreeOptions = [
-    { text: 'Bachelor of Science in Nursing (BSN)', value: 'Bachelor of Science in Nursing'},
-    { text: 'Associate Degree in Nursing (ADN)', value: 'Associate Degree in Nursing'},
-  ]
+    const nurse_medicalDegreeOptions = [
+      { text: 'Bachelor of Science in Nursing (BSN)', value: 'Bachelor of Science in Nursing'},
+      { text: 'Associate Degree in Nursing (ADN)', value: 'Associate Degree in Nursing'},
+    ]
 
-  const nurse_certificationOptions = [
-    { text: 'Maternal and Child Health Nursing', value: 'Maternal and Child Health Nursing'},
-    { text: 'Emergency and Trauma Nursing', value: 'Emergency and Trauma Nursing'},
-    { text: 'Cardiovascular Nursing', value: 'Cardiovascular Nursing'},
-  ]
+    const nurse_certificationOptions = [
+      { text: 'Maternal and Child Health Nursing', value: 'Maternal and Child Health Nursing'},
+      { text: 'Emergency and Trauma Nursing', value: 'Emergency and Trauma Nursing'},
+      { text: 'Cardiovascular Nursing', value: 'Cardiovascular Nursing'},
+    ]
 
-  const ems_medicalDegreeOptions = [
-    {text: 'Emergency Medical Services NC II', value: 'Emergency Medical Services NC II'},
-  ]
+    const ems_medicalDegreeOptions = [
+      {text: 'Emergency Medical Services NC II', value: 'Emergency Medical Services NC II'},
+    ]
 
-  const ems_certificationOptions = [
-    {text: 'Medical First Responder', value: 'Medical First Responder'},
-    {text: 'Ambulance Care Assistants', value: 'Ambulance Care Assistants'},
-    {text: 'Emergency Medical Technicians', value:'Emergency Medical Technicians'},
-    {text: 'Paramedics', value: 'Paramedics'},
-  ]
+    const ems_certificationOptions = [
+      {text: 'Medical First Responder', value: 'Medical First Responder'},
+      {text: 'Ambulance Care Assistants', value: 'Ambulance Care Assistants'},
+      {text: 'Emergency Medical Technicians', value:'Emergency Medical Technicians'},
+      {text: 'Paramedics', value: 'Paramedics'},
+    ]
 
-  const medicalProfessionOptions = [
-    { text: 'Nurse', value: 'Nurse'},
-    { text: 'Surgeon', value: 'Surgeon'},
-    { text: 'Emergency Medical Service Personnel', value: 'Emergency Medical Service Personnel'},
-  ]
+    const medicalProfessionOptions = [
+      { text: 'Nurse', value: 'Nurse'},
+      { text: 'Surgeon', value: 'Surgeon'},
+      { text: 'Emergency Medical Service Personnel', value: 'Emergency Medical Service Personnel'},
+    ]
 
-  const durationServiceOptions = [
-    {text: '1 year', value: 1},
-    {text: '2 years', value: 2},
-    {text: '3 years', value: 3},
-    {text: '4 years', value: 4},
-    {text: '5 years', value: 5},
-    {text: '6 years', value: 6},
-    {text: '7 years', value: 7},
-    {text: '8 years', value: 8},
-    {text: '9 years', value: 9},
-    {text: '10 years', value: 10},
-  ]
+    const durationServiceOptions = [
+      {text: '1 year', value: 1},
+      {text: '2 years', value: 2},
+      {text: '3 years', value: 3},
+      {text: '4 years', value: 4},
+      {text: '5 years', value: 5},
+      {text: '6 years', value: 6},
+      {text: '7 years', value: 7},
+      {text: '8 years', value: 8},
+      {text: '9 years', value: 9},
+      {text: '10 years', value: 10},
+    ]
 
     return (
 
@@ -477,13 +503,29 @@ class HeaderDashboard extends Component{
               {createUserAccountButton}
               {accountLists}
           </Menu.Menu>
-        <Menu.Menu position='right'>
-              <Menu.Item onClick={this.handleItemClick}>
-                  <Dropdown trigger={this.trigger} options={this.options} pointing='top left' icon={null} />
-              </Menu.Item>
-        </Menu.Menu>
+          <Menu.Menu position='right'>
+            <Menu.Item>
+              <Dropdown text='Legends' pointing='top right' floating iconPosition='right' icon='caret down'  >
+                <Dropdown.Menu>
+                  <Dropdown.Item><Image src={vehicularUnresponded} size='mini' floated='right'/>Vehicular Unresponded</Dropdown.Item>
+                  <Dropdown.Item><Image src={vehicularResponding} size='mini' floated='right'/>Vehicular Responding</Dropdown.Item>
+                  <Dropdown.Item><Image src={vehicularSettled} size='mini' floated='right'/>Vehicular Settled</Dropdown.Item>
+                  <Dropdown.Item><Image src={physicalUnresponded} size='mini' floated='right'/>Physical Unresponded</Dropdown.Item>
+                  <Dropdown.Item><Image src={physicalResponding} size='mini' floated='right'/>Physical Responding</Dropdown.Item>
+                  <Dropdown.Item><Image src={physicalSettled} size='mini' floated='right'/>Physical Settled</Dropdown.Item>
+                  <Dropdown.Divider/>
+                  <Dropdown.Item><Image src={responderLogo} size='mini' floated='right'/>Responder</Dropdown.Item>
+                  <Dropdown.Item><Image src={volunteerLogo} size='mini' floated='right'/>Volunteer</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </Menu.Item>
+            <Menu.Item onClick={this.handleItemClick}>
+              <Dropdown trigger={this.trigger} options={this.options} pointing='top left' icon={null} />
+            </Menu.Item>
+          </Menu.Menu>
       </Menu>
-
+    {/* Header Menu */}
+    
       {/* Add Incident Modal */}
       <Modal size={size} open={open} onClose={this.close}>
       <Modal.Header>New Emergency</Modal.Header>
@@ -513,15 +555,18 @@ class HeaderDashboard extends Component{
                       value={this.state.incidentLocation}
                       onChange={this.handleChange}
                       onSelect={this.handleSelect}
+                      searchOptions={searchOptions}
+                      // shouldFetchSuggestions={this.state.incidentLocation.length > 3}
                   >
                       {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
                       <div>
-                          <input
+                          <input 
                           {...getInputProps({
                               placeholder: 'Search Places ...',
                               className: 'location-search-input',
-                          })}
+                          })} 
                           />
+                          
                           <div className="autocomplete-dropdown-container">
                           {loading && <div>Loading...</div>}
                           {suggestions.map(suggestion => {
@@ -547,13 +592,24 @@ class HeaderDashboard extends Component{
                       </div>
                       )}
                   </PlacesAutocomplete>   
+                  {errorMessage.length > 0 && (<div>{this.state.errorMessage}</div>
+                    )}
+                  {this.state.errorAddress?
+                    <div>{this.state.errorAddress}</div>:null}
                   </Form.Field>
               </Form>
               </Modal.Content>
               <Modal.Actions>
-                  <Form.Button color='red' onClick={this.submitIncidentHandler} disabled={!this.state.incidentLocation || !this.state.incidentType}>
+              {this.state.incidentLocation.length > 0 && (
+                  <Form.Button floated='left' color='red' onClick={this.handleCloseClick}> Clear </Form.Button>)}
+                  <Form.Button color='red' onClick={this.submitIncidentHandler} 
+                            disabled={!this.state.incidentLocation || !this.state.incidentType 
+                                      || this.state.errorMessage || this.state.errorAddress
+                                      || !this.state.destinationPlaceId
+                                      }>
                       Submit
                   </Form.Button>
+                 
         </Modal.Actions>
       </Modal>
       {/* Add Incident Modal */}

@@ -26,10 +26,12 @@ export function getNearestMobileUsers(incidentLng, incidentLat, mobileUsers, use
                     nearestUsers.push(userObject);
                     console.log('nearest volunteerss', userObject);
                 }
-            }else if(user_type === 'Responder'){
+            }else if(user_type === 'Responder' && !user.isAccepted){
                 nearestUsers.push(user);
             }
         }
     });
+    nearestUsers.sort((a,b) => parseFloat(a.distance) - parseFloat(b.distance));
+    console.log('nearest fuc', nearestUsers);
     return nearestUsers;
 }

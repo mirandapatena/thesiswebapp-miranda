@@ -18,6 +18,7 @@ class VerifyUserAccount extends Component{
             });
         })
     }
+
     render(){
         return(
                     <Table.Row>

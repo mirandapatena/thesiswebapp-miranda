@@ -22,7 +22,7 @@ class ResponderAccountLists extends Component{
             this.setState({responders: snapshot.val()}, () => {
                 console.log('unverified responderse', this.state.responders);
                 _.map(this.state.responders, (responder, key) => {
-                    fire.database().ref(`users/${key}`).once('value', snapshot => {
+                    fire.database().ref(`users/${key}`).on('value', snapshot => {
                         tempObject = snapshot.val();
                         tempObject.key = snapshot.key;
                         list.push(tempObject);
