@@ -18,6 +18,7 @@ class EmergencyDetails extends Component{
             open2: false,
             open3: false,
             onlineVolunteers: [{}],
+            bestVolunteers: [{}],
             respondersList: [{}],
             activeResponders: [{}],
             nearestVolunteers: [{}],
@@ -26,10 +27,6 @@ class EmergencyDetails extends Component{
         }
         this.getRespondersList = this.getRespondersList.bind(this);
         this.getReporter();
-        
-
-
-        
     }
 
     componentDidMount(){
@@ -49,6 +46,7 @@ class EmergencyDetails extends Component{
 
     show = size => () => {
         this.getRespondersList();
+        this.requestVolunteers();
         this.setState({ size, open: true })
         //this.requestVolunteers();
     }
@@ -78,13 +76,13 @@ class EmergencyDetails extends Component{
 
     getRespondersList = () => {
         let activeResponders;
-        let respdondersList = [];
         let activeRespondersList;
         const respondersRef = fire.database().ref('mobileUsers/Responder');
         respondersRef.once('value', snapshot => {
             activeResponders = snapshot.val();
-            this.setState({respondersList: this.extractActiveResponderDetails(activeResponders)}, () => {
+            this.setState({respondersList: this.extractActiveMobileUserDetails(activeResponders)}, () => {
                 activeRespondersList = getNearestMobileUsers(this.props.coordinates.lng, this.props.coordinates.lat, this.state.respondersList, 'Responder');
+                console.log('activeRespondersList', activeResponders);
                 this.setState({activeResponders: this.getUsersProfiles(activeRespondersList)}, () => {
                     console.log('new state', this.state.activeResponders);
                 });
@@ -92,17 +90,17 @@ class EmergencyDetails extends Component{
         });
     }
     
-    extractActiveResponderDetails = (responders) => {
-        let activeResponderValues = responders;
-        let activeRespondersList = _(activeResponderValues)
+    extractActiveMobileUserDetails = (mobileUsers) => {
+        let activeMobileUserValues = mobileUsers;
+        let activeMobileUserList = _(activeMobileUserValues)
                             .keys()
                             .map(key => {
-                                let cloned = _.clone(activeResponderValues[key]);
+                                let cloned = _.clone(activeMobileUserValues[key]);
                                 cloned.key = key;
                                 return cloned;
                             })
                             .value();
-        return activeRespondersList;
+        return activeMobileUserList;
     }
 
     getUsersProfiles = (userList) => {
@@ -146,31 +144,26 @@ class EmergencyDetails extends Component{
     }
 
     requestVolunteers = () => {
-        var volunteerNode = fire.database().ref('mobileUsers/Volunteer');
-        var nearestVolunteers = [];
-        var onlineVolunteers = [];
-        var volunteersList = [];
-        var lng = this.props.coordinates.lng;
-        var lat = this.props.coordinates.lat;
-        volunteerNode.once('value', snapshot => {
-            onlineVolunteers = snapshot.val();        
-            console.log('online volunteers', onlineVolunteers);
-            this.setState({onlineVolunteers}, () => {
-                console.log('volunteers node', this.state.onlineVolunteers);
-                nearestVolunteers = getNearestMobileUsers(lng, lat, this.state.onlineVolunteers, 'Volunteer');
-                console.log('asdgsdgsryhasdfa', nearestVolunteers);
-                this.getBestVolunteer(nearestVolunteers);
-                volunteersList = callVolunteer(this.state.volunteerWithCredentials, this.props.incidentKey, this.props.coordinates);
-                this.setState({onlineVolunteers: volunteersList});
-                //this.renderVolunteersList();
+        let activeVolunteers;
+        let activeVolunteersList;
+        const volunteerRef = fire.database().ref('mobileUsers/Volunteer');
+        volunteerRef.once('value', snapshot => {
+            activeVolunteers = snapshot.val();
+            console.log('activeVolunteersa', activeVolunteers);
+            this.setState({onlineVolunteers: this.extractActiveMobileUserDetails(activeVolunteers)}, () => {
+                console.log('active volunteer var', this.state.onlineVolunteers);
+                activeVolunteersList = getNearestMobileUsers(this.props.coordinates.lng, this.props.coordinates.lat, this.state.onlineVolunteers, 'Volunteer');
+                console.log('active volunteer list', activeVolunteersList);
+                this.setState({bestVolunteers: this.getUsersProfiles(activeVolunteersList)}, () => {
+                    console.log('the best', this.state.bestVolunteers);
+                });
             });
         });
     }
 
     renderVolunteersList = () => {
-        var volunteerList = this.state.onlineVolunteers;
-        console.log('asdfasgsdgfsdfasg');
-        return _.map(volunteerList, (volunteer, key) => {
+        console.log('renderVolunteersList', this.state.bestVolunteers);
+        return _.map(this.state.bestVolunteers, (volunteer, key) => {
             return (
                 <DispatchMobileUser firstName={volunteer.firstName} lastName={volunteer.lastName} id={volunteer.uid} incidentID={this.props.incidentKey}
                 distance={volunteer.distance} user_type='Volunteer' email={volunteer.email} contactNumber={volunteer.contactNumber}/>
@@ -199,7 +192,6 @@ class EmergencyDetails extends Component{
     }
 
     getReporter = () => {
-        console.log('id lhlhklk', this.props.reportedBy);
         var user = fire.database().ref(`users/${this.props.reportedBy}`);
         var firstName, lastName, snap;
         user.once('value', snapshot => {

@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import { Image, Table, Header, Button} from 'semantic-ui-react';
-import _ from 'lodash';
 import fire from '../config/Fire';
 class DispatchMobileUser extends Component{
 
@@ -9,8 +8,7 @@ class DispatchMobileUser extends Component{
         this.state = {
             isButtonDisabled: false
         }
-
-        var isAccepted = fire.database().ref(`mobileUsers/Responder/${this.props.id}/isAccepted`);
+        var isAccepted = fire.database().ref(`mobileUsers/${this.props.user_type}/${this.props.id}/isAccepted`);
         console.log("sakto ni na user id?", this.props.id);
         var isACCEPTED;
         isAccepted.on('value', snapshot => {
