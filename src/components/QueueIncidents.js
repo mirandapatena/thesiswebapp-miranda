@@ -32,6 +32,7 @@ class QueueIncidents extends Component {
             return (
                 <div className='item' key={key}>
                     <EmergencyDetails 
+                        timeReceived = {incident.timeReceived}
                         incidentType = {incident.incidentType} 
                         incidentLocation = {incident.incidentLocation}
                         coordinates = {incident.coordinates}

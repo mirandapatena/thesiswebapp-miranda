@@ -179,10 +179,11 @@ class HeaderDashboard extends Component{
   submitIncidentHandler = (e) => {
     // console.log('uid reported', this.props.user.uid);
     e.preventDefault();
-    const timeReceived = Date(Date.now());
+    const timeReceived = Date.now();
     const incident = {
       incidentType: this.state.incidentType,
       incidentLocation: this.state.incidentLocation,
+      image_uri: '',
       unresponded: true,
       isResponding: false,
       isSettled: false,

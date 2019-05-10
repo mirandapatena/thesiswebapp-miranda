@@ -23,8 +23,16 @@ class EmergencyDetails extends Component{
             activeResponders: [{}],
             nearestVolunteers: [{}],
             isRequestingResponders: false,
-            isRequestingVolunteers: false
+            isRequestingVolunteers: false,
+            timeReceived: '',
+            volunteerAccept: false,
+            volunteerReject: false,
+            timeOut: false,
+            waitTime: false
         }
+        // console.log('time received', this.props.timeReceived);
+        // var newDate = new Date(this.props.timeReceived);
+        // console.log('time fuck', Date.parse(this.props.timeReceived));
         this.getRespondersList = this.getRespondersList.bind(this);
         this.getReporter();
     }
@@ -48,7 +56,6 @@ class EmergencyDetails extends Component{
         this.getRespondersList();
         this.requestVolunteers();
         this.setState({ size, open: true })
-        //this.requestVolunteers();
     }
 
     showActiveRespondersList = size2 => () => {
@@ -171,6 +178,49 @@ class EmergencyDetails extends Component{
         });
     }
 
+    volunteerDispatch = () => {
+        console.log('volunteerDispatch', this.state.bestVolunteers);
+        var bestVolunteers = this.state.bestVolunteers;
+        var count = 0;
+        var flag = false;
+        var tempTime = this.props.timeReceived;
+        while(!this.state.volunteerAccept || !this.state.timeOut){
+            console.log('outer loop');
+            var sevenMinuteGoal = Date.now();
+            if((Date.now() - sevenMinuteGoal) >= 10000){
+                this.setState({timeOut: true}, () => {
+                    console.log(`${this.props.incidentKey}: no volunteer accepted request`);
+                });
+            } else{
+                console.log('prompting volunteers');
+                bestVolunteers.forEach((volunteer)=>{
+                    console.log(`${volunteer.firstName} now`);
+                    while(!this.state.volunteerAccept || !this.state.waitTime){
+                        var volunteerNode = fire.database().ref(`mobileUsers/Volunteer/${volunteer.key}`);
+                        console.log(`tempTime ${tempTime} Date.now ${Date.now()} ${Date.now() - tempTime}  inner loop`);
+                        if((Date.now() - tempTime) >= 10000){
+                            this.setState({waitTime: true}, () => {
+                                console.log(`${volunteer.firstName} ignored request`);
+                                volunteerNode.off();
+                            });
+                        }
+                        volunteerNode.update({incidentID: this.props.incidentKey}).then(() => {
+                            console.log('wtf');
+                            var isAcceptNode = fire.database().ref(`mobileUsers/Volunter${volunteer.key}/isAccepted`);
+                            isAcceptNode.once('child_changed', snapshot => {
+                                if(snapshot.val() === true){
+                                    this.setState({volunteerAccept: snapshot.val()}, () => {
+                                        console.log(`prompted volunteer: ${volunteer.firstName}`);
+                                    });
+                                }
+                            });
+                        });
+                    }
+                });
+            }  
+        }
+    }
+
     getBestVolunteer = (nearestVolunteers) => {
         var credentialsNode = fire.database();
         var volunteerWithCredentials = [];
@@ -271,7 +321,7 @@ class EmergencyDetails extends Component{
                             </Button>
                             {/*this.requestVolunteers */}
                             <Button color='blue' onClick={this.showActiveVolunteersList('small')}>
-                                {this.state.isRequestingVolunteers === true ? 'Request Additional Volunteers' : 'Request Volunteers'}
+                                {this.state.isRequestingVolunteers === true ? 'Request Additional Volunteers' : 'Request Volunteer'}
                             </Button>
                         </Modal.Actions>
             </Modal>
@@ -317,7 +367,7 @@ class EmergencyDetails extends Component{
                             {this.renderVolunteersList()}
                         </Table.Body>    
                     </Table>
-
+                    <Button onClick={this.volunteerDispatch}>Request Volunteer</Button>
                 </Modal.Content>
             </Modal>
         </div>
