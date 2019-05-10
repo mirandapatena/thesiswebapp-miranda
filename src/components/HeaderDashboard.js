@@ -8,6 +8,11 @@ import {createUserAccount} from '../functions/createUserAccount';
 import ResponderAccountLists from './ResponderAccountLists';
 import VolunteerAccountLists from './VolunteerAccountLists';
 import RegularUserAccountLists from './RegularUserAccountLists';
+import DeleteResponder from './DeleteResponder';
+import DeleteVolunteer from './DeleteVolunteer';
+import DeleteRegularUser from './DeleteRegularUser';
+import DeleteCCP from './DeleteCCP';
+import DeleteAdmin from './DeleteAdmin';
 import '../stylesheet_QueueIncidents.css';
 import '../HeaderDashboard.css';
 import PlacesAutocomplete, {geocodeByAddress, getLatLng, geocodeByPlaceId} from 'react-places-autocomplete';
@@ -36,6 +41,7 @@ const firstNameRegex = RegExp(
 const lastNameRegex = RegExp(
   /^[a-zA-ZñÑ.,'-\s]+$/
 );
+
 
 const formValid = ({ formError, ...rest }) => {
   let valid = true;
@@ -77,7 +83,7 @@ class HeaderDashboard extends Component{
         email: '',
         user_type: '',
         contactNumber: '',
-        // err: '',
+        sex: '',
         lat: null,
         lng: null,
         errorMessage: '',
@@ -98,14 +104,24 @@ class HeaderDashboard extends Component{
           email:'',
           password:'',
           contactNumber:'',
+          sex: '',
           user_type:''
-      }
-        
+      },
+      userID: ''  
       }
       this.logout = this.logout.bind(this);
       this.submitCreateAccount = this.submitCreateAccount.bind(this);
   }
 
+  // getUserDetails = () => {
+  //   let userAccount;
+  //   console.log('getuserdetails', this.state.userID);
+  //   fire.database().ref('users/'+this.state.userID).once("value", snapshot => {
+  //     userAccount = snapshot.val();
+  //     this.setState({userAccount: userAccount});
+  //     console.log('userAccount', this.state.userAccount);
+  //   });
+  // }
 
   show = size => () => this.setState({ size, open: true })
   close = () => this.setState(
@@ -114,7 +130,7 @@ class HeaderDashboard extends Component{
   show2 = size2 => () => this.setState({ size2, open2: true })
   close2 = () => this.setState({ open2: false, firstName: '', lastName: '', password: '', email: '',
                                  user_type: '', contactNumber: '', durationService: '', medicalDegree:'',
-                                 medicalProfession:'', certification:'', isActiveVolunteer:'',
+                                 medicalProfession:'', certification:'', isActiveVolunteer:'', sex:'',
                                  formError: { firstName:'', lastName:'', email:'', password:'', 
                                  contactNumber:'', user_type:''} })
 
@@ -126,6 +142,21 @@ class HeaderDashboard extends Component{
 
   showRegularUserLists = size5 => () => this.setState({ size5, open5: true, open3:false, open4:false })
   close5 = () => this.setState({ open3: false, open4: false, open5: false })
+
+  showResponder = size6 => () => this.setState({ size6, open6: true, open7: false, open8: false, open9: false, open10: false })
+  close6 = () => this.setState({ open6: false, open7: false, open8: false  })
+
+  showVolunteer = size7 => () => this.setState({ size7, open7: true, open6: false, open8: false, open9: false, open10: false })
+  close7 = () => this.setState({ open7: false })
+
+  showRegularUser = size8 => () => this.setState({ size8, open8: true, open6: false, open7: false, open9: false, open10: false  })
+  close8 = () => this.setState({ open8: false })
+
+  showCCP = size9 => () => this.setState({ size9, open9: true, open6: false, open7: false, open8: false, open10: false })
+  close9 = () => this.setState({ open9: false })
+
+  showAdmin = size10 => () => this.setState({ size10, open10: true, open6: false, open7: false, open8: false, open9: false })
+  close10 = () => this.setState({ open10: false })
 
   handleChange = (incidentLocation, destinationPlaceId)  => {
       this.setState({ incidentLocation, destinationPlaceId, errorMessage: '', errorAddress:'' });
@@ -179,11 +210,14 @@ class HeaderDashboard extends Component{
   submitIncidentHandler = (e) => {
     // console.log('uid reported', this.props.user.uid);
     e.preventDefault();
-    const timeReceived = Date.now();
+    
+    var d = Date();
+    var a = d.toString()  
+
+    const timeReceived = a;
     const incident = {
       incidentType: this.state.incidentType,
       incidentLocation: this.state.incidentLocation,
-      image_uri: '',
       unresponded: true,
       isResponding: false,
       isSettled: false,
@@ -249,6 +283,10 @@ class HeaderDashboard extends Component{
       case "contactNumber":
         formError.contactNumber = contactNumberRegex.test(value)? "": "Please enter a valid number (09XXXXXXXX or +639XXXXXXXX)";
         break;
+      
+      // case "sex":
+      //   formError.sex = genderRegex.test(value) ? "" : "Please select.";
+      //   break;
 
       default:
         break;
@@ -285,6 +323,10 @@ class HeaderDashboard extends Component{
     this.setState({certification: value })
   };
 
+  inputSex = (e, { value}) => {
+    this.setState({sex: value })
+  };
+
   submitCreateAccount = (e) => {
 
     e.preventDefault();
@@ -298,10 +340,10 @@ class HeaderDashboard extends Component{
       firstName: this.state.firstName,
       lastName: this.state.lastName,
       password: this.state.password,
-      // confirmPassword: this.state.confirmPassword,
       email: this.state.email,
       user_type: this.state.user_type,
       contactNumber: this.state.contactNumber,
+      sex: this.state.sex,
       isMobile,
       isVerified: false
     }
@@ -324,6 +366,7 @@ class HeaderDashboard extends Component{
         Email: ${this.state.email}
         Password: ${this.state.password}
         Contact Number: ${this.state.contactNumber}
+        Gender: ${this.state.sex}
         User Type: ${this.state.user_type}
       `);
     }
@@ -339,10 +382,10 @@ class HeaderDashboard extends Component{
       lastName: '',
       userName: '',
       password: '',
-      // confirmPassword: '',
       email: '',
       user_type: '',
       contactNumber: '',
+      sex: '',
       medicalProfession: '',
       medicalDegree: '',
       certification: '',
@@ -353,14 +396,14 @@ class HeaderDashboard extends Component{
 
   trigger = (
     <span>
-      <Icon className='user circle' /> Francisco Ibarra
+      <Icon className='user circle' /> {this.props.user.firstName} {this.props.user.lastName}
     </span>
   )
   
   options = [
     { key: 'user', text: 'Account', icon: 'user' },
-    { key: 'help', text: 'Help', icon: 'question' },
-    { key: 'settings', text: 'Settings', icon: 'settings' },
+    // { key: 'help', text: 'Help', icon: 'question' },
+    // { key: 'settings', text: 'Settings', icon: 'settings' },
     { key: 'sign-out', text: 'Sign Out', icon: 'sign out', onClick: this.logout },
   ]
   
@@ -373,41 +416,23 @@ class HeaderDashboard extends Component{
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name })
 
-  renderResponderAccountLists = () => {
-    return(
-      <ResponderAccountLists/>
-    )
-  }
-
-  renderVolunteerAccountLists = () => {
-    return(
-      <VolunteerAccountLists/>
-    )
-  }
-
-  renderRegularUserAccountLists = () => {
-    return(
-      <RegularUserAccountLists/>
-    )
-  }
-  
   
 
   render() {
-    const { open, size } = this.state
-    const { open2, size2 } = this.state
-    const { open3, size3 } = this.state
-    const { open4, size4 } = this.state
-    const { open5, size5 } = this.state
+    const { open, size, open2, size2, open3, size3, open4, 
+            size4, open5, size5, open6, size6, open7, size7,
+            open8, size8, open9, size9, open10, size10
+          } = this.state
     const { formError } = this.state;
     let createUserAccountButton;
     let accountLists;
+    let deleteUser;
 
     const {errorMessage} = this.state;
 
     const searchOptions = {
       location: new google.maps.LatLng(10.324646, 123.942197),
-      radius: 4,
+      radius: 10,
       types: ['establishment']
     }
 
@@ -416,8 +441,13 @@ class HeaderDashboard extends Component{
       <Icon className="add user" />Create User Account
       </Menu.Item>
        accountLists = <Menu.Item link onClick={this.showAccountLists('tiny')}>
-       <Icon className="list" />Account Lists
+       <Icon className="list" />Unverified Mobile Users
        </Menu.Item>
+       deleteUser = <Menu.Item link onClick={this.showAdmin('tiny')}>
+        <Icon className="user delete" />Delete User
+      </Menu.Item>
+       
+
     }
   
 
@@ -489,10 +519,15 @@ class HeaderDashboard extends Component{
       {text: '10 years', value: 10},
     ]
 
+    const sex = [
+      { text: 'Male', value: 'Male'},
+      { text: 'Female', value: 'Female'},
+    ]
+
     return (
 
     <div>
-    {/* Header Menu */}
+      {/* Header Menu */}
       <Menu inverted>
           <Menu.Menu position='left'>
               <Menu.Item>
@@ -503,6 +538,7 @@ class HeaderDashboard extends Component{
               </Menu.Item>
               {createUserAccountButton}
               {accountLists}
+              {deleteUser}
           </Menu.Menu>
           <Menu.Menu position='right'>
             <Menu.Item>
@@ -525,7 +561,7 @@ class HeaderDashboard extends Component{
             </Menu.Item>
           </Menu.Menu>
       </Menu>
-    {/* Header Menu */}
+      {/* Header Menu */}
     
       {/* Add Incident Modal */}
       <Modal size={size} open={open} onClose={this.close}>
@@ -810,6 +846,22 @@ class HeaderDashboard extends Component{
                         {formError.contactNumber.length > 0 && (
                         <span className="errorMessage">{formError.contactNumber}</span>)}
                   </Form.Field>
+
+                  <Form.Field style={{marginBottom: '10px', color: 'whitesmoke'}} required>
+                      <Form.Input
+                         fluid
+                         control={Select}
+                         placeholder='Sex'
+                         options={sex} 
+                         type='text'
+                         name='sex'
+                         noValidate
+                         value={this.state.sex}
+                         onChange={this.inputSex}
+                         required
+                      />
+                        
+                  </Form.Field>
    
                 </Form.Group>
                    
@@ -820,7 +872,7 @@ class HeaderDashboard extends Component{
               <Modal.Actions>
                   <Form.Button color='red' onClick={this.submitCreateAccount} 
                     disabled={!this.state.email || !this.state.firstName || !this.state.lastName 
-                              || !this.state.user_type || !this.state.password || !this.state.contactNumber 
+                              || !this.state.user_type || !this.state.password || !this.state.contactNumber || !this.state.sex
                               || this.state.formError.email || this.state.formError.firstName || this.state.formError.lastName
                               || this.state.formError.password || this.state.formError.contactNumber 
                               || this.state.user_type === 'Volunteer'?!this.state.medicalDegree 
@@ -843,17 +895,17 @@ class HeaderDashboard extends Component{
               <Button color='blue' size='small' onClick={this.showAccountLists('tiny')}>
                 Responder
               </Button>
-              <Button color='white' size='small' onClick={this.showVolunteerLists('tiny')}>
+              <Button color='black' size='small' onClick={this.showVolunteerLists('tiny')}>
                   Volunteer
               </Button>
-              <Button color='red' size='small' onClick={this.showRegularUserLists('tiny')}>
+              <Button color='black' size='small' onClick={this.showRegularUserLists('tiny')}>
                 Regular User
               </Button>
           </Button.Group>
         </div>    
         
         <Modal.Content>
-          {this.renderResponderAccountLists()}
+          <ResponderAccountLists/>
         </Modal.Content>
 
       </Modal>
@@ -863,20 +915,20 @@ class HeaderDashboard extends Component{
       <Modal size={size4} open={open4} onClose={this.close4}>
         <div style={{backgroundColor:"#5c7788"}}>
             <Button.Group>
-              <Button color='blue' size='small' onClick={this.showAccountLists('tiny')}>
+              <Button color='black' size='small' onClick={this.showAccountLists('tiny')}>
                 Responder
               </Button>
-              <Button color='white' size='small' onClick={this.showVolunteerLists('tiny')}>
+              <Button color='blue' size='small' onClick={this.showVolunteerLists('tiny')}>
                   Volunteer
               </Button>
-              <Button color='red' size='small' onClick={this.showRegularUserLists('tiny')}>
+              <Button color='black' size='small' onClick={this.showRegularUserLists('tiny')}>
                 Regular User
               </Button>
           </Button.Group>
         </div>
 
         <Modal.Content>
-          {this.renderVolunteerAccountLists()}
+          <VolunteerAccountLists/>
         </Modal.Content>
       </Modal>
       {/* Volunteer Account Lists */}
@@ -885,27 +937,169 @@ class HeaderDashboard extends Component{
       <Modal size={size5} open={open5} onClose={this.close5}>
         <div style={{backgroundColor:"#5c7788"}}>
           <Button.Group>
-          <Button color='blue' size='small' onClick={this.showAccountLists('tiny')}>
+          <Button color='black' size='small' onClick={this.showAccountLists('tiny')}>
             Responder
           </Button>
-          <Button color='white' size='small' onClick={this.showVolunteerLists('tiny')}>
+          <Button color='black' size='small' onClick={this.showVolunteerLists('tiny')}>
             Volunteer
           </Button>
-          <Button color='red' size='small' onClick={this.showRegularUserLists('tiny')}>
+          <Button color='blue' size='small' onClick={this.showRegularUserLists('tiny')}>
             Regular User
           </Button>
           </Button.Group>
         </div>
 
         <Modal.Content>
-          {this.renderRegularUserAccountLists()}                            
+          <RegularUserAccountLists/>
         </Modal.Content>
 
       </Modal>
       {/* Regular User Account Lists */}
 
-      </div>
-    )
+      {/* Admin: Delete */}
+      <Modal size={size10} open={open10} onClose={this.close10}>
+        <div style={{backgroundColor:"#5c7788"}}>
+          <Button.Group>
+            <Button color='blue' size='small' onClick={this.showAdmin('tiny')}>
+                Admin
+            </Button> 
+            <Button color='black' size='small' onClick={this.showResponder('tiny')}>
+              Responder
+            </Button>
+            <Button color='black' size='small' onClick={this.showVolunteer('tiny')}>
+              Volunteer
+            </Button>
+            <Button color='black' size='small' onClick={this.showRegularUser('tiny')}>
+              Regular User
+            </Button>
+            <Button color='black' size='small' onClick={this.showCCP('tiny')}>
+              CCP
+            </Button> 
+          </Button.Group>
+        </div>
+
+        <Modal.Content>
+          <DeleteAdmin/>
+        </Modal.Content>
+      </Modal>
+      {/* Admin: Delete */}
+
+      {/* Responder: Delete */}
+      <Modal size={size6} open={open6} onClose={this.close6}>
+        <div style={{backgroundColor:"#5c7788"}}>
+          <Button.Group>
+            <Button color='black' size='small' onClick={this.showAdmin('tiny')}>
+                Admin
+            </Button> 
+            <Button color='blue' size='small' onClick={this.showResponder('tiny')}>
+              Responder
+            </Button>
+            <Button color='black' size='small' onClick={this.showVolunteer('tiny')}>
+              Volunteer
+            </Button>
+            <Button color='black' size='small' onClick={this.showRegularUser('tiny')}>
+              Regular User
+            </Button>
+            <Button color='black' size='small' onClick={this.showCCP('tiny')}>
+              CCP
+            </Button> 
+          </Button.Group>
+        </div>
+
+        <Modal.Content>
+          <DeleteResponder/>
+        </Modal.Content>
+
+      </Modal>
+      {/* Responder: Delete */}
+      
+      {/* Volunteer: Delete */}  
+      <Modal size={size7} open={open7} onClose={this.close7}>
+        <div style={{backgroundColor:"#5c7788"}}>
+          <Button.Group>
+            <Button color='black' size='small' onClick={this.showAdmin('tiny')}>
+                Admin
+            </Button> 
+            <Button color='black' size='small' onClick={this.showResponder('tiny')}>
+              Responder
+            </Button>
+            <Button color='blue' size='small' onClick={this.showVolunteer('tiny')}>
+              Volunteer
+            </Button>
+            <Button color='black' size='small' onClick={this.showRegularUser('tiny')}>
+              Regular User
+            </Button>
+            <Button color='black' size='small' onClick={this.showCCP('tiny')}>
+              CCP
+            </Button> 
+          </Button.Group>
+        </div>
+
+        <Modal.Content>
+          <DeleteVolunteer/>
+        </Modal.Content>
+      </Modal>
+      {/* Volunteer: Delete */}  
+      
+      {/* Regular User: Delete */}  
+      <Modal size={size8} open={open8} onClose={this.close8}>
+        <div style={{backgroundColor:"#5c7788"}}>
+          <Button.Group>
+            <Button color='black' size='small' onClick={this.showAdmin('tiny')}>
+                Admin
+            </Button> 
+            <Button color='black' size='small' onClick={this.showResponder('tiny')}>
+              Responder
+            </Button>
+            <Button color='black' size='small' onClick={this.showVolunteer('tiny')}>
+              Volunteer
+            </Button>
+            <Button color='blue' size='small' onClick={this.showRegularUser('tiny')}>
+              Regular User
+            </Button>
+            <Button color='black' size='small' onClick={this.showCCP('tiny')}>
+              CCP
+            </Button> 
+          </Button.Group>
+        </div>
+
+        <Modal.Content>
+          <DeleteRegularUser/>
+        </Modal.Content>
+      </Modal>
+      {/* Regular User: Delete */}  
+
+      {/* Command Center Personnel: Delete */}
+       <Modal size={size9} open={open9} onClose={this.close9}>
+        <div style={{backgroundColor:"#5c7788"}}>
+          <Button.Group>
+            <Button color='black' size='small' onClick={this.showAdmin('tiny')}>
+                Admin
+            </Button> 
+            <Button color='black' size='small' onClick={this.showResponder('tiny')}>
+              Responder
+            </Button>
+            <Button color='black' size='small' onClick={this.showVolunteer('tiny')}>
+              Volunteer
+            </Button>
+            <Button color='black' size='small' onClick={this.showRegularUser('tiny')}>
+              Regular User
+            </Button>
+            <Button color='blue' size='small' onClick={this.showCCP('tiny')}>
+              CCP
+            </Button> 
+          </Button.Group>
+        </div>
+
+        <Modal.Content>
+          <DeleteCCP/>
+        </Modal.Content>
+      </Modal>
+      {/* Command Center Personnel: Delete */}
+
+      
+    </div>
+    )  
   }
 }
 

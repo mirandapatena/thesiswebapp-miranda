@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Button, Table, Header, Image} from 'semantic-ui-react'
+import { Table, Message, Icon } from 'semantic-ui-react'
 import '../stylesheet_QueueIncidents.css';
 import '../HeaderDashboard.css';
 import fire from '../config/Fire';
@@ -22,7 +22,7 @@ class VolunteerAccountLists extends Component{
             this.setState({volunteers: snapshot.val()}, () => {
                 console.log('unverified volunteers', this.state.volunteers);
                 _.map(this.state.volunteers, (volunteer, key) => {
-                    fire.database().ref(`users/${key}`).on('value', snapshot => {
+                    fire.database().ref(`users/${key}`).once('value', snapshot => {
                         tempObject = snapshot.val();
                         tempObject.key = snapshot.key;
                         list.push(tempObject);
@@ -44,20 +44,30 @@ class VolunteerAccountLists extends Component{
 
     render(){
         return(
-            <Table celled>
-
-                <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell>Users</Table.HeaderCell>
-                        <Table.HeaderCell>Status</Table.HeaderCell>
-                        </Table.Row>
-                </Table.Header>
-
-                <Table.Body>
-                    {this.renderUnverifiedVolunteers()}
-                </Table.Body>
-
-            </Table>  
+            <div>
+                {this.state.volunteers?
+                    <Table celled>
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.HeaderCell>Users</Table.HeaderCell>
+                                <Table.HeaderCell>Status</Table.HeaderCell>
+                                </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+                            {this.renderUnverifiedVolunteers()}
+                        </Table.Body>
+                    </Table>
+                :!this.state.volunteers?
+                    <Message info>
+                        <Message.Header>
+                            <div style={{fontSize:'18px', textAlign:'center'}}>
+                                <Icon name='user'/>No Unverified Volunteer Users
+                            </div>
+                        </Message.Header>
+                  </Message>
+                :null
+                }
+            </div>
         )
     }
 

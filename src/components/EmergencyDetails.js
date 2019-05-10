@@ -28,13 +28,26 @@ class EmergencyDetails extends Component{
             volunteerAccept: false,
             volunteerReject: false,
             timeOut: false,
-            waitTime: false
+            waitTime: false,
+            ms: '',
+            s: '',
+            m: ''
         }
         // console.log('time received', this.props.timeReceived);
         // var newDate = new Date(this.props.timeReceived);
         // console.log('time fuck', Date.parse(this.props.timeReceived));
         this.getRespondersList = this.getRespondersList.bind(this);
         this.getReporter();
+
+        let start = Date.parse(this.props.timeReceived);
+        setInterval(_ => {
+            let current = new Date();
+            let count = +current - +start;
+            let ms = count % 1000;
+            let s = Math.floor((count /  1000)) % 60;
+            let m = Math.floor((count / 60000)) % 60;
+            this.setState({ms, s, m});
+        }, 10);
     }
 
     componentDidMount(){
@@ -179,45 +192,21 @@ class EmergencyDetails extends Component{
     }
 
     volunteerDispatch = () => {
-        console.log('volunteerDispatch', this.state.bestVolunteers);
-        var bestVolunteers = this.state.bestVolunteers;
-        var count = 0;
-        var flag = false;
-        var tempTime = this.props.timeReceived;
-        while(!this.state.volunteerAccept || !this.state.timeOut){
-            console.log('outer loop');
-            var sevenMinuteGoal = Date.now();
-            if((Date.now() - sevenMinuteGoal) >= 10000){
-                this.setState({timeOut: true}, () => {
-                    console.log(`${this.props.incidentKey}: no volunteer accepted request`);
-                });
-            } else{
-                console.log('prompting volunteers');
-                bestVolunteers.forEach((volunteer)=>{
-                    console.log(`${volunteer.firstName} now`);
-                    while(!this.state.volunteerAccept || !this.state.waitTime){
-                        var volunteerNode = fire.database().ref(`mobileUsers/Volunteer/${volunteer.key}`);
-                        console.log(`tempTime ${tempTime} Date.now ${Date.now()} ${Date.now() - tempTime}  inner loop`);
-                        if((Date.now() - tempTime) >= 10000){
-                            this.setState({waitTime: true}, () => {
-                                console.log(`${volunteer.firstName} ignored request`);
-                                volunteerNode.off();
-                            });
-                        }
-                        volunteerNode.update({incidentID: this.props.incidentKey}).then(() => {
-                            console.log('wtf');
-                            var isAcceptNode = fire.database().ref(`mobileUsers/Volunter${volunteer.key}/isAccepted`);
-                            isAcceptNode.once('child_changed', snapshot => {
-                                if(snapshot.val() === true){
-                                    this.setState({volunteerAccept: snapshot.val()}, () => {
-                                        console.log(`prompted volunteer: ${volunteer.firstName}`);
-                                    });
-                                }
-                            });
-                        });
-                    }
-                });
-            }  
+        while(this.state.m <= 7){
+            var volunteer = this.state.bestVolunteers;
+            volunteer.forEach((volunteer)=>{
+                var isAccepted = false;
+                while(!(this.state.s % 30) === 0 || !this.state.isAccepted){
+                    var volunteerNode = fire.database().ref(`mobileUser/Volunteer/${volunteer.uid}`);
+                    var isAcceptedNode = fire.database().ref(`mobileUser/Volunteer/${volunteer.uid}/isAccepted`);
+                    volunteerNode.update({incidentID: this.props.incidentKey});
+                    isAcceptedNode.once('child_changed', snapshot => {
+                        isAccepted = snapshot.val();
+                        this.setState({isAccepted});
+                    });
+                }
+            });
+            
         }
     }
 
@@ -287,6 +276,7 @@ class EmergencyDetails extends Component{
                     <Card.Header>
                         <p className='incidentStyleType'><b>{this.props.incidentType}</b></p>
                         <p className='incidentContent'>{this.props.incidentKey}</p>
+                        <p>{this.state.m}:{this.state.s}:{this.state.ms}</p>
                     </Card.Header>
                     <Card.Content>
                         <p className='incidentReportedBy'><b>Reported By:</b> {this.state.firstName} {this.state.lastName}</p>
@@ -308,6 +298,7 @@ class EmergencyDetails extends Component{
             
             <Modal size={size} open={open} onClose={this.close}>
                 <Modal.Header>New Emergency</Modal.Header>
+                    <p>{this.state.m}:{this.state.s}:{this.state.ms}</p>
                     <Modal.Content>
                             <p><b>Reported by:</b> {this.state.firstName} {this.state.lastName}</p>
                             <p><b>Type of Incident:</b> {this.props.incidentType}</p>
@@ -329,6 +320,7 @@ class EmergencyDetails extends Component{
             <Modal size={size2} open={open2} onClose={this.closeActiveRespondersList}>
             <Modal.Header>Active Responders</Modal.Header>
                 <Modal.Content>
+                    <p>{this.state.m}:{this.state.s}:{this.state.ms}</p>
                     {/* <Card.Group itemsPerRow={3}>
                         {this.renderRespondersList()}
                     </Card.Group> */}
@@ -351,6 +343,7 @@ class EmergencyDetails extends Component{
             <Modal size={size3} open={open3} onClose={this.closeActiveVolunteersList}>
             <Modal.Header>Active Volunteers</Modal.Header>
                 <Modal.Content>
+                    <p>{this.state.m}:{this.state.s}:{this.state.ms}</p>
                     {/* <Card.Group itemsPerRow={3}>
                         {this.renderVolunteersList()}
                     </Card.Group> */}

@@ -12,7 +12,6 @@
   background-color: transparent;
   background-repeat: no-repeat;
   background-size: 20px;
-  /*background-position: -0px -0px;*/
   height: 20px;
   width: 22px;
   top: 5px;
@@ -41,9 +40,7 @@
 }
 
 .ui.visible.left.vertical.sidebar.menu{
-  /* background-color: #16426a; */
   background: #0b233b;
-  /* background: url("../src/images/sidebar.jpg"); */
 }
 
 .item{
@@ -84,10 +81,8 @@
 
 .ui.inverted.menu{
   border: 0 solid transparent;
-  /* background: #16426a; */
   background: #0b233b;
   box-shadow: none;
-  /* margin-left:150px; */
 }
 
 
@@ -154,7 +149,7 @@
 .ui.celled.table tr td:first-child, .ui.celled.table tr th:first-child {
   padding-left: 20px;
   /* padding-right: 80px; */
-  width: 300px;
+  width: 350px;
 }
 
 .ui.celled.table tr td, .ui.celled.table tr th {

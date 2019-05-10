@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Button, Table, Header, Image} from 'semantic-ui-react'
+import { Table, Message, Icon } from 'semantic-ui-react'
 import '../stylesheet_QueueIncidents.css';
 import '../HeaderDashboard.css';
 import fire from '../config/Fire';
@@ -7,6 +7,7 @@ import _ from 'lodash';
 import VerifyUserAccount from './VerifyUserAccount';
 
 class RegularUserAccountLists extends Component{
+    
     constructor(props){
         super(props);
         this.state = {
@@ -30,8 +31,7 @@ class RegularUserAccountLists extends Component{
                             console.log('Unverified Regular Users Profiles', this.state.regularUsersProfiles);
                         });
                     })
-                });
-                
+                })
             });
         });
     }
@@ -42,21 +42,32 @@ class RegularUserAccountLists extends Component{
             return (<VerifyUserAccount firstName={regularUser.firstName} lastName={regularUser.lastName} contactNumber={regularUser.contactNumber} email={regularUser.email} uid={regularUser.key}/>)
         })
     }
+    
     render(){
         return(
-            <Table celled>
-                <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell>Users</Table.HeaderCell>
-                        <Table.HeaderCell>Status</Table.HeaderCell>
-                        </Table.Row>
-                </Table.Header>
-
-                <Table.Body>
-                    {this.renderUnverifiedRegularUsers()}
-                </Table.Body>
-
-        </Table>  
+            <div>
+                {this.state.regularUsers?
+                    <Table celled>
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.HeaderCell>Users</Table.HeaderCell>
+                                <Table.HeaderCell>Status</Table.HeaderCell>
+                                </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+                            {this.renderUnverifiedRegularUsers()}
+                        </Table.Body>
+                    </Table>
+                :!this.state.regularUsers?
+                    <Message info>
+                        <Message.Header>
+                            <div style={{fontSize:'18px', textAlign:'center'}}>
+                                <Icon name='user'/>No Unverified Regular User Users
+                            </div>
+                        </Message.Header>
+                  </Message>
+                :null}
+            </div>
         )
     }
 
