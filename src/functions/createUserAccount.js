@@ -1,5 +1,7 @@
 import fire, {fire2} from '../config/Fire';
 import _ from 'lodash';
+import swal from 'sweetalert';
+import '../stylesheet_QueueIncidents.css';
 
 export function createUserAccount (account, credentials = {}){
     const email = account.email;
@@ -20,11 +22,14 @@ export function createUserAccount (account, credentials = {}){
       return 'Success'
     });
     promise.catch(e=>{
-      var err = e.message;
-      console.log(err);
-      alert(err);
-      return err;
+      var registerError = e.message;
+      console.log('ErrorNewAccount',registerError);
+      swal(email,registerError,{icon:"error"});
+
     });
+
+    
+    
 }
 
 function saveUserType(user_type, isMobile, uid, credentials = {}){

@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import { Image, Table, Header, Button} from 'semantic-ui-react';
+import _ from 'lodash';
 import fire from '../config/Fire';
 class DispatchMobileUser extends Component{
 
@@ -8,22 +9,53 @@ class DispatchMobileUser extends Component{
         this.state = {
             isButtonDisabled: false
         }
-        var isAccepted = fire.database().ref(`mobileUsers/${this.props.user_type}/${this.props.id}/isAccepted`);
-        console.log("sakto ni na user id?", this.props.id);
+
+        var isAccepted = fire.database().ref(`mobileUsers/Responder/${this.props.id}/isAccepted`);
         var isACCEPTED;
         isAccepted.on('value', snapshot => {
             isACCEPTED = snapshot.val();
-
-            console.log("hoy",isACCEPTED)     
             this.setState({isAccepted: isACCEPTED});
-            console.log('isSETTLEDDD SHIT',isACCEPTED);
 
             if(isACCEPTED === true){
             this.setState({isButtonDisabled:true});
-            console.log('pISTI KA LESTER',this.state.isButtonDisabled);
+            
         }
         });
-        
+
+        var isRejected = fire.database().ref(`mobileUsers/Responder/${this.props.id}/isRejected`);
+        var isREJECTED;
+        isRejected.on('value', snapshot => {
+            isREJECTED = snapshot.val();
+            this.setState({isRejected: isREJECTED});
+            
+            if(isREJECTED === true){
+            this.setState({isButtonDisabled:true});
+        }
+        });
+
+        var isAccepted = fire.database().ref(`mobileUsers/Volunteer/${this.props.id}/isAccepted`);
+        console.log("volunteer123", this.props.id);
+        var isACCEPTED;
+        isAccepted.on('value', snapshot => {
+            isACCEPTED = snapshot.val();
+            this.setState({isAccepted: isACCEPTED});
+           
+            if(isACCEPTED === true){
+            this.setState({isButtonDisabled:true});
+            
+        }
+        });
+
+        var isRejected = fire.database().ref(`mobileUsers/Volunteer/${this.props.id}/isRejected`);
+        var isREJECTED;
+        isRejected.on('value', snapshot => {
+            isREJECTED = snapshot.val();   
+            this.setState({isRejected: isREJECTED});
+            if(isREJECTED === true){
+            this.setState({isButtonDisabled:true});
+        }
+        });
+
     }
 
     dispatchMobileUser = () => {
@@ -51,12 +83,13 @@ class DispatchMobileUser extends Component{
                         <Header.Content>
                             <Header.Subheader><p className='colorBlue'><b>Email:</b> {this.props.email}</p></Header.Subheader>
                             <Header.Subheader><p className='colorBlue'><b>Contact Number:</b> {this.props.contactNumber}</p></Header.Subheader>
+                            {this.props.points}
                         </Header.Content>
                     </Header>
                 </Table.Cell>
                 <Table.Cell>
                     <Button attached='bottom' color='red' onClick={this.dispatchMobileUser} disabled={this.state.isButtonDisabled}>
-                        Dispatch
+                        {this.state.isRejected===true? 'Rejected' : 'Dispatch'}
                     </Button>
                 </Table.Cell>
             </Table.Row>

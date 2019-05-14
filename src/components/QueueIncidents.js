@@ -3,8 +3,8 @@ import EmergencyDetails from './EmergencyDetails';
 import _ from 'lodash';
 import {connect} from 'react-redux';
 import {getIncidents} from '../actions/incidentAction';
-import fire from '../config/Fire';
-// import {isSETTLED} from '../functions/isSettled';
+import swal from 'sweetalert';
+import '../stylesheet_QueueIncidents.css';
 
 class QueueIncidents extends Component {
    
@@ -34,7 +34,16 @@ class QueueIncidents extends Component {
 
     renderEmergency = () => {        
         return _.map(this.props.incidentsList, (incident, key) => {
+            // console.log('timeReceived:', incident.timeReceived);
+            // var timeToNumber = Date.parse(incident.timeReceived);
+            // console.log('timetoInteger:', timeToNumber);
+
+            // var points = [40, 100, 1, 5, 25, 10];
+            // var p = points.sort(function(a, b){return b - a});
+            // console.log('points', p);
+
             
+
             if(incident.isSettled === false){
                 return (
                     <div className='item' key={key}>
@@ -48,6 +57,11 @@ class QueueIncidents extends Component {
                         />
                     </div>
                 );
+            }
+            if(incident.isSettled === true){   
+                var a = incident.incidentType;
+                var b = incident.incidentLocation;  
+                swal(b,a,{ button: "Ok!", icon:"success", text:"Incident is settled!"});
             }
             
         });

@@ -1,6 +1,6 @@
 import {computeDistance} from './computeDistance';
 import _ from 'lodash';
-
+import fire from 'firebase'
 export function getNearestMobileUsers(incidentLng, incidentLat, mobileUsers, user_type){
     var incidentCoordinates = {
         longitude: parseFloat(incidentLng),
@@ -22,7 +22,15 @@ export function getNearestMobileUsers(incidentLng, incidentLat, mobileUsers, use
             distance = computeDistance(incidentCoordinates.latitude, incidentCoordinates.longitude, userCoordinates.latitude, userCoordinates.longitude);
             userObject.distance = distance;
             if(user_type === 'Volunteer'){
+                var points;
                 if(distance <= 500){
+                    console.log('fuckeys', user.key);
+                    var volunteerNode = fire.database().ref(`credentials/${user.key}/points`);
+                    volunteerNode.once('value', snapshot => {
+                        points = snapshot.val();
+                        userObject.points = points;
+                        console.log('points', userObject);
+                    })
                     nearestUsers.push(userObject);
                     console.log('nearest volunteerss', userObject);
                 }

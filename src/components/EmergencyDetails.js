@@ -175,18 +175,29 @@ class EmergencyDetails extends Component{
                 activeVolunteersList = getNearestMobileUsers(this.props.coordinates.lng, this.props.coordinates.lat, this.state.onlineVolunteers, 'Volunteer');
                 console.log('active volunteer list', activeVolunteersList);
                 this.setState({bestVolunteers: this.getUsersProfiles(activeVolunteersList)}, () => {
+                    //this.getVolunteerCredentials(this.state.bestVolunteers);
                     console.log('the best', this.state.bestVolunteers);
                 });
             });
         });
     }
 
+    // getVolunteerCredentials = (bestVolunteers) => {
+    //     console.log('get volunteer credentials');
+    //     _.map(this.state.bestVolunteers, (volunteer, key)=>{
+    //         var volunteerNode = fire.database().ref(`credentials/${volunteer.key}`);
+    //         volunteerNode.once('value', snapshot => {
+    //             console.log('volunteer credentials', snapshot.val());
+    //         });
+    //     });
+    // }
+
     renderVolunteersList = () => {
         console.log('renderVolunteersList', this.state.bestVolunteers);
         return _.map(this.state.bestVolunteers, (volunteer, key) => {
             return (
                 <DispatchMobileUser firstName={volunteer.firstName} lastName={volunteer.lastName} id={volunteer.uid} incidentID={this.props.incidentKey}
-                distance={volunteer.distance} user_type='Volunteer' email={volunteer.email} contactNumber={volunteer.contactNumber}/>
+                distance={volunteer.distance} user_type='Volunteer' email={volunteer.email} contactNumber={volunteer.contactNumber} points={volunteer.points}/>
             );
         });
     }
