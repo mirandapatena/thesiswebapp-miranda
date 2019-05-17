@@ -1,0 +1,390 @@
+::-webkit-scrollbar { 
+  display: none; 
+}
+
+.element::-webkit-scrollbar { width: 0 !important }
+.element { -ms-overflow-style: none; }
+.element { overflow: -moz-scrollbars-none; }
+
+
+.inc_stat {
+  background-image: url(./images/incident_new.png);
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-size: 20px;
+  height: 20px;
+  width: 22px;
+  top: 5px;
+  left: 225px;
+  position: absolute;
+  z-index: 2;
+  margin-top: 2px;
+}
+
+.inc_typ{
+  background-image: url(./images/type_phy.png);
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-size: 20px;
+  /*background-position: -0px -0px;*/
+  height: 24px;
+  width: 20px;
+  top: 5px;
+  left: 185px;
+  position: absolute;
+  z-index: 2;
+}
+
+.card{
+  background-color: black;
+}
+
+.ui.visible.left.vertical.sidebar.menu{
+  background: #0b233b;
+}
+
+.item{
+  border: 2px;
+}
+
+.fixed-width {
+  min-width: 500px;
+}
+
+.sidebar{
+  min-height:50px;
+}
+
+.aboutcontainer{
+  background-image: url(./images/bg_about.png);
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.butt.change button:hover{
+  background-color:pink;
+}
+
+.hidescrollbar{
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+}
+
+.ui.center.aligned.header, .ui.centered.header {
+  padding-bottom: 1em;
+}
+
+.ui.form .field{
+  margin-bottom: 25px;
+}
+
+.ui.inverted.menu{
+  border: 0 solid transparent;
+  background: #0b233b;
+  box-shadow: none;
+}
+
+
+.ui.modal>.header {
+  display: block;
+  font-family: sans-serif;
+  /* background: #d61717; */
+  /* background: #266194; */
+  background: #16426a;
+  margin: 0px;
+  padding: 0.8em 1.5rem;
+  box-shadow: none;
+  color: rgba(255, 255, 255, 0.85);
+  border-bottom: 0px solid rgba(255, 255, 255, 0.15);
+  
+}
+
+.ui.modal>.actions{
+  background: #16426a;
+  padding: 0.8rem 1.5rem;
+  border-top: 1px solid rgba(34,36,38,.15);
+  text-align: right;
+  font-family: sans-serif;
+}
+
+.ui.modal>.content {
+  display: block;
+  width: 100%;
+  font-size: 1.1em;
+  line-height: 1.4;
+  padding: 2.3rem;
+  /* background: rgb(214, 203, 203); */
+  background: #5c7788;
+  font-family: sans-serif;
+  color: rgb(0, 0, 0);
+}
+
+/* New User Account Forms */
+.ui.form input:not([type]), .ui.form input[type=date], .ui.form input[type=datetime-local], .ui.form input[type=email], .ui.form input[type=file], .ui.form input[type=number], .ui.form input[type=password], .ui.form input[type=search], .ui.form input[type=tel], .ui.form input[type=text], .ui.form input[type=time], .ui.form input[type=url] {
+  font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
+  margin: 0;
+  outline: 0;
+  line-height: 1.21428571em;
+  padding: .67857143em 1em;
+  font-size: 1em;
+  background: #968d8d73;
+  border: 1px solid rgba(34,36,38,.15);
+  color: rgba(255, 255, 255, 0.87);
+  border-radius: .28571429rem;
+}
+
+/* Incident Location: Search Places */
+.ui.form input:not([type]):focus, .ui.form input[type=date]:focus, .ui.form input[type=datetime-local]:focus, .ui.form input[type=email]:focus, .ui.form input[type=file]:focus, .ui.form input[type=number]:focus, .ui.form input[type=password]:focus, .ui.form input[type=search]:focus, .ui.form input[type=tel]:focus, .ui.form input[type=text]:focus, .ui.form input[type=time]:focus, .ui.form input[type=url]:focus {
+    color: rgba(0,0,0,.95);
+    border-color: #85b7d9;
+    border-radius: .28571429rem;
+    background: #d6d6d6;
+}
+
+.ui.modal .actions>.button {
+  margin-left: 0em;
+}
+
+.ui.celled.table tr td:first-child, .ui.celled.table tr th:first-child {
+  padding-left: 20px;
+  /* padding-right: 80px; */
+  width: 300px;
+}
+
+.ui.celled.table tr td, .ui.celled.table tr th {
+  padding-left: 20px;
+  width: 200px;
+}
+
+.ui.dimmer {
+  background-color: rgba(0, 0, 0, 0.445);
+}
+
+.ui.loader {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  margin: 0;
+  z-index: 1000;
+  transform: translateX(-50%) translateY(-50%);
+}
+
+.ui.list {
+  font-size: 1.2em;
+}
+
+ul, menu, dir {
+  display: block;
+  list-style-type: disc;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  padding-inline-start: 0px;
+}
+
+.responderCard{
+  margin-right: 20px;
+
+}
+
+.ui.selection.dropdown {
+  background: #968d8d73;
+  cursor: pointer;
+  word-wrap: break-word;
+  line-height: 1em;
+  white-space: normal;
+  outline: 0;
+  -webkit-transform: rotateZ(0);
+  transform: rotateZ(0);
+  min-width: 14em;
+  min-height: 2.71428571em;
+  display: inline-block;
+  padding: .78571429em 2.1em .78571429em 1em;
+  color: rgba(255, 255, 255, 0.87);
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  border: 1px solid rgba(34,36,38,.15);
+  border-radius: .28571429rem;
+  -webkit-transition: width .1s ease,-webkit-box-shadow .1s ease;
+  transition: width .1s ease,-webkit-box-shadow .1s ease;
+  transition: box-shadow .1s ease,width .1s ease;
+  transition: box-shadow .1s ease,width .1s ease,-webkit-box-shadow .1s ease;
+}
+
+.ui.card>.content, .ui.cards>.card>.content {
+  -webkit-box-flex: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  border: none;
+  border-top: 1px solid rgba(34,36,38,.1);
+  background: 0 0;
+  margin: 0;
+  padding: 1em 1em;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  font-size: 1em;
+  border-radius: 0;
+  /* background: #1b0505; */
+
+}
+
+.colorRed{
+  color: #d61717;
+  margin: 0px;
+}
+
+.colorBlue{
+  color: #16426a;
+  margin: 0px;
+}
+
+.incidentStyleType{
+  color: #16426a;
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 5px;
+  padding-top: 10px;
+}
+
+.incidentContent{
+  color: #16426a;
+  font-size: 16px;
+  text-align: center;
+  /* padding-bottom: 10px; */
+}
+
+.ui.blue.message {
+  background-color: #dff0ff;
+  color: #2185d0;
+  -webkit-box-shadow: 0 0 0 1px #2185d0 inset, 0 0 0 0 transparent;
+  box-shadow: 0 0 0 1px #2185d0 inset, 0 0 0 0 transparent;
+  width: 40%;
+  position: flex;
+  left: 30%;
+  top: 10%;
+}
+
+.incidentReportedBy{
+  font-size: 16px;
+  color: #16426a;
+}
+
+.swal-overlay {
+  /* background-color: rgba(43, 106, 165, 0.45); */
+  background-color: #16416a60;
+
+}
+
+.swal-button {
+  padding: 7px 19px;
+  border-radius: 10px;
+  background-color: #16426a;
+  font-size: 12px;
+  border: 3px solid #3e549a;
+  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.3);
+}
+
+
+/* .swal-modal {
+  border: 10px solid #550606;
+} */
+/* .ui.center.aligned.header, .ui.centered.header {
+  padding-bottom: 1em;
+  padding-top: 1em;
+} */
+
+/* .black{
+  background-color:#1b1c1d;
+  color: whitesmoke;
+} */
+
+.VerticalMenu{
+    height: 100%; /* Full-height: remove this if you want "auto" height */
+    width: 200px; /* Set the width of the sidebar */
+    position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+    z-index: 1; /* Stay on top */
+    top: 0; /* Stay at the top */
+    left: 0;
+    /* background-color: #111; Black */
+    overflow-x: hidden; /* Disable horizontal scroll */
+    /* padding-top: 20px; */
+}
+
+.CreateNewAccount{
+  padding-top: 40px;
+  padding-left: 420px;
+  padding-right: 270px;
+  background: #16426a;
+  min-height: 100vh;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.Homepage{
+  padding-top: 130px;
+  padding-left: 420px;
+  padding-right: 270px;
+  background: #16426a;
+  min-height: 100vh;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.Profilepage{
+  padding-top: 130px;
+  padding-left: 420px;
+  padding-right: 270px;
+  background: #16426a;
+  min-height: 100vh;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.ui.segments {
+  position: relative;
+  background: #0b233b;
+  -webkit-box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);
+  box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);
+  margin: 1rem 0;
+  padding: 1em 1em;
+  border-radius: .28571429rem;
+  border: 1px solid rgba(34,36,38,.15);
+}
+
+.ui.segment {
+  position: relative;
+  background: #0b233b;
+  -webkit-box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);
+  box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);
+  margin: 1rem 0;
+  padding: 1em 1em;
+  border-radius: .28571429rem;
+  border: 1px solid rgba(34,36,38,.15);
+}
+
+.UnverifiedMobileUsers{
+  padding-top: 60px;
+  padding-left: 310px;
+  padding-right: 270px;
+  background: #16426a;
+  min-height: 100vh;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.ui.table {
+  font-size: 1em;
+  width: 925px;
+}
+
+.ManageUserAccounts{
+  padding-top: 60px;
+  padding-left: 310px;
+  padding-right: 270px;
+  background: #16426a;
+  min-height: 100vh;
+  display: flex;
+  flex-flow: column nowrap;
+}
