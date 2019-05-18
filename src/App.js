@@ -10,6 +10,17 @@ import logUser from './actions/logUser';
 import logUID from './actions/logUID';
 import fire from './config/Fire';
 import {Router, Route, browserHistory} from 'react-router';
+import CreateNewAccount from './components/CreateNewAccount';
+import Home from './components/Home';
+import Profile from './components/Profile';
+import UnverifiedResponders from './components/UnverifiedResponders';
+import UnverifiedVolunteers from './components/UnverifiedVolunteers';
+import UnverifiedRegularUsers from './components/UnverifiedRegularUsers';
+import AccountsAdmin from './components/AccountsAdmin';
+import AccountsCCP from './components/AccountsCCP';
+import AccountsResponder from './components/AccountsResponder';
+import AccountsVolunteer from './components/AccountsVolunteer';
+import AccountsRegularUser from './components/AccountsRegularUser';
 
 class App extends Component {
   constructor(props){
@@ -83,6 +94,17 @@ class App extends Component {
         <Route exact path='/login' component={Login} />
         <AdministratorRoute exact path='/administrator' component={DashboardAdmin} user_type={this.state.user_type} />
         <CCPersonnelRoute exact path='/ccpersonnel' component={DashboardCCPersonnel} user_type={this.state.user_type} />
+        <CreateNewAccount exact path='/CreateNewAccount' component={CreateNewAccount} user_type={this.state.user_type} />
+        <Home exact path='/Home' component={Home} user_type={this.state.user_type} />
+        <Profile exact path='/Profile' component={Profile} user_type={this.state.user_type} />
+        <UnverifiedResponders exact path='/UnverifiedResponders' component={UnverifiedResponders} user_type={this.state.user_type} />
+        <UnverifiedVolunteers exact path='/UnverifiedVolunteers' component={UnverifiedVolunteers} user_type={this.state.user_type} />
+        <UnverifiedRegularUsers exact path='/UnverifiedRegularUsers' component={UnverifiedRegularUsers} user_type={this.state.user_type} />
+        <AccountsAdmin exact path='/AccountsAdmin' component={AccountsAdmin} user_type={this.state.user_type} />
+        <AccountsCCP exact path='/AccountsCCP' component={AccountsCCP} user_type={this.state.user_type} />
+        <AccountsResponder exact path='/AccountsResponder' component={AccountsResponder} user_type={this.state.user_type} />
+        <AccountsVolunteer exact path='/AccountsVolunteer' component={AccountsVolunteer} user_type={this.state.user_type} />
+        <AccountsRegularUser exact path='/AccountsRegularUser' component={AccountsRegularUser} user_type={this.state.user_type} />
       </Router>
     );
   }

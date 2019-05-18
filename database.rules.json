@@ -1,0 +1,11 @@
+{
+  "rules": {
+    "responders": {
+      ".indexOn": [
+        "uid"
+      ]
+    },
+    ".read": true,
+    ".write": true
+  }
+}

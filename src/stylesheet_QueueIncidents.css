@@ -128,7 +128,7 @@
   line-height: 1.21428571em;
   padding: .67857143em 1em;
   font-size: 1em;
-  background: #3b3333;
+  background: #968d8d73;
   border: 1px solid rgba(34,36,38,.15);
   color: rgba(255, 255, 255, 0.87);
   border-radius: .28571429rem;
@@ -149,11 +149,12 @@
 .ui.celled.table tr td:first-child, .ui.celled.table tr th:first-child {
   padding-left: 20px;
   /* padding-right: 80px; */
-  width: 350px;
+  width: 300px;
 }
 
 .ui.celled.table tr td, .ui.celled.table tr th {
   padding-left: 20px;
+  width: 200px;
 }
 
 .ui.dimmer {
@@ -189,7 +190,7 @@ ul, menu, dir {
 }
 
 .ui.selection.dropdown {
-  background: #3b3333;
+  background: #968d8d73;
   cursor: pointer;
   word-wrap: break-word;
   line-height: 1em;
@@ -251,7 +252,18 @@ ul, menu, dir {
   color: #16426a;
   font-size: 16px;
   text-align: center;
-  padding-bottom: 10px;
+  /* padding-bottom: 10px; */
+}
+
+.ui.blue.message {
+  background-color: #dff0ff;
+  color: #2185d0;
+  -webkit-box-shadow: 0 0 0 1px #2185d0 inset, 0 0 0 0 transparent;
+  box-shadow: 0 0 0 1px #2185d0 inset, 0 0 0 0 transparent;
+  width: 40%;
+  position: flex;
+  left: 30%;
+  top: 10%;
 }
 
 .incidentReportedBy{
@@ -287,3 +299,92 @@ ul, menu, dir {
   background-color:#1b1c1d;
   color: whitesmoke;
 } */
+
+.VerticalMenu{
+    height: 100%; /* Full-height: remove this if you want "auto" height */
+    width: 200px; /* Set the width of the sidebar */
+    position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+    z-index: 1; /* Stay on top */
+    top: 0; /* Stay at the top */
+    left: 0;
+    /* background-color: #111; Black */
+    overflow-x: hidden; /* Disable horizontal scroll */
+    /* padding-top: 20px; */
+}
+
+.CreateNewAccount{
+  padding-top: 40px;
+  padding-left: 420px;
+  padding-right: 270px;
+  background: #16426a;
+  min-height: 100vh;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.Homepage{
+  padding-top: 130px;
+  padding-left: 420px;
+  padding-right: 270px;
+  background: #16426a;
+  min-height: 100vh;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.Profilepage{
+  padding-top: 130px;
+  padding-left: 420px;
+  padding-right: 270px;
+  background: #16426a;
+  min-height: 100vh;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.ui.segments {
+  position: relative;
+  background: #0b233b;
+  -webkit-box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);
+  box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);
+  margin: 1rem 0;
+  padding: 1em 1em;
+  border-radius: .28571429rem;
+  border: 1px solid rgba(34,36,38,.15);
+}
+
+.ui.segment {
+  position: relative;
+  background: #0b233b;
+  -webkit-box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);
+  box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);
+  margin: 1rem 0;
+  padding: 1em 1em;
+  border-radius: .28571429rem;
+  border: 1px solid rgba(34,36,38,.15);
+}
+
+.UnverifiedMobileUsers{
+  padding-top: 60px;
+  padding-left: 310px;
+  padding-right: 270px;
+  background: #16426a;
+  min-height: 100vh;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.ui.table {
+  font-size: 1em;
+  width: 925px;
+}
+
+.ManageUserAccounts{
+  padding-top: 60px;
+  padding-left: 310px;
+  padding-right: 270px;
+  background: #16426a;
+  min-height: 100vh;
+  display: flex;
+  flex-flow: column nowrap;
+}

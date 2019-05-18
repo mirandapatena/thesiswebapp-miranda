@@ -5,14 +5,6 @@ import fire from '../config/Fire';
 import {connect} from 'react-redux';
 import {saveIncident} from '../actions/incidentAction';
 import {createUserAccount} from '../functions/createUserAccount';
-import ResponderAccountLists from './ResponderAccountLists';
-import VolunteerAccountLists from './VolunteerAccountLists';
-import RegularUserAccountLists from './RegularUserAccountLists';
-import DeleteResponder from './DeleteResponder';
-import DeleteVolunteer from './DeleteVolunteer';
-import DeleteRegularUser from './DeleteRegularUser';
-import DeleteCCP from './DeleteCCP';
-import DeleteAdmin from './DeleteAdmin';
 import '../stylesheet_QueueIncidents.css';
 import '../HeaderDashboard.css';
 import PlacesAutocomplete, {geocodeByAddress, getLatLng, geocodeByPlaceId} from 'react-places-autocomplete';
@@ -40,6 +32,10 @@ const firstNameRegex = RegExp(
 
 const lastNameRegex = RegExp(
   /^[a-zA-ZñÑ.,'-\s]+$/
+);
+
+const passwordRegex = RegExp(
+  /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/
 );
 
 
@@ -87,6 +83,7 @@ class HeaderDashboard extends Component{
         lat: null,
         lng: null,
         errorMessage: '',
+        isShown: false,
         incidentPhoto: null,
         reportedBy: '',
         timeReceived: null,
@@ -218,6 +215,7 @@ class HeaderDashboard extends Component{
     const incident = {
       incidentType: this.state.incidentType,
       incidentLocation: this.state.incidentLocation,
+      image_uri: '',
       unresponded: true,
       isResponding: false,
       isSettled: false,
@@ -235,7 +233,8 @@ class HeaderDashboard extends Component{
       isRespondingResponder: false,
       unrespondedResponder: true,
       isRespondingVolunteer: false,
-      unrespondedVolunteer: true
+      unrespondedVolunteer: true,
+      isShown: false
     }
     this.props.saveIncident(incident);
     this.setState({
@@ -247,6 +246,7 @@ class HeaderDashboard extends Component{
         isSettled: false,
         lng: null,
         lat: null,
+        isShown: false
     });
     console.log(this.state.incidentsList);
   }
@@ -273,7 +273,7 @@ class HeaderDashboard extends Component{
         break;
 
       case "password":
-        formError.password = value.length < 8 ? "Password should at least 8 characters" : "";
+        formError.password = passwordRegex.test(value) ? "" : "Password must be 8 characters or longer, should contain at least 1 lowercase and 1 uppercase letter, and at least one special character"
         break;
 
       // case "confirmPassword":
@@ -283,10 +283,6 @@ class HeaderDashboard extends Component{
       case "contactNumber":
         formError.contactNumber = contactNumberRegex.test(value)? "": "Please enter a valid number (09XXXXXXXX or +639XXXXXXXX)";
         break;
-      
-      // case "sex":
-      //   formError.sex = genderRegex.test(value) ? "" : "Please select.";
-      //   break;
 
       default:
         break;
@@ -366,7 +362,7 @@ class HeaderDashboard extends Component{
         Email: ${this.state.email}
         Password: ${this.state.password}
         Contact Number: ${this.state.contactNumber}
-        Gender: ${this.state.sex}
+        Sex: ${this.state.sex}
         User Type: ${this.state.user_type}
       `);
     }
@@ -392,6 +388,7 @@ class HeaderDashboard extends Component{
       isActiveVolunteer: ''
     })
 
+    
   }
 
   trigger = (
@@ -864,9 +861,7 @@ class HeaderDashboard extends Component{
                   </Form.Field>
    
                 </Form.Group>
-                   
-                 <p style={{color:'white'}}>{this.state.err}</p>
-                  
+                
               </Form>
               </Modal.Content>
               <Modal.Actions>
@@ -879,223 +874,11 @@ class HeaderDashboard extends Component{
                               || !this.state.medicalProfession || !this.state.certification 
                               || !this.state.isActiveVolunteer || !this.state.durationService:null               
                             } 
-                  >
-                      Create User Account
+                  >Create User Account
                   </Form.Button>
-                   
         </Modal.Actions>
       </Modal>
       {/*Create Personnel Account Modal*/}
-
-      {/* Responder Account Lists */}
-      <Modal size={size3} open={open3} onClose={this.close3}>
-        
-        <div style={{backgroundColor:"#5c7788"}}>
-            <Button.Group>
-              <Button color='blue' size='small' onClick={this.showAccountLists('tiny')}>
-                Responder
-              </Button>
-              <Button color='black' size='small' onClick={this.showVolunteerLists('tiny')}>
-                  Volunteer
-              </Button>
-              <Button color='black' size='small' onClick={this.showRegularUserLists('tiny')}>
-                Regular User
-              </Button>
-          </Button.Group>
-        </div>    
-        
-        <Modal.Content>
-          <ResponderAccountLists/>
-        </Modal.Content>
-
-      </Modal>
-      {/* Responder Account Lists */}
-
-      {/* Volunteer Account Lists */}
-      <Modal size={size4} open={open4} onClose={this.close4}>
-        <div style={{backgroundColor:"#5c7788"}}>
-            <Button.Group>
-              <Button color='black' size='small' onClick={this.showAccountLists('tiny')}>
-                Responder
-              </Button>
-              <Button color='blue' size='small' onClick={this.showVolunteerLists('tiny')}>
-                  Volunteer
-              </Button>
-              <Button color='black' size='small' onClick={this.showRegularUserLists('tiny')}>
-                Regular User
-              </Button>
-          </Button.Group>
-        </div>
-
-        <Modal.Content>
-          <VolunteerAccountLists/>
-        </Modal.Content>
-      </Modal>
-      {/* Volunteer Account Lists */}
-
-      {/* Regular User Account Lists */}
-      <Modal size={size5} open={open5} onClose={this.close5}>
-        <div style={{backgroundColor:"#5c7788"}}>
-          <Button.Group>
-          <Button color='black' size='small' onClick={this.showAccountLists('tiny')}>
-            Responder
-          </Button>
-          <Button color='black' size='small' onClick={this.showVolunteerLists('tiny')}>
-            Volunteer
-          </Button>
-          <Button color='blue' size='small' onClick={this.showRegularUserLists('tiny')}>
-            Regular User
-          </Button>
-          </Button.Group>
-        </div>
-
-        <Modal.Content>
-          <RegularUserAccountLists/>
-        </Modal.Content>
-
-      </Modal>
-      {/* Regular User Account Lists */}
-
-      {/* Admin: Delete */}
-      <Modal size={size10} open={open10} onClose={this.close10}>
-        <div style={{backgroundColor:"#5c7788"}}>
-          <Button.Group>
-            <Button color='blue' size='small' onClick={this.showAdmin('tiny')}>
-                Admin
-            </Button> 
-            <Button color='black' size='small' onClick={this.showResponder('tiny')}>
-              Responder
-            </Button>
-            <Button color='black' size='small' onClick={this.showVolunteer('tiny')}>
-              Volunteer
-            </Button>
-            <Button color='black' size='small' onClick={this.showRegularUser('tiny')}>
-              Regular User
-            </Button>
-            <Button color='black' size='small' onClick={this.showCCP('tiny')}>
-              CCP
-            </Button> 
-          </Button.Group>
-        </div>
-
-        <Modal.Content>
-          <DeleteAdmin/>
-        </Modal.Content>
-      </Modal>
-      {/* Admin: Delete */}
-
-      {/* Responder: Delete */}
-      <Modal size={size6} open={open6} onClose={this.close6}>
-        <div style={{backgroundColor:"#5c7788"}}>
-          <Button.Group>
-            <Button color='black' size='small' onClick={this.showAdmin('tiny')}>
-                Admin
-            </Button> 
-            <Button color='blue' size='small' onClick={this.showResponder('tiny')}>
-              Responder
-            </Button>
-            <Button color='black' size='small' onClick={this.showVolunteer('tiny')}>
-              Volunteer
-            </Button>
-            <Button color='black' size='small' onClick={this.showRegularUser('tiny')}>
-              Regular User
-            </Button>
-            <Button color='black' size='small' onClick={this.showCCP('tiny')}>
-              CCP
-            </Button> 
-          </Button.Group>
-        </div>
-
-        <Modal.Content>
-          <DeleteResponder/>
-        </Modal.Content>
-
-      </Modal>
-      {/* Responder: Delete */}
-      
-      {/* Volunteer: Delete */}  
-      <Modal size={size7} open={open7} onClose={this.close7}>
-        <div style={{backgroundColor:"#5c7788"}}>
-          <Button.Group>
-            <Button color='black' size='small' onClick={this.showAdmin('tiny')}>
-                Admin
-            </Button> 
-            <Button color='black' size='small' onClick={this.showResponder('tiny')}>
-              Responder
-            </Button>
-            <Button color='blue' size='small' onClick={this.showVolunteer('tiny')}>
-              Volunteer
-            </Button>
-            <Button color='black' size='small' onClick={this.showRegularUser('tiny')}>
-              Regular User
-            </Button>
-            <Button color='black' size='small' onClick={this.showCCP('tiny')}>
-              CCP
-            </Button> 
-          </Button.Group>
-        </div>
-
-        <Modal.Content>
-          <DeleteVolunteer/>
-        </Modal.Content>
-      </Modal>
-      {/* Volunteer: Delete */}  
-      
-      {/* Regular User: Delete */}  
-      <Modal size={size8} open={open8} onClose={this.close8}>
-        <div style={{backgroundColor:"#5c7788"}}>
-          <Button.Group>
-            <Button color='black' size='small' onClick={this.showAdmin('tiny')}>
-                Admin
-            </Button> 
-            <Button color='black' size='small' onClick={this.showResponder('tiny')}>
-              Responder
-            </Button>
-            <Button color='black' size='small' onClick={this.showVolunteer('tiny')}>
-              Volunteer
-            </Button>
-            <Button color='blue' size='small' onClick={this.showRegularUser('tiny')}>
-              Regular User
-            </Button>
-            <Button color='black' size='small' onClick={this.showCCP('tiny')}>
-              CCP
-            </Button> 
-          </Button.Group>
-        </div>
-
-        <Modal.Content>
-          <DeleteRegularUser/>
-        </Modal.Content>
-      </Modal>
-      {/* Regular User: Delete */}  
-
-      {/* Command Center Personnel: Delete */}
-       <Modal size={size9} open={open9} onClose={this.close9}>
-        <div style={{backgroundColor:"#5c7788"}}>
-          <Button.Group>
-            <Button color='black' size='small' onClick={this.showAdmin('tiny')}>
-                Admin
-            </Button> 
-            <Button color='black' size='small' onClick={this.showResponder('tiny')}>
-              Responder
-            </Button>
-            <Button color='black' size='small' onClick={this.showVolunteer('tiny')}>
-              Volunteer
-            </Button>
-            <Button color='black' size='small' onClick={this.showRegularUser('tiny')}>
-              Regular User
-            </Button>
-            <Button color='blue' size='small' onClick={this.showCCP('tiny')}>
-              CCP
-            </Button> 
-          </Button.Group>
-        </div>
-
-        <Modal.Content>
-          <DeleteCCP/>
-        </Modal.Content>
-      </Modal>
-      {/* Command Center Personnel: Delete */}
 
       
     </div>

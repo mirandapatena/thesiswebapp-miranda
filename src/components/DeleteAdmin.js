@@ -3,6 +3,10 @@ import { Table, Message, Icon } from 'semantic-ui-react'
 import fire from '../config/Fire';
 import _ from 'lodash';
 import DeleteUserAccount from './DeleteUserAccount';
+import { Search, Label } from 'semantic-ui-react'
+
+
+const resultRenderer = ({ title }) => <Label content={title} />
 
 class DeleteAdmin extends Component{
 
@@ -11,7 +15,10 @@ class DeleteAdmin extends Component{
         this.state = {
             admins: [{}],
             adminsProfiles: [{}],
-            administrators: [{}]
+            administrators: [{}],
+            isLoading: false, 
+            results: [], 
+            value: ""
         }
         
     }
@@ -23,6 +30,25 @@ class DeleteAdmin extends Component{
     // renderAdmins = () => {
        
     // }
+
+    // handleResultSelect = (e, { result }) => this.setState({ value: result.firstName });
+
+    // handleSearchChange = (e, { value }) => {
+    //     this.setState({ isLoading: true, value });
+
+    //     setTimeout(() => {
+    //     if (this.state.value.length < 1) return this.setState(initialState);
+
+    //     const re = new RegExp(_.escapeRegExp(this.state.value), "i");
+    //     const isMatch = result => re.test(result.firstName);
+
+    //     this.setState({
+    //         isLoading: false,
+    //         results: _.filter(this.state.administrators, isMatch)
+    //     });
+    //     }, 300);
+    // };
+
     getAdministratorData = () => {
         var adminNode = fire.database().ref('webUsers/Administrator');
         var adminsProfiles;
@@ -59,7 +85,18 @@ class DeleteAdmin extends Component{
     render(){
         return(
             <div>
-                 {this.state.administrators?
+            {/*<Search
+            loading={isLoading}
+            onResultSelect={this.handleResultSelect}
+            onSearchChange={_.debounce(this.handleSearchChange, 500, {
+              leading: true
+            })}
+            results={results}
+            value={value}
+            resultRenderer={resultRenderer}
+            {...this.props}
+        />*/}
+                 {/*this.state.administrators?
                     <Table celled>
                         <Table.Header>
                             <Table.Row>
@@ -80,7 +117,7 @@ class DeleteAdmin extends Component{
                         </Message.Header>
                   </Message>
                 :null
-                }
+                 */}
             </div>
         )
     }

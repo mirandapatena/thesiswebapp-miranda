@@ -38,21 +38,35 @@ class DeleteUserAccount extends Component{
     
     render(){
         return(
-                    <Table.Row>
-                        <Table.Cell>
-                            <Header as='h4' image><Image src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' rounded size='mini'/>
-                                <Header.Content>{this.props.firstName} {this.props.lastName}
-                                    <Header.Subheader>{this.props.email}</Header.Subheader>
-                                    <Header.Subheader>{this.props.contactNumber}</Header.Subheader>
-                                </Header.Content>
-                            </Header>
-                        </Table.Cell>
-                        <Table.Cell>
-                            <Button color='green' onClick={this.deleteUser}>
-                                Delete
-                            </Button>
-                        </Table.Cell>
-                    </Table.Row>
+            <Table.Row>
+            <Table.Cell>
+                <Header as='h4' image><Image src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' rounded size='mini'/>
+                    <Header.Content>
+                        {this.props.firstName} {this.props.lastName}
+                    </Header.Content>
+                </Header>
+            </Table.Cell>
+            <Table.Cell>
+                    <Header.Content>
+                    {this.props.email}
+                </Header.Content>
+            </Table.Cell>
+            <Table.Cell>
+                <Header.Content>
+                    {this.props.contactNumber}
+                </Header.Content>
+            </Table.Cell> 
+            <Table.Cell>
+                {/* <Button color='green' onClick={this.deleteUser}>
+                    Delete
+                </Button> */}
+                <Button.Group>
+                    <Button positive>Update</Button>
+                    <Button.Or />
+                    <Button onClick={this.deleteUser}>Delete</Button>
+                </Button.Group>
+            </Table.Cell>
+        </Table.Row>
         )
     }
 

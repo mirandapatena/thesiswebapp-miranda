@@ -14,6 +14,7 @@ class QueueIncidents extends Component {
             incidentsList : [{
                 key: '',
                 isSettled: false,
+                isShown: false,
                 incidentType: '',
                 incidentLocation: '',
                 isResponded: '',
@@ -42,8 +43,6 @@ class QueueIncidents extends Component {
             // var p = points.sort(function(a, b){return b - a});
             // console.log('points', p);
 
-            
-
             if(incident.isSettled === false){
                 return (
                     <div className='item' key={key}>
@@ -57,8 +56,9 @@ class QueueIncidents extends Component {
                         />
                     </div>
                 );
+                
             }
-            if(incident.isSettled === true){   
+            if(incident.isSettled === true && incident.isShown === false){   
                 var a = incident.incidentType;
                 var b = incident.incidentLocation;  
                 swal(b,a,{ button: "Ok!", icon:"success", text:"Incident is settled!"});
