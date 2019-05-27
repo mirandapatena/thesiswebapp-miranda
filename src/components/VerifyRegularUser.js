@@ -19,7 +19,7 @@ class VerifyRegularUser extends Component{
     componentDidMount(){
         var list = [];
         var tempObject = {};
-        fire.database().ref('unverifiedMobileUsers').orderByChild('user_type').equalTo('Regular User').on('value', snapshot => {
+        fire.database().ref('unverifiedMobileUsers').orderByChild('user_type').equalTo('Regular User').once('value', snapshot => {
             this.setState({regularUsers: snapshot.val()}, () => {
                 console.log('unverified regular users', this.state.regularUsers);
                 _.map(this.state.regularUsers, (regularUser, key) => {
@@ -36,10 +36,20 @@ class VerifyRegularUser extends Component{
         });
     }
 
+    verify = (uid) => {
+        var filteredItems = this.state.regularUsersProfiles.filter(function (item) {
+            return (item.key !== uid);
+          });
+         
+          this.setState({
+            regularUsersProfiles: filteredItems
+          });
+    }
+
     renderUnverifiedRegularUsers = () => {
         return _.map(this.state.regularUsersProfiles, (regularUser, key) => {
             console.log('asgdfgsdhfsd key', regularUser);
-            return (<VerifyUserAccount firstName={regularUser.firstName} lastName={regularUser.lastName} contactNumber={regularUser.contactNumber} email={regularUser.email} uid={regularUser.key}/>)
+            return (<VerifyUserAccount firstName={regularUser.firstName} lastName={regularUser.lastName} contactNumber={regularUser.contactNumber} email={regularUser.email} uid={regularUser.key} verify={this.verify}/>)
         })
     }
     

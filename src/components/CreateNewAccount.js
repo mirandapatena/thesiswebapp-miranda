@@ -5,7 +5,7 @@ import '../stylesheet_QueueIncidents.css';
 import {createUserAccount} from '../functions/createUserAccount';
 
 const emailRegex = RegExp(
-    /^([a-zA-Z0-9_.\-]+)@([a-zA-Z]+)\.([a-zA-Z]{2,5})$/
+    /^([a-zA-Z0-9_.-]+)@([a-zA-Z]+)\.([a-zA-Z]{2,5})$/
   );
   
   const contactNumberRegex = RegExp(

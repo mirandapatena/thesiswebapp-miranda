@@ -18,7 +18,7 @@ class VerifyVolunteer extends Component{
     componentDidMount(){
         var list = [];
         var tempObject = {};
-        fire.database().ref('unverifiedMobileUsers').orderByChild('user_type').equalTo('Volunteer').on('value', snapshot => {
+        fire.database().ref('unverifiedMobileUsers').orderByChild('user_type').equalTo('Volunteer').once('value', snapshot => {
             this.setState({volunteers: snapshot.val()}, () => {
                 console.log('unverified volunteers', this.state.volunteers);
                 _.map(this.state.volunteers, (volunteer, key) => {
@@ -35,10 +35,20 @@ class VerifyVolunteer extends Component{
         });
     }
 
+    verify = (uid) => {
+        var filteredItems = this.state.volunteersProfiles.filter(function (item) {
+            return (item.key !== uid);
+          });
+         
+          this.setState({
+            volunteersProfiles: filteredItems
+          });
+    }
+
     renderUnverifiedVolunteers = () => {
         return _.map(this.state.volunteersProfiles, (volunteer, key) => {
             console.log('asgdfgsdhfsd key', volunteer);
-            return (<VerifyUserAccount firstName={volunteer.firstName} lastName={volunteer.lastName} contactNumber={volunteer.contactNumber} email={volunteer.email} uid={volunteer.key}/>)
+            return (<VerifyUserAccount firstName={volunteer.firstName} lastName={volunteer.lastName} contactNumber={volunteer.contactNumber} email={volunteer.email} uid={volunteer.key} verify={this.verify}/>)
         })
     }
 

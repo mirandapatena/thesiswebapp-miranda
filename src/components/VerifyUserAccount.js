@@ -15,8 +15,9 @@ class VerifyUserAccount extends Component{
             console.log(`${this.props.uid} account verified`);
             deleteNode.remove().then(()=>{
                 console.log(`${this.props.uid} node in unverifiedMobileUsers node removed`);
+                this.props.verify(this.props.uid);
             });
-        })
+        });
     }
 
     render(){
