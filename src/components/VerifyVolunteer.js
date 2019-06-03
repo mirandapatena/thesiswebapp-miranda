@@ -5,13 +5,15 @@ import '../HeaderDashboard.css';
 import fire from '../config/Fire';
 import _ from 'lodash';
 import VerifyUserAccount from './VerifyUserAccount';
+import searchUser from '../functions/searchUser';
 
 class VerifyVolunteer extends Component{
     constructor(props){
         super(props);
         this.state = {
             volunteers: [{}],
-            volunteersProfiles: [{}]
+            volunteersProfiles: [{}],
+            search: ''
         }
     }
 
@@ -27,7 +29,7 @@ class VerifyVolunteer extends Component{
                         tempObject.key = snapshot.key;
                         list.push(tempObject);
                         this.setState({volunteersProfiles: list}, ()=> {
-                            console.log('Unverified Regular Users Profiles', this.state.volunteersProfiles);
+                            console.log('Unverified Volunteers Profiles', this.state.volunteersProfiles);
                         });
                     })
                 })
@@ -45,11 +47,8 @@ class VerifyVolunteer extends Component{
           });
     }
 
-    renderUnverifiedVolunteers = () => {
-        return _.map(this.state.volunteersProfiles, (volunteer, key) => {
-            console.log('asgdfgsdhfsd key', volunteer);
-            return (<VerifyUserAccount firstName={volunteer.firstName} lastName={volunteer.lastName} contactNumber={volunteer.contactNumber} email={volunteer.email} uid={volunteer.key} verify={this.verify}/>)
-        })
+    searchHandler = (event) => {
+        this.setState({search: event.target.value});
     }
 
     render(){
@@ -60,7 +59,11 @@ class VerifyVolunteer extends Component{
                         <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell colSpan='2'> Unverified Volunteers </Table.HeaderCell>
-                                <Table.HeaderCell colSpan='2'><Search aligned='right' />  </Table.HeaderCell>
+                                <Table.HeaderCell colSpan='2'>
+                                    <form>
+                                        <input type="text" name="" id="" onChange={this.searchHandler}/>
+                                    </form>
+                                </Table.HeaderCell>
                             </Table.Row>
                             
                             <Table.Row>
@@ -72,7 +75,8 @@ class VerifyVolunteer extends Component{
 
                         </Table.Header>
                         <Table.Body>
-                            {this.renderUnverifiedVolunteers()}
+                        {this.state.volunteersProfiles.filter(searchUser(this.state.search)).map(volunteer => 
+                            <VerifyUserAccount firstName={volunteer.firstName} lastName={volunteer.lastName} contactNumber={volunteer.contactNumber} email={volunteer.email} uid={volunteer.key} verify={this.verify}/>)}
                         </Table.Body>
                     </Table>
                 :!this.state.volunteers?
@@ -80,7 +84,11 @@ class VerifyVolunteer extends Component{
                         <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell colSpan='2'> Unverified Volunteers </Table.HeaderCell>
-                                <Table.HeaderCell colSpan='2'><Search aligned='right' />  </Table.HeaderCell>
+                                <Table.HeaderCell colSpan='2'>
+                                    <form>
+                                        <input type="text" name="" id="" onChange={this.searchHandler}/>
+                                    </form>
+                                </Table.HeaderCell>
                             </Table.Row>
                             
                             <Table.Row>

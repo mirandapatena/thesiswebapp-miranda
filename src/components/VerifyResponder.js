@@ -5,6 +5,7 @@ import '../HeaderDashboard.css';
 import fire from '../config/Fire';
 import _ from 'lodash';
 import VerifyUserAccount from './VerifyUserAccount';
+import searchUser from '../functions/searchUser';
 
 class VerifyResponder extends Component{
     
@@ -12,7 +13,8 @@ class VerifyResponder extends Component{
         super(props);
         this.state = {
             responders: [{}],
-            respondersProfiles: [{}]
+            respondersProfiles: [{}],
+            search: ''
         }
     }
 
@@ -52,6 +54,10 @@ class VerifyResponder extends Component{
         })
     }
 
+    searchHandler = (event) => {
+        this.setState({search: event.target.value});
+    }
+
     render(){
         return(
             <div>
@@ -60,7 +66,11 @@ class VerifyResponder extends Component{
                         <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell colSpan='2'> Unverified Responders </Table.HeaderCell>
-                                <Table.HeaderCell colSpan='2'><Search aligned='right' />  </Table.HeaderCell>
+                                <Table.HeaderCell colSpan='2'>
+                                    <form>
+                                        <input type="text" name="" id="" onChange={this.searchHandler}/>
+                                    </form>
+                                </Table.HeaderCell>
                             </Table.Row>
                             <Table.Row>
                                 <Table.HeaderCell style={{width:'350px'}}>Name</Table.HeaderCell>
@@ -70,15 +80,20 @@ class VerifyResponder extends Component{
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            {this.renderUnverifiedResponders()}
+                        {this.state.respondersProfiles.filter(searchUser(this.state.search)).map(responder => 
+                            <VerifyUserAccount firstName={responder.firstName} lastName={responder.lastName} contactNumber={responder.contactNumber} email={responder.email} uid={responder.key} verify={this.verify}/>)}
                         </Table.Body>
                     </Table>
                 :!this.state.responders?
                 <Table celled>
                         <Table.Header>
                             <Table.Row>
-                                <Table.HeaderCell colSpan='2'> Unverified Volunteers </Table.HeaderCell>
-                                <Table.HeaderCell colSpan='2'><Search aligned='right' />  </Table.HeaderCell>
+                                <Table.HeaderCell colSpan='2'> Unverified Responders</Table.HeaderCell>
+                                <Table.HeaderCell colSpan='2'>
+                                    <form>
+                                        <input type="text" name="" id="" onChange={this.searchHandler}/>
+                                    </form>
+                                </Table.HeaderCell>
                             </Table.Row>
                             
                             <Table.Row>
