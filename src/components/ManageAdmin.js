@@ -52,7 +52,7 @@ class ManageAdmin extends Component{
         return _.map(this.state.administrators, (administrator, key) => {
             console.log('renderAdministrators1', administrator.uid);
             return(
-            <DeleteUserAccount uid={administrator.uid} firstName={administrator.firstName} lastName={administrator.lastName} email={administrator.email} contactNumber={administrator.contactNumber} user_type='Administrator' />);
+            <DeleteUserAccount uid={administrator.uid} firstName={administrator.firstName} lastName={administrator.lastName} email={administrator.email} contactNumber={administrator.contactNumber} user_type='Administrator' key={administrator.uid}/>);
         });
     }
 

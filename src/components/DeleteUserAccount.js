@@ -15,22 +15,22 @@ class DeleteUserAccount extends Component{
 
     deleteUser = () => {
         if(this.props.user_type === 'Administrator' || this.props.user_type === 'Command Center Personnel'){
-            var webUserNode = fire.database().ref(`webUsers/${this.props.user_type}/${this.props.uid}`);
-            var userNode = fire.database().ref(`users/${this.props.uid}`);
+            var webUserNode = fire.database().ref(`webUsers/${this.props.user_type}/${this.props.key}`);
+            var userNode = fire.database().ref(`users/${this.props.key}`);
             webUserNode.remove().then(()=>{
-                console.log(`${this.props.uid} removed from webUsers node`);
+                console.log(`${this.props.key} removed from webUsers node`);
                 userNode.remove().then(()=>{
-                    console.log(`${this.props.uid} removed from users node`);
+                    console.log(`${this.props.key} removed from users node`);
                 });
             });
 
         }else if(this.props.user_type === 'Regular User' || this.props.user_type === 'Responder' || this.props.user_type === 'Volunteer'){
-            var mobileUserNode = fire.database().ref(`webUsers/${this.props.user_type}/${this.props.uid}`);
-            var userNode2 = fire.database().ref(`users/${this.props.uid}`);
+            var mobileUserNode = fire.database().ref(`webUsers/${this.props.user_type}/${this.props.key}`);
+            var userNode2 = fire.database().ref(`users/${this.props.key}`);
             mobileUserNode.remove().then(()=>{
-                console.log(`${this.props.uid} removed from mobileUsers node`);
+                console.log(`${this.props.key} removed from mobileUsers node`);
                 userNode2.remove().then(()=>{
-                    console.log(`${this.props.uid} removed from users node`);
+                    console.log(`${this.props.key} removed from users node`);
                 });
             });
         }
