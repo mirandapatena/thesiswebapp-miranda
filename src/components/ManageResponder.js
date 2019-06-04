@@ -14,43 +14,20 @@ class ManageResponder extends Component{
         }
     }
 
-    // componentDidMount(){
-       
-    // }
-
-    getResponderData = () => {
-        var responderNode = fire.database().ref('mobileUsers/Responder');
-        var respondersProfiles;
-        var responders = [];
-        var responderObject = {};
-        responderNode.once('value', snapshot => {
-            respondersProfiles = snapshot.val();
-            console.log('responders', respondersProfiles);
-            this.setState({respondersProfiles}, () => {
-                console.log('responder setstate', this.state.respondersProfiles);
-                _.map(respondersProfiles, (responder, key) => {
-                    var profile = fire.database().ref(`users/${responder.uid}`);
-                    profile.once('value', snapshot => {
-                        responderObject = snapshot.val();
-                        responderObject.uid = responder.uid;
-                        responders.push(responderObject);
-                        this.setState({responders}, () => {
-                            console.log('responder key', responderObject);
-                        });
-                    });
-                });
+    componentDidMount(){
+        fire.database().ref('users').orderByChild('user_type').equalTo('Responder').once('value', snapshot => {
+            this.setState({responders: snapshot.val()}, () => {
+                console.log('manage regular', this.state.responders);
             });
-        });
-
+        });    
     }
 
-    // renderResponders = () => {
-    //     return _.map(this.state.responders, (responder, key) => {
-    //         console.log('renderResponder', responder.uid);
-    //         return(
-    //         <DeleteUserAccount uid={responder.uid} firstName={responder.firstName} lastName={responder.lastName} email={responder.email} contactNumber={responder.contactNumber} user_type='Responder' />);
-    //     });
-    // }
+    renderResponders = () => {
+        return _.map(this.state.responders, (responder, key) => {
+            return(
+            <DeleteUserAccount uid={responder.uid} firstName={responder.firstName} lastName={responder.lastName} email={responder.email} contactNumber={responder.contactNumber} user_type='Responder' key={key}/>);
+        });
+    }
 
     render(){
         return(
@@ -71,7 +48,7 @@ class ManageResponder extends Component{
                          </Table.Row>
                      </Table.Header>
                      <Table.Body>
-                            {/*this.renderResponders()*/}
+                            {this.renderResponders()}
                         </Table.Body>
                     </Table>
                 :!this.state.responders?

@@ -83,7 +83,7 @@ class VerifyVolunteer extends Component{
                 <Table celled>
                         <Table.Header>
                             <Table.Row>
-                                <Table.HeaderCell colSpan='2'> Unverified Volunteers </Table.HeaderCell>
+                                <Table.HeaderCell colSpan='2'>Unverified Volunteers</Table.HeaderCell>
                                 <Table.HeaderCell colSpan='2'>
                                     <form>
                                         <input type="text" name="" id="" onChange={this.searchHandler}/>
