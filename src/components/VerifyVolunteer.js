@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Table, Message, Icon, Search } from 'semantic-ui-react'
+import { Table, Message, Icon, Input } from 'semantic-ui-react'
 import '../stylesheet_QueueIncidents.css';
 import '../HeaderDashboard.css';
 import fire from '../config/Fire';
@@ -8,6 +8,7 @@ import VerifyUserAccount from './VerifyUserAccount';
 import searchUser from '../functions/searchUser';
 
 class VerifyVolunteer extends Component{
+    
     constructor(props){
         super(props);
         this.state = {
@@ -61,7 +62,7 @@ class VerifyVolunteer extends Component{
                                 <Table.HeaderCell colSpan='2'> Unverified Volunteers </Table.HeaderCell>
                                 <Table.HeaderCell colSpan='2'>
                                     <form>
-                                        <input type="text" name="" id="" onChange={this.searchHandler}/>
+                                        <Input type="text" name="" id="" onChange={this.searchHandler} style={{marginLeft:'75px'}}/><Icon name='search' style={{marginLeft:'6px'}}/>
                                     </form>
                                 </Table.HeaderCell>
                             </Table.Row>
@@ -86,7 +87,7 @@ class VerifyVolunteer extends Component{
                                 <Table.HeaderCell colSpan='2'>Unverified Volunteers</Table.HeaderCell>
                                 <Table.HeaderCell colSpan='2'>
                                     <form>
-                                        <input type="text" name="" id="" onChange={this.searchHandler}/>
+                                        <Input type="text" name="" id="" onChange={this.searchHandler} style={{marginLeft:'75px'}}/><Icon name='search' style={{marginLeft:'6px'}}/>
                                     </form>
                                 </Table.HeaderCell>
                             </Table.Row>

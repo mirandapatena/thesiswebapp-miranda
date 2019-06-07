@@ -18,6 +18,7 @@ export function createUserAccount (account, credentials = {}){
         saveUserType(user_type, isMobile, user.user.uid, credentials);
       }else{
         saveUserType(user_type, isMobile, user.user.uid);
+        swal(email,"Account successfully created!",{icon:"success"});
       }
       return 'Success'
     });
@@ -25,11 +26,10 @@ export function createUserAccount (account, credentials = {}){
       var registerError = e.message;
       console.log('ErrorNewAccount',registerError);
       swal(email,registerError,{icon:"error"});
-
     });
+    
+    
 
-    
-    
 }
 
 function saveUserType(user_type, isMobile, uid, credentials = {}){

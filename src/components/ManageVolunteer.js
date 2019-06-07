@@ -3,6 +3,7 @@ import { Table, Message, Icon, Search } from 'semantic-ui-react'
 import fire from '../config/Fire';
 import _ from 'lodash';
 import DeleteUserAccount from './DeleteUserAccount';
+import searchUser from '../functions/searchUser';
 
 class ManageVolunteer extends Component{
    
@@ -10,26 +11,44 @@ class ManageVolunteer extends Component{
         super(props);
         this.state = {
             volunteerProfiles: [{}],
-            volunteers: [{}]
+            volunteers: [{}],
+            search: ''
         }
         
     }
 
     componentDidMount(){
-        var list = [];
-        var tempObject = {};
+        var array = [];
         fire.database().ref('users').orderByChild('user_type').equalTo('Volunteer').once('value', snapshot => {
             this.setState({volunteers: snapshot.val()}, () => {
-                console.log('manage volunteers', this.state.volunteers);
+                _.map(this.state.volunteers, (volunteer, key) => {
+                    var tempObject = volunteer;
+                    tempObject.key = key;
+                    console.log('temp volunteer', tempObject);
+                    array.push(tempObject);
+                });
+                this.setState({volunteerProfiles: array}, () => {
+                    console.log('volunteerProfiles', this.state.volunteerProfiles);
+                });
             });
         });    
     }
 
-    renderVolunteers = () => {
-        return _.map(this.state.volunteers, (volunteer, key) => {
-            return(
-            <DeleteUserAccount uid={volunteer.uid} firstName={volunteer.firstName} lastName={volunteer.lastName} email={volunteer.email} contactNumber={volunteer.contactNumber} user_type='Volunteer' key={key}/>);
-        });
+    searchHandler = (event) => {
+        this.setState({search: event.target.value});
+    }
+
+    delete = (uid) => {
+        console.log('in delete function');
+        var filteredItems = this.state.volunteerProfiles.filter(function (item) {
+            console.log('in filter');
+            return (item.key !== uid);
+          });
+          this.setState({
+            volunteerProfiles: filteredItems
+          }, () => {
+              console.log('state array updated');
+          });
     }
 
     render(){
@@ -39,8 +58,12 @@ class ManageVolunteer extends Component{
                     <Table celled>
                      <Table.Header>
                          <Table.Row>
-                             <Table.HeaderCell colSpan='2'> Volunteers </Table.HeaderCell>
-                             <Table.HeaderCell colSpan='2'><Search aligned='right' />  </Table.HeaderCell>
+                            <Table.HeaderCell colSpan='2'> Volunteers </Table.HeaderCell>
+                            <Table.HeaderCell colSpan='2'>
+                                <form>
+                                    <input type="text" name="" id="" onChange={this.searchHandler} style={{marginLeft:'75px'}}/><Icon name='search' style={{marginLeft:'6px'}}/>    
+                                </form>
+                            </Table.HeaderCell>
                          </Table.Row>
                          
                          <Table.Row>
@@ -51,7 +74,10 @@ class ManageVolunteer extends Component{
                          </Table.Row>
                      </Table.Header>
                      <Table.Body>
-                            {this.renderVolunteers()}
+                     {this.state.volunteerProfiles.filter(searchUser(this.state.search)).map(volunteer => {
+                        return(
+                        <DeleteUserAccount user_type={volunteer.user_type} firstName={volunteer.firstName} lastName={volunteer.lastName} contactNumber={volunteer.contactNumber} email={volunteer.email} uid={volunteer.key} delete={this.delete}/>);
+                    })}
                         </Table.Body>
                     </Table>
                 :!this.state.volunteers?
@@ -59,7 +85,11 @@ class ManageVolunteer extends Component{
                         <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell colSpan='2'> Volunteers </Table.HeaderCell>
-                                <Table.HeaderCell colSpan='2'><Search aligned='right' />  </Table.HeaderCell>
+                                <Table.HeaderCell colSpan='2'>
+                                    <form>
+                                        <input type="text" name="" id="" onChange={this.searchHandler} style={{marginLeft:'75px'}}/><Icon name='search' style={{marginLeft:'6px'}}/>    
+                                    </form>
+                                </Table.HeaderCell>
                             </Table.Row>
                             
                             <Table.Row>

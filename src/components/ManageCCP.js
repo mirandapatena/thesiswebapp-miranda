@@ -3,6 +3,7 @@ import { Table, Message, Icon, Search } from 'semantic-ui-react'
 import fire from '../config/Fire';
 import _ from 'lodash';
 import DeleteUserAccount from './DeleteUserAccount';
+import searchUser from '../functions/searchUser';
 
 class ManageCCP extends Component{
 
@@ -11,49 +12,41 @@ class ManageCCP extends Component{
         this.state = {
             admins: [{}],
             ccpProfiles: [{}],
-            commandCenterPersonnel: [{}]
+            commandCenterPersonnel: [{}],
+            search: ''
         }
         
     }
 
     componentDidMount(){
-        this.getCCPData();
-    }
-
-    // renderAdmins = () => {
-       
-    // }
-    getCCPData = () => {
-        var ccpNode = fire.database().ref('webUsers/Command Center Personnel');
-        var ccpProfiles;
-        var commandCenterPersonnel = [{}];
-        var ccpObject = {};
-        ccpNode.once('value', snapshot => {
-            ccpProfiles = snapshot.val();
-            console.log('ccpProfiles', ccpProfiles);
-            this.setState({ccpProfiles}, () => {
-                console.log('ccpProfiles', this.state.ccpProfiles);
-                _.map(ccpProfiles, (ccp, key) => {
-                    var profile = fire.database().ref(`users/${ccp.uid}`);
-                    profile.once('value', snapshot => {
-                        ccpObject = snapshot.val();
-                        ccpObject.uid = ccp.uid;
-                        commandCenterPersonnel.push(ccpObject);
-                        this.setState({commandCenterPersonnel}, () => {
-                            console.log('commandCenterPersonnel', ccpObject);
-                        });
-                    });
+        var array = [];
+        fire.database().ref('users').orderByChild('user_type').equalTo('Command Center Personnel').once('value', snapshot => {
+            this.setState({commandCenterPersonnel: snapshot.val()}, () => {
+                _.map(this.state.commandCenterPersonnel, (ccp, key) => {
+                    var tempObject = ccp;
+                    tempObject.key = key;
+                    console.log('temp ccp', tempObject);
+                    array.push(tempObject);
+                });
+                this.setState({ccpProfiles: array}, () => {
+                    console.log('ccpProfiles', this.state.ccpProfiles);
                 });
             });
         });
     }
 
-    renderCCP = () => {
-        return _.map(this.state.commandCenterPersonnel, (ccp, key) => {
-            console.log('ccp1', ccp.uid);
-            return(
-            <DeleteUserAccount uid={ccp.uid} firstName={ccp.firstName} lastName={ccp.lastName} email={ccp.email} contactNumber={ccp.contactNumber} user_type='Command Center Personnel' key={ccp.uid}/>);
-        });
+    searchHandler = (event) => {
+        this.setState({search: event.target.value});
+    }
+
+    delete = (uid) => {
+        var filteredItems = this.state.ccpProfiles.filter(function (item) {
+            return (item.key !== uid);
+          });
+         
+          this.setState({
+            ccpProfiles: filteredItems
+          });
     }
 
     render(){
@@ -64,7 +57,11 @@ class ManageCCP extends Component{
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell colSpan='2'> Command Center Personnels </Table.HeaderCell>
-                            <Table.HeaderCell colSpan='2'><Search aligned='right' />  </Table.HeaderCell>
+                            <Table.HeaderCell colSpan='2'>
+                                <form>
+                                    <input type="text" name="" id="" onChange={this.searchHandler} style={{marginLeft:'75px'}}/><Icon name='search' style={{marginLeft:'6px'}}/>    
+                                </form>
+                            </Table.HeaderCell>
                         </Table.Row>
                         
                         <Table.Row>
@@ -75,7 +72,10 @@ class ManageCCP extends Component{
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                            {this.renderCCP()}
+                            {this.state.ccpProfiles.filter(searchUser(this.state.search)).map(ccp => {
+                                return(
+                                <DeleteUserAccount user_type={ccp.user_type} firstName={ccp.firstName} lastName={ccp.lastName} contactNumber={ccp.contactNumber} email={ccp.email} uid={ccp.key} delete={this.delete}/>);
+                            })}
                         </Table.Body>
                     </Table>
                 :!this.state.admins?
@@ -83,16 +83,18 @@ class ManageCCP extends Component{
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell colSpan='2'> Command Center Personnels </Table.HeaderCell>
-                            <Table.HeaderCell colSpan='2'><Search aligned='right' />  </Table.HeaderCell>
-                        </Table.Row>
-                        
-                        <Table.Row>
+                            <Table.HeaderCell colSpan='2'>
+                                <form>
+                                    <input type="text" name="" id="" onChange={this.searchHandler} style={{marginLeft:'75px'}}/><Icon name='search' style={{marginLeft:'6px'}}/>    
+                                </form>
+                            </Table.HeaderCell>
+                        </Table.Row>    
+                    <Table.Row>
                             <Table.HeaderCell style={{width:'350px'}}>Name</Table.HeaderCell>
                             <Table.HeaderCell style={{width:'300px'}}>Email</Table.HeaderCell>
                             <Table.HeaderCell>Contact Number</Table.HeaderCell>
                             <Table.HeaderCell>Actions</Table.HeaderCell>
-                        </Table.Row>
-                        
+                        </Table.Row>   
                     </Table.Header>
                     <Table.Body>
                         <Table.Row>

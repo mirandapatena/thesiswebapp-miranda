@@ -3,6 +3,7 @@ import { Table, Message, Icon, Search } from 'semantic-ui-react'
 import fire from '../config/Fire';
 import _ from 'lodash';
 import DeleteUserAccount from './DeleteUserAccount';
+import searchUser from '../functions/searchUser';
 
 class ManageRegularUser extends Component{
 
@@ -10,26 +11,44 @@ class ManageRegularUser extends Component{
         super(props);
         this.state = {
             regularUsersProfiles: [{}],
-            regularUsers: [{}]
+            regularUsers: [{}],
+            search: ''
         }
     }
 
     componentDidMount(){
+        var array = [];
         fire.database().ref('users').orderByChild('user_type').equalTo('Regular User').once('value', snapshot => {
             this.setState({regularUsers: snapshot.val()}, () => {
-                console.log('manage regular', this.state.regularUsers);
+                _.map(this.state.regularUsers, (regularUser, key) => {
+                    var tempObject = regularUser;
+                    tempObject.key = key;
+                    console.log('temp regularUser', tempObject);
+                    array.push(tempObject);
+                });
+                this.setState({regularUsersProfiles: array}, () => {
+                    console.log('regularUsersProfiles', this.state.regularUsersProfiles);
+                });
             });
         });    
     }
 
-
-    renderRegularUsers = () => {
-        return _.map(this.state.regularUsers, (regularUser, key) => {
-            return(
-            <DeleteUserAccount uid={regularUser.uid} firstName={regularUser.firstName} lastName={regularUser.lastName} email={regularUser.email} contactNumber={regularUser.contactNumber} user_type='Regular User' key={key}/>);
-        });
+    searchHandler = (event) => {
+        this.setState({search: event.target.value});
     }
-    
+
+    delete = (uid) => {
+        console.log('in delete function');
+        var filteredItems = this.state.regularUsersProfiles.filter(function (item) {
+            console.log('in filter');
+            return (item.key !== uid);
+          });
+          this.setState({
+            regularUsersProfiles: filteredItems
+          }, () => {
+              console.log('state array updated');
+          });
+    }
 
     render(){
         return(
@@ -39,7 +58,11 @@ class ManageRegularUser extends Component{
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell colSpan='2'> Regular Users </Table.HeaderCell>
-                            <Table.HeaderCell colSpan='2'><Search aligned='right' />  </Table.HeaderCell>
+                            <Table.HeaderCell colSpan='2'>
+                                <form>
+                                    <input type="text" name="" id="" onChange={this.searchHandler} style={{marginLeft:'75px'}}/><Icon name='search' style={{marginLeft:'6px'}}/>    
+                                </form>
+                            </Table.HeaderCell>
                         </Table.Row>
                         
                         <Table.Row>
@@ -50,7 +73,10 @@ class ManageRegularUser extends Component{
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                            {this.renderRegularUsers()} 
+                    {this.state.regularUsersProfiles.filter(searchUser(this.state.search)).map(regularUser => {
+                        return(
+                        <DeleteUserAccount user_type={regularUser.user_type} firstName={regularUser.firstName} lastName={regularUser.lastName} contactNumber={regularUser.contactNumber} email={regularUser.email} uid={regularUser.key} delete={this.delete}/>);
+                    })}
                         </Table.Body>
                     </Table>
                 :!this.state.regularUsers?
@@ -58,7 +84,11 @@ class ManageRegularUser extends Component{
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell colSpan='2'> Regular Users </Table.HeaderCell>
-                            <Table.HeaderCell colSpan='2'><Search aligned='right' />  </Table.HeaderCell>
+                            <Table.HeaderCell colSpan='2'>
+                                <form>
+                                    <input type="text" name="" id="" onChange={this.searchHandler} style={{marginLeft:'75px'}}/><Icon name='search' style={{marginLeft:'6px'}}/>    
+                                </form>
+                            </Table.HeaderCell>
                         </Table.Row>
                         
                         <Table.Row>

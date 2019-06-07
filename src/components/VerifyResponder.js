@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Table, Message, Icon, Search } from 'semantic-ui-react'
+import { Table, Message, Icon, Input } from 'semantic-ui-react'
 import '../stylesheet_QueueIncidents.css';
 import '../HeaderDashboard.css';
 import fire from '../config/Fire';
@@ -68,7 +68,7 @@ class VerifyResponder extends Component{
                                 <Table.HeaderCell colSpan='2'> Unverified Responders </Table.HeaderCell>
                                 <Table.HeaderCell colSpan='2'>
                                     <form>
-                                        <input type="text" name="" id="" onChange={this.searchHandler}/>
+                                        <Input type="text" name="" id="" onChange={this.searchHandler} style={{marginLeft:'75px'}}/><Icon name='search' style={{marginLeft:'6px'}}/>
                                     </form>
                                 </Table.HeaderCell>
                             </Table.Row>
@@ -91,7 +91,7 @@ class VerifyResponder extends Component{
                                 <Table.HeaderCell colSpan='2'>Unverified Responders</Table.HeaderCell>
                                 <Table.HeaderCell colSpan='2'>
                                     <form>
-                                        <input type="text" name="" id="" onChange={this.searchHandler}/>
+                                        <Input type="text" name="" id="" onChange={this.searchHandler} style={{marginLeft:'75px'}}/><Icon name='search' style={{marginLeft:'6px'}}/>
                                     </form>
                                 </Table.HeaderCell>
                             </Table.Row>

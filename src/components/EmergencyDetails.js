@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Button, Card, Modal, Table, Icon } from 'semantic-ui-react';
+import { Button, Card, Modal, Table, Icon, Message } from 'semantic-ui-react';
 import '../stylesheet_QueueIncidents.css';
 import fire from '../config/Fire';
 import _ from 'lodash';
@@ -25,6 +25,7 @@ class EmergencyDetails extends Component{
             isRequestingResponders: false,
             isRequestingVolunteers: false,
             timeReceived: '',
+            noteIncident: '',
             volunteerAccept: false,
             volunteerReject: false,
             timeOut: false,
@@ -287,7 +288,9 @@ class EmergencyDetails extends Component{
                     <Card.Header>
                         <p className='incidentStyleType'><b>{this.props.incidentType}</b></p>
                         <p className='incidentContent'>{this.props.incidentKey}</p>
-                        <p>{this.state.m}:{this.state.s}:{this.state.ms}</p>
+                        <div style={{textAlign: 'center', fontSize:'23px', fontFamily:'sans-serif', color:'red', paddingBottom: '4px'}}>
+                            <b>{this.state.m}:{this.state.s}:{this.state.ms}</b>
+                        </div>
                     </Card.Header>
                     <Card.Content>
                         <p className='incidentReportedBy'><b>Reported By:</b> {this.state.firstName} {this.state.lastName}</p>
@@ -309,12 +312,18 @@ class EmergencyDetails extends Component{
             
             <Modal size={size} open={open} onClose={this.close}>
                 <Modal.Header>New Emergency</Modal.Header>
-                    <p>{this.state.m}:{this.state.s}:{this.state.ms}</p>
                     <Modal.Content>
+                            <Message color='blue'>
+                                <div style={{textAlign: 'center', fontSize:'30px', fontFamily:'sans-serif', paddingBottom:'5px'}}>
+                                    <b>{this.state.m}:{this.state.s}:{this.state.ms}</b>
+                                </div>
+                            </Message>
                             <p><b>Reported by:</b> {this.state.firstName} {this.state.lastName}</p>
                             <p><b>Type of Incident:</b> {this.props.incidentType}</p>
                             <p><b>Location of Incident:</b> {this.props.incidentLocation}</p>
                             <p><b>Coordinates:</b> {this.props.coordinates.lng} {this.props.coordinates.lat}</p>
+                            <p><b>Time Received:</b> {this.props.timeReceived}</p>
+                            <p><b>Note:</b> {this.props.incidentNote}</p>
                             <p><b>Photo of Incident:</b></p>
                     </Modal.Content>
                         <Modal.Actions>
@@ -331,10 +340,13 @@ class EmergencyDetails extends Component{
             <Modal size={size2} open={open2} onClose={this.closeActiveRespondersList}>
             <Modal.Header>Active Responders</Modal.Header>
                 <Modal.Content>
-                    <p>{this.state.m}:{this.state.s}:{this.state.ms}</p>
-                    {/* <Card.Group itemsPerRow={3}>
-                        {this.renderRespondersList()}
-                    </Card.Group> */}
+                {this.state.activeResponders?
+                <div>
+                    <Message color='blue'>
+                        <div style={{textAlign: 'center', fontSize:'30px', fontFamily:'sans-serif', paddingBottom:'5px'}}>
+                            <b>{this.state.m}:{this.state.s}:{this.state.ms}</b>
+                        </div>
+                    </Message>
                     <Table>
                         <Table.Header>
                             <Table.Row>
@@ -348,16 +360,31 @@ class EmergencyDetails extends Component{
                             {this.renderRespondersList()}
                         </Table.Body>
                     </Table>
+                    </div>
+                    :!this.state.activeResponders?
+                    <div style={{paddingTop:'20px', paddingBottom:'20px'}}>
+                        <Message info>
+                            <Message.Header>
+                                <div style={{fontSize:'18px', textAlign:'center'}}>
+                                    <Icon name='user'/>No Available Responders
+                                </div>
+                            </Message.Header>
+                        </Message>
+                    </div>
+                    :null}
                 </Modal.Content>
             </Modal>
 
             <Modal size={size3} open={open3} onClose={this.closeActiveVolunteersList}>
             <Modal.Header>Active Volunteers</Modal.Header>
-                <Modal.Content>
-                    <p>{this.state.m}:{this.state.s}:{this.state.ms}</p>
-                    {/* <Card.Group itemsPerRow={3}>
-                        {this.renderVolunteersList()}
-                    </Card.Group> */}
+            <Modal.Content>
+            {this.state.bestVolunteers?
+            <div>
+                    <Message color='blue'>
+                        <div style={{textAlign: 'center', fontSize:'30px', fontFamily:'sans-serif', paddingBottom:'5px'}}>
+                            <b>{this.state.m}:{this.state.s}:{this.state.ms}</b>
+                        </div>
+                    </Message>
                     <Table>
                         <Table.Header>
                             <Table.Row>
@@ -371,8 +398,23 @@ class EmergencyDetails extends Component{
                             {this.renderVolunteersList()}
                         </Table.Body>    
                     </Table>
-                    <Button onClick={this.volunteerDispatch}>Request Volunteer</Button>
+                    
+                </div>
+                :!this.state.bestVolunteers?
+                <div style={{paddingTop:'20px', paddingBottom:'20px'}}>
+                    <Message info>
+                        <Message.Header>
+                            <div style={{fontSize:'18px', textAlign:'center'}}>
+                                <Icon name='user'/>No Available Volunteers
+                            </div>
+                        </Message.Header>
+                    </Message>
+                </div>
+                :null}
                 </Modal.Content>
+                <Modal.Actions>
+                    <Button color='blue' onClick={this.volunteerDispatch}>Request Volunteer</Button>
+                </Modal.Actions>
             </Modal>
         </div>
         );

@@ -50,6 +50,7 @@ class QueueIncidents extends Component {
                             timeReceived = {incident.timeReceived}
                             incidentType = {incident.incidentType} 
                             incidentLocation = {incident.incidentLocation}
+                            incidentNote = {incident.incidentNote}
                             coordinates = {incident.coordinates}
                             incidentKey = {key}
                             reportedBy = {incident.reportedBy}
