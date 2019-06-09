@@ -260,6 +260,12 @@ class DeleteUserAccount extends Component{
                                     console.log(`${this.props.uid} credentials have been deleted`);
                                     this.props.delete(this.props.uid);
                                 });
+                            }
+                            if(!this.props.isVerified){
+                                var deleteUnverifiedNode = fire.database().ref(`unverifiedMobileUsers/${this.props.uid}`);
+                                deleteUnverifiedNode.remove().then(()=>{
+                                    this.props.delete(this.props.uid);
+                                })
                             }else{
                                 this.props.delete(this.props.uid);
                             }
@@ -278,7 +284,7 @@ class DeleteUserAccount extends Component{
     }
 
     updateUserFirstName = () =>{
-
+       // console.log(`${this.props.uid} 'firstName' ${this.state.firstName}`);
         swal({
             title: "Are you sure you want to edit this account's first name?",
             icon: "warning",
@@ -298,7 +304,10 @@ class DeleteUserAccount extends Component{
                         icon: "error",
                         });
                     } else {
+                        //console.log(`${this.props.uid} 'firstName' ${this.state.firstName}`);
+                        //this.props.update(this.props.uid, 'firstName', this.state.firstName);
                         console.log('updated successfully!');
+                        //this.props.update();
                         swal("Account successfully updated!", {
                         icon: "success",
                         });

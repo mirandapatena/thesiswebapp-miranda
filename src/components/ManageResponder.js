@@ -14,6 +14,9 @@ class ManageResponder extends Component{
             respondersProfiles: [{}],
             search: ''
         }
+        this.update = this.update.bind(this);
+        console.log('this', this)
+        //this.updateDetails = this.updateDetails.bind(this);
     }
 
     componentDidMount(){
@@ -57,29 +60,30 @@ class ManageResponder extends Component{
           });
     }
 
-    updateDetails = () => {
+    update(){
         console.log('updateDetails');
     }
 
     // updateDetails = (uid, field, data) => {
     //     console.log('in update');
-    //     var users = this.state.respondersProfiles.map(user => {
-    //         if(user.key === uid){
-    //             switch(field){
-    //                 case 'firstName':
-    //                                 user.firstName = data; 
-    //                                 break;
-    //                 case 'lastName':
-    //                                 user.lastName = data; 
-    //                                 break;
-    //                 case 'contactNumber':
-    //                                 user.contactNumber = data; 
-    //                                 break;
-    //                 default: break;
-    //             }
-    //         }
-    //     });
-    //     this.setState({respondersProfiles: users}); 
+    //     console.log(`${uid} ${field} ${data}`);
+    //     // var users = this.state.respondersProfiles.map(user => {
+    //     //     if(user.key === uid){
+    //     //         switch(field){
+    //     //             case 'firstName':
+    //     //                             user.firstName = data; 
+    //     //                             break;
+    //     //             case 'lastName':
+    //     //                             user.lastName = data; 
+    //     //                             break;
+    //     //             case 'contactNumber':
+    //     //                             user.contactNumber = data; 
+    //     //                             break;
+    //     //             default: break;
+    //     //         }
+    //     //     }
+    //     // });
+    //     // this.setState({respondersProfiles: users}); 
     // }
 
     render(){
@@ -107,7 +111,7 @@ class ManageResponder extends Component{
                      <Table.Body>
                             {this.state.respondersProfiles.filter(searchUser(this.state.search)).map(responder => {
                                 return(
-                                <DeleteUserAccount user_type={responder.user_type} firstName={responder.firstName} lastName={responder.lastName} contactNumber={responder.contactNumber} email={responder.email} uid={responder.key} delete={this.delete} updateDetails={this.updateDetails}/> );                        
+                                <DeleteUserAccount isVerified={this.isVerified} user_type={responder.user_type} firstName={responder.firstName} lastName={responder.lastName} contactNumber={responder.contactNumber} email={responder.email} uid={responder.key} delete={this.delete} update={this.update}/> );                        
                             })}
                         </Table.Body>
                     </Table>
