@@ -1,24 +1,26 @@
 import React, {Component} from 'react';
-import { Table, Message, Icon, Search } from 'semantic-ui-react'
+import { Table, Message, Icon, Input } from 'semantic-ui-react'
 import '../stylesheet_QueueIncidents.css';
 import '../HeaderDashboard.css';
 import fire from '../config/Fire';
 import _ from 'lodash';
 import VerifyUserAccount from './VerifyUserAccount';
+import searchUser from '../functions/searchUser';
 
 class VerifyVolunteer extends Component{
     constructor(props){
         super(props);
         this.state = {
             volunteers: [{}],
-            volunteersProfiles: [{}]
+            volunteersProfiles: [{}],
+            search: ''
         }
     }
 
     componentDidMount(){
         var list = [];
         var tempObject = {};
-        fire.database().ref('unverifiedMobileUsers').orderByChild('user_type').equalTo('Volunteer').on('value', snapshot => {
+        fire.database().ref('unverifiedMobileUsers').orderByChild('user_type').equalTo('Volunteer').once('value', snapshot => {
             this.setState({volunteers: snapshot.val()}, () => {
                 console.log('unverified volunteers', this.state.volunteers);
                 _.map(this.state.volunteers, (volunteer, key) => {
@@ -27,7 +29,7 @@ class VerifyVolunteer extends Component{
                         tempObject.key = snapshot.key;
                         list.push(tempObject);
                         this.setState({volunteersProfiles: list}, ()=> {
-                            console.log('Unverified Regular Users Profiles', this.state.volunteersProfiles);
+                            console.log('Unverified Volunteers Profiles', this.state.volunteersProfiles);
                         });
                     })
                 })
@@ -35,11 +37,18 @@ class VerifyVolunteer extends Component{
         });
     }
 
-    renderUnverifiedVolunteers = () => {
-        return _.map(this.state.volunteersProfiles, (volunteer, key) => {
-            console.log('asgdfgsdhfsd key', volunteer);
-            return (<VerifyUserAccount firstName={volunteer.firstName} lastName={volunteer.lastName} contactNumber={volunteer.contactNumber} email={volunteer.email} uid={volunteer.key}/>)
-        })
+    verify = (uid) => {
+        var filteredItems = this.state.volunteersProfiles.filter(function (item) {
+            return (item.key !== uid);
+          });
+         
+          this.setState({
+            volunteersProfiles: filteredItems
+          });
+    }
+
+    searchHandler = (event) => {
+        this.setState({search: event.target.value});
     }
 
     render(){
@@ -50,7 +59,11 @@ class VerifyVolunteer extends Component{
                         <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell colSpan='2'> Unverified Volunteers </Table.HeaderCell>
-                                <Table.HeaderCell colSpan='2'><Search aligned='right' />  </Table.HeaderCell>
+                                <Table.HeaderCell colSpan='2'>
+                                    <form>
+                                        <Input type="text" name="" id="" onChange={this.searchHandler} style={{marginLeft:'75px'}}/><Icon name='search' style={{marginLeft:'6px'}}/>
+                                    </form>
+                                </Table.HeaderCell>
                             </Table.Row>
                             
                             <Table.Row>
@@ -62,15 +75,20 @@ class VerifyVolunteer extends Component{
 
                         </Table.Header>
                         <Table.Body>
-                            {this.renderUnverifiedVolunteers()}
+                        {this.state.volunteersProfiles.filter(searchUser(this.state.search)).map(volunteer => 
+                            <VerifyUserAccount firstName={volunteer.firstName} lastName={volunteer.lastName} contactNumber={volunteer.contactNumber} email={volunteer.email} uid={volunteer.key} verify={this.verify}/>)}
                         </Table.Body>
                     </Table>
                 :!this.state.volunteers?
                 <Table celled>
                         <Table.Header>
                             <Table.Row>
-                                <Table.HeaderCell colSpan='2'> Unverified Volunteers </Table.HeaderCell>
-                                <Table.HeaderCell colSpan='2'><Search aligned='right' />  </Table.HeaderCell>
+                                <Table.HeaderCell colSpan='2'>Unverified Volunteers</Table.HeaderCell>
+                                <Table.HeaderCell colSpan='2'>
+                                    <form>
+                                        <Input type="text" name="" id="" onChange={this.searchHandler} style={{marginLeft:'75px'}}/><Icon name='search' style={{marginLeft:'6px'}}/>
+                                    </form>
+                                </Table.HeaderCell>
                             </Table.Row>
                             
                             <Table.Row>

@@ -5,42 +5,42 @@ import '../stylesheet_QueueIncidents.css';
 import {createUserAccount} from '../functions/createUserAccount';
 
 const emailRegex = RegExp(
-    /^([a-zA-Z0-9_.\-]+)@([a-zA-Z]+)\.([a-zA-Z]{2,5})$/
-  );
-  
-  const contactNumberRegex = RegExp(
-    /^(09|\+639)\d{9}$/
-  );
-  
-  const firstNameRegex = RegExp(
-    /^[a-zA-ZñÑ.,'-\s]+$/
-  );
-  
-  const lastNameRegex = RegExp(
-    /^[a-zA-ZñÑ.,'-\s]+$/
-  );
-  
-  const passwordRegex = RegExp(
-    /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/
-  );
-  
-  
-  const formValid = ({ formError, ...rest }) => {
-    let valid = true;
-  
-    // validate form errors being empty
-    Object.values(formError).forEach(val => {
-      val.length > 0 && (valid = false)
-    });
-  
-    // validate the form was filled out
-    Object.values(rest).forEach(val => {
-      val === null && (valid = false);
-    });
-  
-  
-    return valid;
-  }
+  /^([a-zA-Z0-9_.\-]+)@([a-zA-Z]+)\.([a-zA-Z]{2,5})$/
+);
+
+const contactNumberRegex = RegExp(
+  /^(09|\+639)\d{9}$/
+);
+
+const firstNameRegex = RegExp(
+  /^[a-zA-ZñÑ.,'-\s]+$/
+);
+
+const lastNameRegex = RegExp(
+  /^[a-zA-ZñÑ.,'-\s]+$/
+);
+
+const passwordRegex = RegExp(
+  /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/
+);
+
+
+const formValid = ({ formError, ...rest }) => {
+  let valid = true;
+
+  // validate form errors being empty
+  Object.values(formError).forEach(val => {
+    val.length > 0 && (valid = false)
+  });
+
+  // validate the form was filled out
+  Object.values(rest).forEach(val => {
+    val === null && (valid = false);
+  });
+
+
+  return valid;
+}
 
 class CreateNewAccount extends Component{
 
@@ -49,6 +49,7 @@ class CreateNewAccount extends Component{
         super(props);
         
         this.state = {
+          hidden: true,
           firstName: '',
           lastName: '',
           password: '',
@@ -74,7 +75,12 @@ class CreateNewAccount extends Component{
         userID: ''  
         }
         this.submitCreateAccount = this.submitCreateAccount.bind(this);
-    }
+        this.toggleShow = this.toggleShow.bind(this)
+      }
+  
+      toggleShow() {
+          this.setState({ hidden: !this.state.hidden });
+      }
 
     handleCreateAccount = (e) => {
         e.preventDefault();
@@ -301,7 +307,6 @@ class CreateNewAccount extends Component{
                 <Segment style={{color:'whitesmoke', fontSize:'20px'}}><b>New User Account</b></Segment>
                 <Segment>
                 <Form>
-
                     <Form.Group widths='equal'>
                     <Form.Field style={{marginBottom: '10px', color: 'whitesmoke'}} required>
                         <Form.Input
@@ -334,6 +339,7 @@ class CreateNewAccount extends Component{
 
                     <Form.Group widths='equal'>
                     <Form.Field
+                        search
                         control={Select}
                         options={userTypeOptions}                
                         placeholder='Select User Type'
@@ -450,13 +456,14 @@ class CreateNewAccount extends Component{
                         <Form.Input
                         fluid
                         placeholder='Password'
-                        type='password'
+                        type={this.state.hidden ? "password" : "text"}
                         name='password'
                         noValidate
                         value={this.state.password}
                         className={formError.password.length > 0 ? "error" : null}
                         onChange={this.handleCreateAccount}
                         required
+                        onClick={this.toggleShow}
                         />                     
                         {formError.password.length > 0 && (
                         <span className="errorMessage">{formError.password}</span>)}
@@ -510,16 +517,13 @@ class CreateNewAccount extends Component{
     
                     </Form.Group>
                     </Form>
-                    
-                    
-                    
-                        
+
                     <Button floated='right' color='red' onClick={this.submitCreateAccount} 
                         disabled={!this.state.email || !this.state.firstName || !this.state.lastName 
                                 || !this.state.user_type || !this.state.password || !this.state.contactNumber || !this.state.sex
                                 || this.state.formError.email || this.state.formError.firstName || this.state.formError.lastName
                                 || this.state.formError.password || this.state.formError.contactNumber 
-                                || this.state.user_type === 'Volunteer'?!this.state.medicalDegree 
+                                || this.state.user_type === 'Volunteer'?!this.state.medicalDegree || !this.state.sex
                                 || !this.state.medicalProfession || !this.state.certification 
                                 || !this.state.isActiveVolunteer || !this.state.durationService:null               
                                 } 

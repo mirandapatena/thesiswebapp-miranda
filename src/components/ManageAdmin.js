@@ -52,7 +52,7 @@ class ManageAdmin extends Component{
         return _.map(this.state.administrators, (administrator, key) => {
             console.log('renderAdministrators1', administrator.uid);
             return(
-            <DeleteUserAccount uid={administrator.uid} firstName={administrator.firstName} lastName={administrator.lastName} email={administrator.email} contactNumber={administrator.contactNumber} user_type='Administrator' />);
+            <DeleteUserAccount uid={administrator.uid} firstName={administrator.firstName} lastName={administrator.lastName} email={administrator.email} contactNumber={administrator.contactNumber} user_type='Administrator' key={administrator.uid}/>);
         });
     }
 
@@ -68,10 +68,10 @@ class ManageAdmin extends Component{
                         </Table.Row>
                         
                         <Table.Row>
-                            <Table.HeaderCell style={{width:'350px'}}>Name</Table.HeaderCell>
-                            <Table.HeaderCell style={{width:'300px'}}>Email</Table.HeaderCell>
+                            <Table.HeaderCell>Name</Table.HeaderCell>
+                            <Table.HeaderCell>Email</Table.HeaderCell>
                             <Table.HeaderCell>Contact Number</Table.HeaderCell>
-                            <Table.HeaderCell>Status</Table.HeaderCell>
+                            <Table.HeaderCell>Actions</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>

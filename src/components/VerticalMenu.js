@@ -4,16 +4,169 @@ import fire from '../config/Fire';
 import {Link} from "react-router";
 
 class VerticalMenu extends Component{
+    constructor(props){
+    
+        super(props);
+        
+            this.state = {
+              emailVerified:false
+            }
+    }
+
     state = { activeItem: '' }
 
     handleItemClick = (e, { name }) => this.setState({ activeItem: name })
 
     logout() {
         fire.auth().signOut();
-      }
+    }
+
+    componentDidMount(){
+        var user = fire.auth().currentUser;
+        console.log('userProfile',user);
+        var emailVerified;
+        if (user != null){
+            emailVerified = user.emailVerified;
+            console.log('isEmailVerified: ',emailVerified);
+            this.setState({emailVerified: emailVerified});
+            console.log('isEmailVerified2: ', emailVerified);
+        }
+    }
 
     render() {
         const { activeItem } = this.state
+        let CreateNewAccount;
+        let UnverifiedMobileUsers;
+        let ManageAccounts;
+        let VerifyEmail;
+        let Archives;
+
+        if(this.state.emailVerified === true){
+            CreateNewAccount = <Link to='/CreateNewAccount'>
+                                    <Menu.Item 
+                                        name='create user account' 
+                                        active={activeItem === 'create user account'} 
+                                        onClick={this.handleItemClick}>
+                                        <Icon name='add user'/> Create New Account
+                                    </Menu.Item>
+                                </Link>
+
+            Archives = <Link to='/Archives'>
+                                    <Menu.Item 
+                                    name='archives' 
+                                    active={activeItem === 'archives'} 
+                                    onClick={this.handleItemClick}>
+                                    <Icon name='archive'/> Archives
+                                    </Menu.Item>
+                                </Link>                                
+
+            UnverifiedMobileUsers = <Menu.Item
+                                            name='Unverified Mobile Users'
+                                            active={activeItem === 'Unverified Mobile Users'}
+                                            onClick={this.handleItemClick}>
+                                        <Icon name='mobile'/> Unverified Mobile Users
+                                            <Menu.Menu>
+
+                                                <Link to='UnverifiedResponders'>
+                                                    <Menu.Item
+                                                    name='Responder'
+                                                    active={activeItem === 'Responder'}
+                                                    onClick={this.handleItemClick}
+                                                    >
+                                                    Responder
+                                                    </Menu.Item>
+                                                </Link>
+
+                                                <Link to='UnverifiedVolunteers'>
+                                                    <Menu.Item 
+                                                    name='Volunteer' 
+                                                    active={activeItem === 'Volunteer'} 
+                                                    onClick={this.handleItemClick}>
+                                                    Volunteer
+                                                    </Menu.Item>
+                                                </Link>
+
+                                                <Link to='UnverifiedRegularUsers'>
+                                                    <Menu.Item 
+                                                    name='Regular User' 
+                                                    active={activeItem === 'Regular User'} 
+                                                    onClick={this.handleItemClick}>
+                                                    Regular User
+                                                    </Menu.Item>
+                                                </Link>
+
+                                            </Menu.Menu>
+                                        </Menu.Item>
+
+            ManageAccounts = <Menu.Item
+                                    name='View All Accounts'
+                                    active={activeItem === 'View All Accounts'}
+                                    onClick={this.handleItemClick}
+                                >
+                                <Icon name='users'/> Manage Accounts
+                                    <Menu.Menu>
+                                        <Link to='AccountsAdmin'>
+                                            <Menu.Item
+                                            name='Administrator'
+                                            active={activeItem === 'Administrator'}
+                                            onClick={this.handleItemClick}
+                                            >
+                                            Administrator
+                                            </Menu.Item>
+                                        </Link>
+                                        
+                                        <Link to='AccountsCCP'>
+                                            <Menu.Item
+                                            name='Command Center Personnel'
+                                            active={activeItem === 'Command Center Personnel'}
+                                            onClick={this.handleItemClick}
+                                            >
+                                            Command Center Personnel
+                                            </Menu.Item>
+                                        </Link>
+
+                                        <Link to='AccountsResponder'>
+                                            <Menu.Item
+                                            name='Responder'
+                                            active={activeItem === 'Responder'}
+                                            onClick={this.handleItemClick}
+                                            >
+                                            Responder
+                                            </Menu.Item>
+                                        </Link>
+
+                                        <Link to='AccountsVolunteer'>
+                                            <Menu.Item 
+                                            name='Volunteer' 
+                                            active={activeItem === 'Volunteer'} 
+                                            onClick={this.handleItemClick}>
+                                            Volunteer
+                                            </Menu.Item>
+                                        </Link>
+
+                                        <Link to='AccountsRegularUser'>
+                                            <Menu.Item 
+                                            name='Regular User' 
+                                            active={activeItem === 'Regular User'} 
+                                            onClick={this.handleItemClick}>
+                                            Regular User
+                                            </Menu.Item>
+                                        </Link>
+
+                                    </Menu.Menu>
+                                </Menu.Item>
+            
+        }else if(this.state.emailVerified === false){
+            VerifyEmail = <Link to='VerifyEmail'>
+                            <Menu.Item 
+                                name='verifyemail' 
+                                active={activeItem === 'verifyemail'} 
+                                onClick={this.handleItemClick}>
+                            <Icon name='mail'/>
+                            Verify Email
+                            </Menu.Item>
+                        </Link>
+        }
     
         return (
             
@@ -22,8 +175,9 @@ class VerticalMenu extends Component{
                 <Menu.Item 
                     name='home' 
                     active={activeItem === 'home'} 
-                    onClick={this.handleItemClick} >
-                <Icon name='home'/> Home
+                    onClick={this.handleItemClick}>
+                <Icon name='home'/>
+                Home
                 </Menu.Item>
             </Link>
 
@@ -35,110 +189,12 @@ class VerticalMenu extends Component{
                 <Icon name='user circle'/> Profile
                 </Menu.Item>
             </Link>
-
-            <Link to='/CreateNewAccount'>
-                <Menu.Item 
-                    name='create user account' 
-                    active={activeItem === 'create user account'} 
-                    onClick={this.handleItemClick}>
-                    <Icon name='add user'/> Create New Account
-                </Menu.Item>
-            </Link>
-
-            <Menu.Item
-                name='Unverified Mobile Users'
-                active={activeItem === 'Unverified Mobile Users'}
-                onClick={this.handleItemClick}>
-            <Icon name='mobile'/> Unverified Mobile Users
-                <Menu.Menu>
-
-                    <Link to='UnverifiedResponders'>
-                        <Menu.Item
-                        name='Responder'
-                        active={activeItem === 'Responder'}
-                        onClick={this.handleItemClick}
-                        >
-                        Responder
-                        </Menu.Item>
-                    </Link>
-
-                    <Link to='UnverifiedVolunteers'>
-                        <Menu.Item 
-                        name='Volunteer' 
-                        active={activeItem === 'Volunteer'} 
-                        onClick={this.handleItemClick}>
-                        Volunteer
-                        </Menu.Item>
-                    </Link>
-
-                    <Link to='UnverifiedRegularUsers'>
-                        <Menu.Item 
-                        name='Regular User' 
-                        active={activeItem === 'Regular User'} 
-                        onClick={this.handleItemClick}>
-                        Regular User
-                        </Menu.Item>
-                    </Link>
-
-                </Menu.Menu>
-            </Menu.Item>
-            <Menu.Item
-                name='View All Accounts'
-                active={activeItem === 'View All Accounts'}
-                onClick={this.handleItemClick}
-            >
-            <Icon name='users'/> Manage Accounts
-                <Menu.Menu>
-                    <Link to='AccountsAdmin'>
-                        <Menu.Item
-                        name='Administrator'
-                        active={activeItem === 'Administrator'}
-                        onClick={this.handleItemClick}
-                        >
-                        Administrator
-                        </Menu.Item>
-                    </Link>
-                    
-                    <Link to='AccountsCCP'>
-                        <Menu.Item
-                        name='Command Center Personnel'
-                        active={activeItem === 'Command Center Personnel'}
-                        onClick={this.handleItemClick}
-                        >
-                        Command Center Personnel
-                        </Menu.Item>
-                    </Link>
-
-                    <Link to='AccountsResponder'>
-                        <Menu.Item
-                        name='Responder'
-                        active={activeItem === 'Responder'}
-                        onClick={this.handleItemClick}
-                        >
-                        Responder
-                        </Menu.Item>
-                    </Link>
-
-                    <Link to='AccountsVolunteer'>
-                        <Menu.Item 
-                        name='Volunteer' 
-                        active={activeItem === 'Volunteer'} 
-                        onClick={this.handleItemClick}>
-                        Volunteer
-                        </Menu.Item>
-                    </Link>
-
-                    <Link to='AccountsRegularUser'>
-                        <Menu.Item 
-                        name='Regular User' 
-                        active={activeItem === 'Regular User'} 
-                        onClick={this.handleItemClick}>
-                        Regular User
-                        </Menu.Item>
-                    </Link>
-
-                </Menu.Menu>
-            </Menu.Item>
+            {VerifyEmail}
+            {CreateNewAccount}
+            {UnverifiedMobileUsers}
+            {ManageAccounts}
+            {Archives}
+            
             <Menu.Item
                 name='logout' 
                 active={activeItem === 'logout'} 

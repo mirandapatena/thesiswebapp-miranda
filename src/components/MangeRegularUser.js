@@ -15,42 +15,20 @@ class ManageRegularUser extends Component{
     }
 
     componentDidMount(){
-        //this.getRegularData();    
+        fire.database().ref('users').orderByChild('user_type').equalTo('Regular User').once('value', snapshot => {
+            this.setState({regularUsers: snapshot.val()}, () => {
+                console.log('manage regular', this.state.regularUsers);
+            });
+        });    
     }
 
-    getRegularData = () => {
-        var regularUserNode = fire.database().ref('mobileUsers/Regular User');
-        var regularUsersProfiles;
-        var regularUsers = [{}];
-        var regObject = {};
-        regularUserNode.once('value', snapshot => {
-            regularUsersProfiles = snapshot.val();
-            console.log('regularUsers', regularUsersProfiles);
-            this.setState({regularUsersProfiles}, () => {
-                console.log('regular user setstate', this.state.regularUsersProfiles);
-                _.map(regularUsersProfiles, (regularUser, key) => {
-                    console.log('regular key', key);
-                    var profile = fire.database().ref(`users/${key}`);
-                    profile.once('value', snapshot => {
-                        regObject = snapshot.val();
-                        regObject.uid = key;
-                        regularUsers.push(regObject);
-                        this.setState({regularUsers}, () => {
-                            console.log('regularUser key', regObject);
-                        });
-                    });
-                });
-            });
+
+    renderRegularUsers = () => {
+        return _.map(this.state.regularUsers, (regularUser, key) => {
+            return(
+            <DeleteUserAccount uid={regularUser.uid} firstName={regularUser.firstName} lastName={regularUser.lastName} email={regularUser.email} contactNumber={regularUser.contactNumber} user_type='Regular User' key={key}/>);
         });
     }
-
-    // renderRegularUsers = () => {
-    //     return _.map(this.state.regularUsers, (regularUser, key) => {
-    //         console.log('renderRegularUser1', regularUser.uid);
-    //         return(
-    //         <DeleteUserAccount uid={regularUser.uid} firstName={regularUser.firstName} lastName={regularUser.lastName} email={regularUser.email} contactNumber={regularUser.contactNumber} user_type='Regular User' />);
-    //     });
-    // }
     
 
     render(){
@@ -65,14 +43,14 @@ class ManageRegularUser extends Component{
                         </Table.Row>
                         
                         <Table.Row>
-                            <Table.HeaderCell style={{width:'350px'}}>Name</Table.HeaderCell>
-                            <Table.HeaderCell style={{width:'300px'}}>Email</Table.HeaderCell>
+                            <Table.HeaderCell>Name</Table.HeaderCell>
+                            <Table.HeaderCell>Email</Table.HeaderCell>
                             <Table.HeaderCell>Contact Number</Table.HeaderCell>
                             <Table.HeaderCell>Status</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                            {/*this.renderRegularUsers()*/} 
+                            {this.renderRegularUsers()} 
                         </Table.Body>
                     </Table>
                 :!this.state.regularUsers?
@@ -84,8 +62,8 @@ class ManageRegularUser extends Component{
                         </Table.Row>
                         
                         <Table.Row>
-                            <Table.HeaderCell style={{width:'350px'}}>Name</Table.HeaderCell>
-                            <Table.HeaderCell style={{width:'300px'}}>Email</Table.HeaderCell>
+                            <Table.HeaderCell>Name</Table.HeaderCell>
+                            <Table.HeaderCell>Email</Table.HeaderCell>
                             <Table.HeaderCell>Contact Number</Table.HeaderCell>
                             <Table.HeaderCell>Actions</Table.HeaderCell>
                         </Table.Row>

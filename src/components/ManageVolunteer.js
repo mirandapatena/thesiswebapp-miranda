@@ -16,41 +16,21 @@ class ManageVolunteer extends Component{
     }
 
     componentDidMount(){
-        //this.getVolunteerData();
+        var list = [];
+        var tempObject = {};
+        fire.database().ref('users').orderByChild('user_type').equalTo('Volunteer').once('value', snapshot => {
+            this.setState({volunteers: snapshot.val()}, () => {
+                console.log('manage volunteers', this.state.volunteers);
+            });
+        });    
     }
 
-    getVolunteerData = () => {
-        var volunteerNode = fire.database().ref('mobileUsers/Volunteer');
-        var volunteerProfiles;
-        var volunteers = [];
-        var volunteerObject = {};
-        volunteerNode.once('value', snapshot => {
-            volunteerProfiles = snapshot.val();
-            console.log('volunteers', volunteerProfiles);
-            this.setState({volunteerProfiles}, () => {
-                console.log('volunteer setstate', this.state.volunteerProfiles);
-                _.map(volunteerProfiles, (volunteer, key) => {
-                    var profile = fire.database().ref(`users/${volunteer.uid}`);
-                    profile.once('value', snapshot => {
-                        volunteerObject = snapshot.val();
-                        volunteerObject.uid = volunteer.uid;
-                        volunteers.push(volunteerObject);
-                        this.setState({volunteers}, () => {
-                            console.log('volunteer key', volunteerObject);
-                        });
-                    });
-                });
-            });
+    renderVolunteers = () => {
+        return _.map(this.state.volunteers, (volunteer, key) => {
+            return(
+            <DeleteUserAccount uid={volunteer.uid} firstName={volunteer.firstName} lastName={volunteer.lastName} email={volunteer.email} contactNumber={volunteer.contactNumber} user_type='Volunteer' key={key}/>);
         });
     }
-
-    // renderVolunteers = () => {
-    //     return _.map(this.state.volunteers, (volunteer, key) => {
-    //         console.log('renderAdministrators1', volunteer.uid);
-    //         return(
-    //         <DeleteUserAccount uid={volunteer.uid} firstName={volunteer.firstName} lastName={volunteer.lastName} email={volunteer.email} contactNumber={volunteer.contactNumber} user_type='Volunteer' />);
-    //     });
-    // }
 
     render(){
         return(
@@ -67,11 +47,11 @@ class ManageVolunteer extends Component{
                              <Table.HeaderCell style={{width:'350px'}}>Name</Table.HeaderCell>
                              <Table.HeaderCell style={{width:'300px'}}>Email</Table.HeaderCell>
                              <Table.HeaderCell>Contact Number</Table.HeaderCell>
-                             <Table.HeaderCell>Status</Table.HeaderCell>
+                             <Table.HeaderCell>Actions</Table.HeaderCell>
                          </Table.Row>
                      </Table.Header>
                      <Table.Body>
-                            {/*this.renderVolunteers()*/}
+                            {this.renderVolunteers()}
                         </Table.Body>
                     </Table>
                 :!this.state.volunteers?
@@ -83,8 +63,8 @@ class ManageVolunteer extends Component{
                             </Table.Row>
                             
                             <Table.Row>
-                                <Table.HeaderCell style={{width:'350px'}}>Name</Table.HeaderCell>
-                                <Table.HeaderCell style={{width:'300px'}}>Email</Table.HeaderCell>
+                                <Table.HeaderCell width='3'>Name</Table.HeaderCell>
+                                <Table.HeaderCell width='3'>Email</Table.HeaderCell>
                                 <Table.HeaderCell>Contact Number</Table.HeaderCell>
                                 <Table.HeaderCell>Actions</Table.HeaderCell>
                             </Table.Row>

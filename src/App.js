@@ -21,6 +21,9 @@ import AccountsCCP from './components/AccountsCCP';
 import AccountsResponder from './components/AccountsResponder';
 import AccountsVolunteer from './components/AccountsVolunteer';
 import AccountsRegularUser from './components/AccountsRegularUser';
+import ForgotAccount from './components/ForgotAccount';
+import VerifyEmail from './components/VerifyEmail';
+import Archives from './components/Archives';
 
 class App extends Component {
   constructor(props){
@@ -53,7 +56,7 @@ class App extends Component {
         this.getUserDetails();
       } else {
         this.setState({ user: null });
-        browserHistory.replace('/');
+        browserHistory.replace('/login');
       }
     });
   }
@@ -90,13 +93,13 @@ class App extends Component {
   render() {
     return (
       <Router history={browserHistory}>
-        <Route exact path='/' component={LandingPage}/>
+        {/* <Route exact path='/' component={LandingPage}/> */}
         <Route exact path='/login' component={Login} />
         <AdministratorRoute exact path='/administrator' component={DashboardAdmin} user_type={this.state.user_type} />
         <CCPersonnelRoute exact path='/ccpersonnel' component={DashboardCCPersonnel} user_type={this.state.user_type} />
         <CreateNewAccount exact path='/CreateNewAccount' component={CreateNewAccount} user_type={this.state.user_type} />
         <Home exact path='/Home' component={Home} user_type={this.state.user_type} />
-        <Profile exact path='/Profile' component={Profile} user_type={this.state.user_type} />
+        <Profile exact path='/Profile' component={Profile} user_type={this.state.user_type} user={this.state.userAccount}/>
         <UnverifiedResponders exact path='/UnverifiedResponders' component={UnverifiedResponders} user_type={this.state.user_type} />
         <UnverifiedVolunteers exact path='/UnverifiedVolunteers' component={UnverifiedVolunteers} user_type={this.state.user_type} />
         <UnverifiedRegularUsers exact path='/UnverifiedRegularUsers' component={UnverifiedRegularUsers} user_type={this.state.user_type} />
@@ -105,6 +108,9 @@ class App extends Component {
         <AccountsResponder exact path='/AccountsResponder' component={AccountsResponder} user_type={this.state.user_type} />
         <AccountsVolunteer exact path='/AccountsVolunteer' component={AccountsVolunteer} user_type={this.state.user_type} />
         <AccountsRegularUser exact path='/AccountsRegularUser' component={AccountsRegularUser} user_type={this.state.user_type} />
+        <ForgotAccount exact path='/ForgotAccount' component={ForgotAccount} />
+        <VerifyEmail exact path='VerifyEmail' component={VerifyEmail} user_type={this.state.user_type}/>
+        <Archives exact path='Archives' component={Archives} user_type={this.state.user_type}/>
       </Router>
     );
   }

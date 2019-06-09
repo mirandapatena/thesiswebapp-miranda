@@ -52,7 +52,7 @@ class ManageCCP extends Component{
         return _.map(this.state.commandCenterPersonnel, (ccp, key) => {
             console.log('ccp1', ccp.uid);
             return(
-            <DeleteUserAccount uid={ccp.uid} firstName={ccp.firstName} lastName={ccp.lastName} email={ccp.email} contactNumber={ccp.contactNumber} user_type='Command Center Personnel' />);
+            <DeleteUserAccount uid={ccp.uid} firstName={ccp.firstName} lastName={ccp.lastName} email={ccp.email} contactNumber={ccp.contactNumber} user_type='Command Center Personnel' key={ccp.uid}/>);
         });
     }
 
@@ -68,8 +68,8 @@ class ManageCCP extends Component{
                         </Table.Row>
                         
                         <Table.Row>
-                            <Table.HeaderCell style={{width:'350px'}}>Name</Table.HeaderCell>
-                            <Table.HeaderCell style={{width:'300px'}}>Email</Table.HeaderCell>
+                            <Table.HeaderCell width='3'>Name</Table.HeaderCell>
+                            <Table.HeaderCell width='3'>Email</Table.HeaderCell>
                             <Table.HeaderCell>Contact Number</Table.HeaderCell>
                             <Table.HeaderCell>Actions</Table.HeaderCell>
                         </Table.Row>

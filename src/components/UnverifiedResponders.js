@@ -25,4 +25,4 @@ class UnverifiedResponders extends Component{
 
 }
 
-export default UnverifiedResponders;
+export default UnverifiedResponders

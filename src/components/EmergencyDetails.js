@@ -25,6 +25,7 @@ class EmergencyDetails extends Component{
             isRequestingResponders: false,
             isRequestingVolunteers: false,
             timeReceived: '',
+            noteIncident: '',
             volunteerAccept: false,
             volunteerReject: false,
             timeOut: false,
@@ -322,6 +323,7 @@ class EmergencyDetails extends Component{
                             <p><b>Location of Incident:</b> {this.props.incidentLocation}</p>
                             <p><b>Coordinates:</b> {this.props.coordinates.lng} {this.props.coordinates.lat}</p>
                             <p><b>Time Received:</b> {this.props.timeReceived}</p>
+                            <p><b>Note:</b> {this.props.incidentNote}</p>
                             <p><b>Photo of Incident:</b></p>
                     </Modal.Content>
                         <Modal.Actions>
