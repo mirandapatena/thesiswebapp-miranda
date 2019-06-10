@@ -1,6 +1,6 @@
 import VerticalMenu from './VerticalMenu';
 import React, {Component} from 'react'
-import { Button, Table, Search, Image, Modal, Form, Select, Icon} from 'semantic-ui-react'
+import { Input, Table, Search, Image, Modal, Form, Select, Icon} from 'semantic-ui-react'
 import '../stylesheet_QueueIncidents.css';
 import fire from '../config/Fire';
 import _ from 'lodash';
@@ -22,7 +22,7 @@ class Archives extends Component{
         this.getArchives();
     }
 
-   searchUser = (search) => {
+    searchUser = (search) => {
         return function(x){
             var name = x.incidentLocation + ' ' + x.incidentID + ' ' + x.incidentTimeReceived;
             return name.toLowerCase().includes(search.toLowerCase()) || !search;
@@ -54,47 +54,69 @@ class Archives extends Component{
 
     renderAchives = () => {
         return _.map(this.state.archives, (archive, key) => {
-            console.log('renderAchives', archive.incidentKey);
-            let additionalResponders, additionalVolunteer, detailedLocation, originalVolunteer, image_uri, incidentLocation;
-
-            if(!archive.additionalResponders){
-                additionalResponders = 'No Additional Responders Requested';
+            console.log('renderAchives', archive);
+            let incidentAdditionalResponders, incidentAdditionalVolunteers, feedbackLocation, incidentOriginalVolunteer, incidentImage, incidentLocation, feedbackReport;
+            console.log('arcive shit', archive.incidentCoordinates);
+            if(!archive.incidentAdditionalResponders){
+                incidentAdditionalResponders = 'No Additional Responders Requested';
             }else{
-                additionalResponders = archive.additionalResponders;
+                incidentAdditionalResponders = archive.incidentAdditionalResponders;
             }
-            if(!archive.additionalVolunteer){
-                additionalVolunteer = 'No Additional Volunteers Requested';
+            if(!archive.incidentAdditionalVolunteers){
+                incidentAdditionalVolunteers = 'No Additional Volunteers Requested';
             }else{
-                additionalVolunteer = archive.additionalVolunteer;
+                incidentAdditionalVolunteers = archive.incidentAdditionalVolunteers;
             }
-            if(!archive.detailedLocation){
-                detailedLocation = 'No detailed location given by reporter';
+            if(!archive.feedbackLocation){
+                feedbackLocation = 'No detailed location given by reporter';
             }else{
-                detailedLocation = archive.detailedLocation;
+                feedbackLocation = archive.feedbackLocation;
             }
-            if(!archive.originalVolunteer){
-                originalVolunteer = 'No Volunteer requested to respond'
+            if(!archive.feedbackReport){
+                feedbackReport = 'No feedback report given by responder';
             }else{
-                originalVolunteer = archive.originalVolunteer;
+                feedbackReport = archive.feedbackReport;
             }
-            if(!archive.image_uri){
-                image_uri = 'No photo of incident uploaded by reporter'
+            if(!archive.incidentOriginalVolunteer){
+                incidentOriginalVolunteer = 'No Volunteer requested to respond'
             }else{
-                image_uri = archive.image_uri
+                incidentOriginalVolunteer = archive.incidentOriginalVolunteer;
+            }
+            if(!archive.incidentImage){
+                incidentImage = 'No photo of incident uploaded by reporter'
+            }else{
+                incidentImage = archive.incidentImage
             }
             if(!archive.incidentLocation || archive.incidentLocation === ''){
                 incidentLocation = 'Pinned location (See coordinates or Detailed Location)';
             }else{
                 incidentLocation = archive.incidentLocation;
             }
+            
             return(
-            <ArchivesDisplay incidentKey={archive.incidentID} detailedLocation={archive.detailedLocation} incidentLocation={incidentLocation} timeReceived={archive.timeReceived} coordinates={archive.coordinates} image_uri={archive.image_uri} report={archive.report} additionalResponders={additionalResponders} additionalVolunteer={additionalVolunteer} detailedLocation={detailedLocation} originalVolunteer={originalVolunteer} image_uri={image_uri}/>);
+            <ArchivesDisplay incidentKey={archive.incidentID} 
+                                feedbackByResponder={archive.feedbackByResponder} 
+                                feedbackLocation={feedbackLocation} 
+                                feedbackReport={archive.feedbackReport}
+                                feedbackTimeSettled={archive.feedbackTimeSettled}
+                                incidentLocation={incidentLocation} 
+                                incidentTimeReceived={archive.incidentTimeReceived}
+                                incidentCoordinates={archive.incidentCoordinates}
+                                incidentReportedBy={archive.incidentReportedBy}
+                                incidentImage={incidentImage} 
+                                report={archive.report} 
+                                incidentAdditionalResponders={incidentAdditionalResponders} 
+                                incidentAdditionalVolunteers={incidentAdditionalVolunteers} 
+                                incidentOriginalVolunteer={incidentOriginalVolunteer} 
+                                incidentType={archive.incidentType}
+            />);
         });
     }
-
+    
     searchHandler = (event) => {
         this.setState({search: event.target.value});
     }
+
 
     render(){
         return(
@@ -108,10 +130,12 @@ class Archives extends Component{
                     <Table celled>
                         <Table.Header>
                             <Table.Row>
-                                <Table.HeaderCell> Archives </Table.HeaderCell>
-                                <Table.HeaderCell colSpan='2'><form>
-                                <input type="text" name="" id="" onChange={this.searchHandler} style={{marginLeft:'75px'}}/><Icon name='search' style={{marginLeft:'6px'}}/>    
-                            </form></Table.HeaderCell>
+                                <Table.HeaderCell colSpan='2'> Archives </Table.HeaderCell>
+                                <Table.HeaderCell>
+                                    <form style={{paddingLeft:'10px'}}>
+                                        <Input type="text" name="" id="" onChange={this.searchHandler} style={{marginLeft:'75px'}}/><Icon name='search' style={{marginLeft:'6px'}}/>    
+                                    </form>
+                                </Table.HeaderCell>
                             </Table.Row>
                             
                             <Table.Row>
@@ -123,34 +147,38 @@ class Archives extends Component{
                         </Table.Header>
                             <Table.Body>
                             {this.state.archives.filter(this.searchUser(this.state.search)).map(archive => {
-                                
-                                console.log('inmaparchive', archive);
-                                let additionalResponders, additionalVolunteer, detailedLocation, originalVolunteer, image_uri, incidentLocation;
+                                console.log('renderAchives', archive.incidentKey);
+                                let incidentAdditionalResponders, incidentAdditionalVolunteers, feedbackLocation, incidentOriginalVolunteer, incidentImage, incidentLocation, feedbackReport;
 
-                                if(!archive.additionalResponders){
-                                    additionalResponders = 'No Additional Responders Requested';
+                                if(!archive.incidentAdditionalResponders){
+                                    incidentAdditionalResponders = 'No Additional Responders Requested';
                                 }else{
-                                    additionalResponders = archive.additionalResponders;
+                                    incidentAdditionalResponders = archive.incidentAdditionalResponders;
                                 }
-                                if(!archive.additionalVolunteer){
-                                    additionalVolunteer = 'No Additional Volunteers Requested';
+                                if(!archive.incidentAdditionalVolunteers){
+                                    incidentAdditionalVolunteers = 'No Additional Volunteers Requested';
                                 }else{
-                                    additionalVolunteer = archive.additionalVolunteer;
+                                    incidentAdditionalVolunteers = archive.incidentAdditionalVolunteers;
                                 }
-                                if(!archive.detailedLocation){
-                                    detailedLocation = 'No detailed location given by reporter';
+                                if(!archive.feedbackLocation){
+                                    feedbackLocation = 'No detailed location given by reporter';
                                 }else{
-                                    detailedLocation = archive.detailedLocation;
+                                    feedbackLocation = archive.feedbackLocation;
                                 }
-                                if(!archive.originalVolunteer){
-                                    originalVolunteer = 'No Volunteer requested to respond'
+                                if(!archive.feedbackReport){
+                                    feedbackReport = 'No feedback report given by responder';
                                 }else{
-                                    originalVolunteer = archive.originalVolunteer;
+                                    feedbackReport = archive.feedbackReport;
                                 }
-                                if(!archive.image_uri){
-                                    image_uri = 'No photo of incident uploaded by reporter'
+                                if(!archive.incidentOriginalVolunteer){
+                                    incidentOriginalVolunteer = 'No Volunteer requested to respond'
                                 }else{
-                                    image_uri = archive.image_uri
+                                    incidentOriginalVolunteer = archive.incidentOriginalVolunteer;
+                                }
+                                if(!archive.incidentImage){
+                                    incidentImage = 'No photo of incident uploaded by reporter'
+                                }else{
+                                    incidentImage = archive.incidentImage
                                 }
                                 if(!archive.incidentLocation || archive.incidentLocation === ''){
                                     incidentLocation = 'Pinned location (See coordinates or Detailed Location)';
@@ -158,8 +186,23 @@ class Archives extends Component{
                                     incidentLocation = archive.incidentLocation;
                                 }
                                 return(
-                                <ArchivesDisplay incidentKey={archive.incidentID} detailedLocation={archive.detailedLocation} incidentLocation={incidentLocation} timeReceived={archive.incidentTimeReceived} coordinates={archive.coordinates} image_uri={archive.image_uri} report={archive.report} additionalResponders={additionalResponders} additionalVolunteer={additionalVolunteer} detailedLocation={detailedLocation} originalVolunteer={originalVolunteer} image_uri={image_uri}/>);
-                            })}
+                                <ArchivesDisplay incidentKey={archive.incidentID} 
+                                                    feedbackByResponder={archive.feedbackByResponder} 
+                                                    feedbackLocation={feedbackLocation} 
+                                                    feedbackReport={archive.feedbackReport}
+                                                    feedbackTimeSettled={archive.feedbackTimeSettled}
+                                                    incidentLocation={incidentLocation} 
+                                                    incidentTimeReceived={archive.incidentTimeReceived}
+                                                    incidentCoordinates={archive.incidentCoordinates}
+                                                    incidentReportedBy={archive.incidentReportedBy}
+                                                    incidentImage={incidentImage} 
+                                                    report={archive.report} 
+                                                    incidentAdditionalResponders={incidentAdditionalResponders} 
+                                                    incidentAdditionalVolunteers={incidentAdditionalVolunteers} 
+                                                    incidentOriginalVolunteer={incidentOriginalVolunteer} 
+                                                    incidentType={archive.incidentType}
+                                        />);
+                                })}
                             </Table.Body>
                         </Table>
 
