@@ -21,7 +21,7 @@ class ArchivesDispaly extends Component{
                 </Table.Cell>
                 <Table.Cell width='3'>
                     <Header.Content>
-                    {this.props.detailedLocation}
+                    {this.props.incidentLocation}
                     </Header.Content>
                 </Table.Cell>
                 <Table.Cell width='3'>
