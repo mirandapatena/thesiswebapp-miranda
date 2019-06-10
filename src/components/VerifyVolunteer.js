@@ -8,7 +8,6 @@ import VerifyUserAccount from './VerifyUserAccount';
 import searchUser from '../functions/searchUser';
 
 class VerifyVolunteer extends Component{
-    
     constructor(props){
         super(props);
         this.state = {

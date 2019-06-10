@@ -364,16 +364,21 @@ ul, menu, dir {
   border-top: none;
   border-right: none;
   margin-left: 5px;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 
 .CreateNewAccount{
   padding-top: 40px;
   padding-left: 420px;
   padding-right: 270px;
+  padding-bottom: 60px;
   /* background: #16426a; */
   background: url("../src/images/Login Form Background.jpg");
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   min-height: 100vh;
   display: flex;
   flex-flow: column nowrap;
@@ -383,23 +388,46 @@ ul, menu, dir {
   padding-top: 130px;
   padding-left: 420px;
   padding-right: 270px;
+  padding-bottom: 60px;
   /* background: #16426a; */
   background: url("../src/images/Login Form Background.jpg");
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   min-height: 100vh;
   display: flex;
   flex-flow: column nowrap;
 }
 
+
 .Profilepage{
-  padding-top: 130px;
+  padding-top: 300px;
   padding-left: 500px;
   padding-right: 450px;
+  padding-bottom: 60px;
   /* background: #16426a; */
   background: url("../src/images/Login Form Background.jpg");
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.Archives{
+  padding-top: 80px;
+  padding-left: 300px;
+  padding-right: 100px;
+  padding-bottom: 60px;
+  /* background: #16426a; */
+  background: url("../src/images/Login Form Background.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   min-height: 100vh;
   display: flex;
   flex-flow: column nowrap;
@@ -431,10 +459,13 @@ ul, menu, dir {
   padding-top: 60px;
   padding-left: 350px;
   padding-right: 220px;
+  padding-bottom: 60px;
   /* background: #16426a; */
   background: url("../src/images/Login Form Background.jpg");
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   min-height: 100vh;
   display: flex;
   flex-flow: column nowrap;
@@ -449,10 +480,13 @@ ul, menu, dir {
   padding-top: 60px;
   padding-left: 350px;
   padding-right: 220px;
+  padding-bottom: 60px;
   /* background: #16426a; */
   background: url("../src/images/Login Form Background.jpg");
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   min-height: 100vh;
   display: flex;
   flex-flow: column nowrap;
@@ -472,4 +506,57 @@ ul, menu, dir {
   .col-10 {width: 83.33%;}
   .col-11 {width: 91.66%;}
   .col-12 {width: 100%;}
+}
+
+.forgotPassword{
+  color: red!important
+}
+
+h1.ui.header {
+  font-size: 2rem;
+  color: #db2828!important;
+}
+
+.ui.vertical.menu .item>i.icon {
+  width: 6.20em;
+}
+
+i.icon.times.circle:hover {
+  color: #db2828;
+  cursor: pointer;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: #db2828;
+  color: rgb(255, 255, 255);
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 150%;
+  left: 50%;
+  margin-left: -60px;
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #db2828 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
 }

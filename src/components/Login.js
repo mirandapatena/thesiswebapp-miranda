@@ -3,6 +3,8 @@ import { Button, Form, Grid, Header, Segment } from 'semantic-ui-react'
 import CircularProgress from "@material-ui/core/CircularProgress"
 import fire from '../config/Fire';
 import '../loginForm.css';
+import swal from 'sweetalert';
+import {Link} from "react-router";
 
 class Login extends Component{
   constructor(props){
@@ -65,6 +67,8 @@ class Login extends Component{
    }
   }
 
+  
+
   render(){
     return(
       <div className='login-form'>
@@ -111,10 +115,16 @@ class Login extends Component{
                 <CircularProgress classname={this.progress} style={{color: "#fff"}} color={"inherit"} size={16} variant="determinate" value={this.state.completed} />) :(
               "Login")}
             </Button>
-              <p className='catchError'>{this.state.err}</p>
+            <p className='catchError'>{this.state.err}</p>
             {this.state.emailError||this.state.passwordError?
               <p className='catchError'>Please do not leave any of the fields blank.</p>:null
-          }
+            }
+            <div style={{marginTop:'10px', marginLeft:'235px'}}>
+              <Link to='ForgotAccount'>
+                Forgot Account
+              </Link>
+            </div>
+              
         </Form>
         </Segment>
       </Grid.Column>

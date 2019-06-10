@@ -65,13 +65,55 @@ class HeaderDashboard extends Component{
         responderResponding: [],
         volunteerResponding: '',
         incidentNote:'',
+        firstName: '',
+        lastName: '',
+        password: '',
+        email: '',
+        user_type: '',
+        contactNumber: '',
         formError: {
           incidentNote:''
         },
-      userID: ''  
+      userID: '',
+      uid: ''
       }
       this.logout = this.logout.bind(this);
       // this.submitCreateAccount = this.submitCreateAccount.bind(this);
+  }
+
+  componentDidMount(){
+    var user = fire.auth().currentUser;
+        console.log('userProfile',user);
+        var uid;
+        if (user != null){
+            uid = user.uid;
+            // email = user.email;
+            
+            this.setState({uid});
+            console.log('MyUID: ',uid);
+            // console.log('My Email: ', uid);
+        }
+
+    // var user = fire.database().ref(`users/${this.state.uid}`);
+    //     var firstName, lastName, email, contactNumber, password, snap;
+    //     user.once('value', snapshot => {
+    //         console.log('snapshot', snapshot);
+    //         snap = snapshot.val();
+    //         firstName = snap.firstName;
+    //         lastName = snap.lastName;
+    //         email = snap.email;
+    //         contactNumber = snap.contactNumber;
+    //         password = snap.password;
+    //         this.setState({firstName, lastName, email, contactNumber, password}, () => {
+    //             console.log(
+    //                 `${this.state.firstName} 
+    //                 ${this.state.lastName} 
+    //                 ${this.state.email}
+    //                 ${this.state.contactNumber}
+    //                 ${this.state.password}
+    //                 userAccount`);
+    //         });
+    //     });
   }
 
   // getUserDetails = () => {
@@ -220,7 +262,7 @@ class HeaderDashboard extends Component{
 
   trigger = (
     <span>
-      <Icon className='user circle' /> {this.props.user.firstName} {this.props.user.lastName}
+      <Icon className='user circle' />
     </span>
   )
   

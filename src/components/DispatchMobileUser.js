@@ -83,7 +83,7 @@ class DispatchMobileUser extends Component{
                         <Header.Content>
                             <Header.Subheader><p className='colorBlue'><b>Email:</b> {this.props.email}</p></Header.Subheader>
                             <Header.Subheader><p className='colorBlue'><b>Contact Number:</b> {this.props.contactNumber}</p></Header.Subheader>
-                            {this.props.points}
+                            <Header.Subheader><p className='colorBlue'><b>Points:</b> {this.props.points}</p></Header.Subheader>
                         </Header.Content>
                     </Header>
                 </Table.Cell>

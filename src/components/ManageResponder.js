@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Table, Message, Icon, Search } from 'semantic-ui-react'
+import { Table, Message, Icon, Input } from 'semantic-ui-react'
 import fire from '../config/Fire';
 import _ from 'lodash';
 import DeleteUserAccount from './DeleteUserAccount';
@@ -96,7 +96,7 @@ class ManageResponder extends Component{
                             <Table.HeaderCell colSpan='2'> Responders </Table.HeaderCell>
                             <Table.HeaderCell colSpan='2'>
                                 <form>
-                                    <input type="text" name="" id="" onChange={this.searchHandler} style={{marginLeft:'75px'}}/><Icon name='search' style={{marginLeft:'6px'}}/>    
+                                    <Input type="text" name="" id="" onChange={this.searchHandler} style={{marginLeft:'75px'}}/><Icon name='search' style={{marginLeft:'6px'}}/>
                                 </form>
                             </Table.HeaderCell>
                          </Table.Row>
@@ -116,19 +116,42 @@ class ManageResponder extends Component{
                         </Table.Body>
                     </Table>
                 :!this.state.responders?
-                    <Message info>
-                        <Message.Header>
-                            <div style={{fontSize:'18px', textAlign:'center'}}>
-                                <Icon name='user'/>No Responder Accounts
-                            </div>
-                        </Message.Header>
-                  </Message>
-                :null
-                } 
-                
-            </div>
-        )
-    }
+                <Table celled>
+                <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell colSpan='2'> Responders </Table.HeaderCell>
+                        <Table.HeaderCell colSpan='2'>
+                            <form>
+                                <Input type="text" name="" id="" onChange={this.searchHandler} style={{marginLeft:'75px'}}/><Icon name='search' style={{marginLeft:'6px'}}/>
+                            </form>
+                        </Table.HeaderCell>
+                    </Table.Row>    
+                <Table.Row>
+                        <Table.HeaderCell style={{width:'350px'}}>Name</Table.HeaderCell>
+                        <Table.HeaderCell style={{width:'300px'}}>Email</Table.HeaderCell>
+                        <Table.HeaderCell>Contact Number</Table.HeaderCell>
+                        <Table.HeaderCell>Actions</Table.HeaderCell>
+                    </Table.Row>   
+                </Table.Header>
+                <Table.Body>
+                    <Table.Row>
+                        <Table.Cell colSpan='4' style={{paddingTop:'40px', paddingBottom:'40px'}}>
+                            <Message info>
+                                <Message.Header>
+                                    <div style={{fontSize:'18px', textAlign:'center'}}>
+                                        <Icon name='user'/>No Responder Accounts
+                                    </div>
+                                </Message.Header>
+                            </Message>
+                        </Table.Cell>
+                    </Table.Row>
+                </Table.Body>
+            </Table>
+            :null
+            }
+        </div>
+    )
+}
 
 }
 

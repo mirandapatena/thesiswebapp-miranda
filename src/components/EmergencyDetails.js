@@ -37,18 +37,18 @@ class EmergencyDetails extends Component{
         // console.log('time received', this.props.timeReceived);
         // var newDate = new Date(this.props.timeReceived);
         // console.log('time fuck', Date.parse(this.props.timeReceived));
-        this.getRespondersList = this.getRespondersList.bind(this);
-        this.getReporter();
+        // this.getRespondersList = this.getRespondersList.bind(this);
+        // this.getReporter();
 
-        let start = Date.parse(this.props.timeReceived);
-        setInterval(_ => {
-            let current = new Date();
-            let count = +current - +start;
-            let ms = count % 1000;
-            let s = Math.floor((count /  1000)) % 60;
-            let m = Math.floor((count / 60000)) % 60;
-            this.setState({ms, s, m});
-        }, 10);
+        // let start = Date.parse(this.props.timeReceived);
+        // setInterval(_ => {
+        //     let current = new Date();
+        //     let count = +current - +start;
+        //     let ms = count % 1000;
+        //     let s = Math.floor((count /  1000)) % 60;
+        //     let m = Math.floor((count / 60000)) % 60;
+        //     this.setState({ms, s, m});
+        // }, 10);
     }
 
     componentDidMount(){

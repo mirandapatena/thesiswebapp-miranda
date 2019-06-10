@@ -12,7 +12,7 @@ class Home extends Component{
                 </div>
                 
                 <div className="Homepage">
-                    <h1>WELCOME MADAFAKKER!</h1>
+                    {/* <h1>WELCOME MADAFAKKER!</h1> */}
                 </div>
             </div>
         )

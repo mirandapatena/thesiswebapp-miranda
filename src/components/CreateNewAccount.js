@@ -49,6 +49,7 @@ class CreateNewAccount extends Component{
         super(props);
         
         this.state = {
+          hidden: true,
           firstName: '',
           lastName: '',
           password: '',
@@ -74,7 +75,12 @@ class CreateNewAccount extends Component{
         userID: ''  
         }
         this.submitCreateAccount = this.submitCreateAccount.bind(this);
-    }
+        this.toggleShow = this.toggleShow.bind(this)
+      }
+  
+      toggleShow() {
+          this.setState({ hidden: !this.state.hidden });
+      }
 
     handleCreateAccount = (e) => {
         e.preventDefault();
@@ -450,13 +456,14 @@ class CreateNewAccount extends Component{
                         <Form.Input
                         fluid
                         placeholder='Password'
-                        type='password'
+                        type={this.state.hidden ? "password" : "text"}
                         name='password'
                         noValidate
                         value={this.state.password}
                         className={formError.password.length > 0 ? "error" : null}
                         onChange={this.handleCreateAccount}
                         required
+                        onClick={this.toggleShow}
                         />                     
                         {formError.password.length > 0 && (
                         <span className="errorMessage">{formError.password}</span>)}

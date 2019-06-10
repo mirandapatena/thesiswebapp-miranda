@@ -410,7 +410,7 @@ class DeleteUserAccount extends Component{
                             });
                         } else {
                         console.log('updated successfully!');
-                        this.props.
+                        // this.props.
                         swal("Account successfully updated!", {
                             icon: "success",
                             });
