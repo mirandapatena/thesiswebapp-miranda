@@ -3,8 +3,9 @@ import EmergencyDetails from './EmergencyDetails';
 import _ from 'lodash';
 import {connect} from 'react-redux';
 import {getIncidents} from '../actions/incidentAction';
-import swal from 'sweetalert';
 import '../stylesheet_QueueIncidents.css';
+import {NotificationManager} from 'react-notifications';
+import 'react-notifications/lib/notifications.css';
 
 class QueueIncidents extends Component {
    
@@ -13,8 +14,8 @@ class QueueIncidents extends Component {
         this.state = {
             incidentsList : [{
                 key: '',
-                isSettled: false,
-                isShown: false,
+                // isSettled: false,
+                // isShown: false,
                 incidentType: '',
                 incidentLocation: '',
                 isResponded: '',
@@ -54,17 +55,24 @@ class QueueIncidents extends Component {
                             coordinates = {incident.coordinates}
                             incidentKey = {key}
                             reportedBy = {incident.reportedBy}
+                            responderResponding = {incident.responderResponding}
+                            volunteerResponding = {incident.volunteerResponding}
+                            isRespondingResponder = {incident.isRespondingResponder}
+                            isRespondingVolunteer = {incident.isRespondingVolunteer}
+                            image_uri = {incident.image_uri}
                         />
                     </div>
                 );
                 
             }
             if(incident.isSettled === true && incident.isShown === false){   
-                var a = incident.incidentType;
-                var b = incident.incidentLocation;  
-                swal(b,a,{ button: "Ok!", icon:"success", text:"Incident is settled!"});
-            }
+                var a = <div>
+                                <p><b>Incident Location:</b> {incident.incidentLocation}</p>
+                                <p>This incident has been settled</p>
+                            </div>; 
             
+                    NotificationManager.success(a);
+            }
         });
     }
     

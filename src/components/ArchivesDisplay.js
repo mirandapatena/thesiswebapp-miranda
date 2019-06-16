@@ -7,6 +7,26 @@ import failLoadImage from '../images/failLoadImage.png';
 
 class ArchivesDispaly extends Component{
 
+    constructor(props){
+        super(props);
+    }
+
+    displayImage = () => {
+        if(this.props.incidentImage !== 'No photo of incident uploaded by reporter'){
+            return(
+                <div>
+                    <p><b>Photo/s of Incident:</b></p>
+                    <p><Image src={this.props.incidentImage}/></p>
+                </div>
+                );
+        }else{
+            return (
+                <div>
+                    <p><b>{this.props.incidentImage}</b></p>
+                </div>
+                );
+        }
+    }
     
 
     render(){
@@ -42,7 +62,7 @@ class ArchivesDispaly extends Component{
                                 {_.map(this.props.incidentCoordinates, (coordinates) => {
                                     console.log('inmapcoordinates', coordinates);
                                     return(
-                                        <div>
+                                        <div style={{paddingLeft:'10px'}}>
                                             {coordinates}
                                         </div>
                                     );
@@ -53,23 +73,50 @@ class ArchivesDispaly extends Component{
                             <div style={{textAlign:'left', fontSize:'14px', paddingBottom:'20px'}}>
                                 <b>Date and Time Settled of Incident:</b> {this.props.feedbackTimeSettled}</div>
                             
+                            {this.props.incidentAdditionalResponders === ''?
+                             <div style={{textAlign:'left', fontSize:'14px', paddingBottom:'5px'}}>
+                                <b>Additional Responders:</b> No Additional Responders Requested
+                             </div>
+                            :
                             <div style={{textAlign:'left', fontSize:'14px', paddingBottom:'5px'}}>
                                 <b>Additional Responders:</b> {
                                     _.map(this.props.incidentAdditionalResponders, (additionalResponder) => {
                                     return(
                                         <div>
-                                            <div>
-                                                Name: {additionalResponder.name}
+                                            <div style={{paddingLeft:'15px', paddingBottom:'5px'}}>
+                                                <b>Name:</b> {additionalResponder.name}
                                             </div>
-                                            <div>
-                                                Time Received: {additionalResponder.timeReceived}
+                                            <div style={{paddingLeft:'15px', paddingBottom:'5px'}}>
+                                                <b>Time Received:</b> {additionalResponder.timeReceived}
                                             </div>
                                             
                                         </div>
                                     )
                                 })}</div>
-                            <div style={{textAlign:'left', fontSize:'14px', paddingBottom:'20px'}}>
-                                <b>Additional Volunteer:</b> {this.props.incidentAdditionalVolunteers}</div>
+                            }
+
+                            {this.props.incidentAdditionalVolunteers === ''?
+                             <div style={{textAlign:'left', fontSize:'14px', paddingBottom:'20px'}}>
+                                <b>Additional Volunteer:</b> No Additional Volunteer Requested
+                             </div>
+                            :
+                            <div style={{textAlign:'left', fontSize:'14px', paddingBottom:'5px'}}>
+                                <b>Additional Responders:</b> {
+                                    _.map(this.props.incidentAdditionalVolunteers, (additionalVolunteer) => {
+                                    return(
+                                        <div>
+                                            <div style={{paddingLeft:'15px', paddingBottom:'5px'}}>
+                                                Name: {additionalVolunteer.name}
+                                            </div>
+                                            <div style={{paddingLeft:'15px', paddingBottom:'5px'}}>
+                                                Time Received: {additionalVolunteer.timeReceived}
+                                            </div>
+                                            
+                                        </div>
+                                    )
+                                })}</div>
+                            }
+                           
                             
                             <div style={{textAlign:'left', fontSize:'14px', paddingBottom:'5px'}}>
                                 <b>Assigned Responder: </b>{this.props.feedbackByResponder}</div>
@@ -80,7 +127,7 @@ class ArchivesDispaly extends Component{
                                 <b>Feedback Report:</b> {this.props.feedbackReport}</div>
 
                             <div style={{textAlign:'left', fontSize:'14px', paddingBottom:'20px'}}>
-                                <b>Incident Image: </b> <Image src={failLoadImage} size='large'/></div>
+                                {this.displayImage()}</div>
 
                         </Modal.Content>
                     </Modal>

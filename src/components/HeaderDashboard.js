@@ -16,6 +16,10 @@ import physicalResponding from '../../src/images/pi_otw.png';
 import physicalSettled from '../../src/images/pi_fin.png';
 import volunteerLogo from '../images/tracking_volunteer.png';
 import responderLogo from '../images/tracking_responder.png';
+import incStat from '../images/incident_new.png';
+import swal from 'sweetalert';
+import {NotificationManager} from 'react-notifications';
+import 'react-notifications/lib/notifications.css';
 
 const noteRegex = RegExp(
   /^.{0,150}$/
@@ -235,7 +239,9 @@ class HeaderDashboard extends Component{
       unrespondedResponder: true,
       isRespondingVolunteer: false,
       unrespondedVolunteer: true,
-      isShown: false
+      isShown: false,
+      isRespondingResponderShown: false,
+      isRespondingVolunteerShown: false
     }
     if (formValid(this.state)) {
       console.log(`
@@ -254,9 +260,12 @@ class HeaderDashboard extends Component{
         isSettled: false,
         lng: null,
         lat: null,
-        isShown: false
+        isShown: false,
+        isRespondingResponderShown: false,
+        isRespondingVolunteerShown: false
     });
     console.log(this.state.incidentsList);
+    swal(this.state.incidentLocation,"New incident has been added!");
   }
 
 
@@ -321,6 +330,7 @@ class HeaderDashboard extends Component{
                   <Dropdown.Divider/>
                   <Dropdown.Item><Image src={responderLogo} size='mini' floated='right'/>Responder</Dropdown.Item>
                   <Dropdown.Item><Image src={volunteerLogo} size='mini' floated='right'/>Volunteer</Dropdown.Item>
+                  <Dropdown.Item><Image src={incStat} size='mini' floated='right'/>New Emergency</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </Menu.Item>

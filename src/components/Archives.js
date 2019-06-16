@@ -40,8 +40,6 @@ class Archives extends Component{
                 list.push(archive);
             });
             list.sort(function(a,b){
-                // Turn your strings into dates, and then subtract them
-                // to get a value that is either negative, positive, or zero.
                 return new Date(b.incidentTimeReceived) - new Date(a.incidentTimeReceived);
               });
             this.setState({archives: list}, () => {
@@ -55,18 +53,9 @@ class Archives extends Component{
     renderAchives = () => {
         return _.map(this.state.archives, (archive, key) => {
             console.log('renderAchives', archive);
-            let incidentAdditionalResponders, incidentAdditionalVolunteers, feedbackLocation, incidentOriginalVolunteer, incidentImage, incidentLocation, feedbackReport;
+            let feedbackLocation, incidentOriginalVolunteer, incidentImage, incidentLocation, feedbackReport;
             console.log('arcive shit', archive.incidentCoordinates);
-            if(!archive.incidentAdditionalResponders){
-                incidentAdditionalResponders = 'No Additional Responders Requested';
-            }else{
-                incidentAdditionalResponders = archive.incidentAdditionalResponders;
-            }
-            if(!archive.incidentAdditionalVolunteers){
-                incidentAdditionalVolunteers = 'No Additional Volunteers Requested';
-            }else{
-                incidentAdditionalVolunteers = archive.incidentAdditionalVolunteers;
-            }
+            
             if(!archive.feedbackLocation){
                 feedbackLocation = 'No detailed location given by reporter';
             }else{
@@ -92,6 +81,9 @@ class Archives extends Component{
             }else{
                 incidentLocation = archive.incidentLocation;
             }
+            if(!archive.image_uri || archive.image_uri === ''){
+                
+            }
             
             return(
             <ArchivesDisplay incidentKey={archive.incidentID} 
@@ -105,8 +97,8 @@ class Archives extends Component{
                                 incidentReportedBy={archive.incidentReportedBy}
                                 incidentImage={incidentImage} 
                                 report={archive.report} 
-                                incidentAdditionalResponders={incidentAdditionalResponders} 
-                                incidentAdditionalVolunteers={incidentAdditionalVolunteers} 
+                                incidentAdditionalResponders={archive.incidentAdditionalResponders} 
+                                incidentAdditionalVolunteers={archive.incidentAdditionalVolunteers} 
                                 incidentOriginalVolunteer={incidentOriginalVolunteer} 
                                 incidentType={archive.incidentType}
             />);
@@ -148,18 +140,8 @@ class Archives extends Component{
                             <Table.Body>
                             {this.state.archives.filter(this.searchUser(this.state.search)).map(archive => {
                                 console.log('renderAchives', archive.incidentKey);
-                                let incidentAdditionalResponders, incidentAdditionalVolunteers, feedbackLocation, incidentOriginalVolunteer, incidentImage, incidentLocation, feedbackReport;
+                                let feedbackLocation, incidentOriginalVolunteer, incidentImage, incidentLocation, feedbackReport;
 
-                                if(!archive.incidentAdditionalResponders){
-                                    incidentAdditionalResponders = 'No Additional Responders Requested';
-                                }else{
-                                    incidentAdditionalResponders = archive.incidentAdditionalResponders;
-                                }
-                                if(!archive.incidentAdditionalVolunteers){
-                                    incidentAdditionalVolunteers = 'No Additional Volunteers Requested';
-                                }else{
-                                    incidentAdditionalVolunteers = archive.incidentAdditionalVolunteers;
-                                }
                                 if(!archive.feedbackLocation){
                                     feedbackLocation = 'No detailed location given by reporter';
                                 }else{
@@ -197,8 +179,8 @@ class Archives extends Component{
                                                     incidentReportedBy={archive.incidentReportedBy}
                                                     incidentImage={incidentImage} 
                                                     report={archive.report} 
-                                                    incidentAdditionalResponders={incidentAdditionalResponders} 
-                                                    incidentAdditionalVolunteers={incidentAdditionalVolunteers} 
+                                                    incidentAdditionalResponders={archive.incidentAdditionalResponders} 
+                                                    incidentAdditionalVolunteers={archive.incidentAdditionalVolunteers} 
                                                     incidentOriginalVolunteer={incidentOriginalVolunteer} 
                                                     incidentType={archive.incidentType}
                                         />);
