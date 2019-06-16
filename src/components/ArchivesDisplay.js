@@ -49,13 +49,13 @@ class ArchivesDispaly extends Component{
                                         <Form.Group widths='2'>
                                             <Form.Field>
                                                 <pre style={{marginBottom:'0px', marginTop:'5px'}}>
-                                                    <b>REPORTED BY  : </b>           
+                                                    <b>REPORTED BY : </b>           
                                                     <u>  {this.props.incidentReportedBy}  </u>
                                                 </pre>
                                             </Form.Field>
                                             <Form.Field>
                                                 <pre style={{marginBottom:'0px', marginTop:'5px'}}>
-                                                    <b>DATE OF REPORT: </b>     
+                                                    <b>DATE OF REPORT : </b>     
                                                     <u>  {this.props.incidentTimeReceived}  </u>   
                                                 </pre>
                                             </Form.Field>

@@ -427,8 +427,14 @@ class EmergencyDetails extends Component{
                             <p><b>Location of Incident:</b> {this.props.incidentLocation}</p>
                             <p><b>Coordinates:</b> {this.props.coordinates.lng} {this.props.coordinates.lat}</p>
                             <p><b>Time Received:</b> {this.props.timeReceived}</p>
-                            <p><b>Note:</b> {this.props.incidentNote}</p>
-                            <p><b>Photo of Incident:</b></p>
+                            {this.props.incidentNote === ''?
+                            <p><b>Note:</b> No detailed location given by reporter</p>
+                                :<p><b>Note:</b> {this.props.incidentNote}</p>}
+                            {this.props.incidentPhoto === ''?
+                            <p><b>Photo of Incident: No photo of incident uploaded by reporter</b></p>
+                                :<p><b>Photo of Incident: insert photo</b></p>}
+
+                            
                     </Modal.Content>
                         <Modal.Actions>
                             <Button color='red' onClick={this.showActiveRespondersList('small')}>

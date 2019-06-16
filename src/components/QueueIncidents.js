@@ -59,6 +59,7 @@ class QueueIncidents extends Component {
                             volunteerResponding = {incident.volunteerResponding}
                             isRespondingResponder = {incident.isRespondingResponder}
                             isRespondingVolunteer = {incident.isRespondingVolunteer}
+                            incidentPhoto = {incident.incidentPhoto}
                         />
                     </div>
                 );
