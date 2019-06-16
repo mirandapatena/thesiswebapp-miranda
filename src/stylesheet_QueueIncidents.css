@@ -6,7 +6,6 @@
 .element { -ms-overflow-style: none; }
 .element { overflow: -moz-scrollbars-none; }
 
-
 .inc_stat {
   background-image: url(./images/incident_new.png);
   background-color: transparent;
@@ -14,8 +13,8 @@
   background-size: 20px;
   height: 20px;
   width: 22px;
-  top: 5px;
-  left: 225px;
+  top: -4px;
+  left: 222px;
   position: absolute;
   z-index: 2;
   margin-top: 2px;
@@ -256,7 +255,7 @@ ul, menu, dir {
   border-top: 1px solid rgba(34,36,38,.1);
   background: 0 0;
   margin: 0;
-  padding: 1em 1em;
+  padding: 0.5em 0.5em;
   -webkit-box-shadow: none;
   box-shadow: none;
   font-size: 1em;
@@ -304,6 +303,7 @@ ul, menu, dir {
 .incidentReportedBy{
   font-size: 16px;
   color: #16426a;
+  /* color: #475e74; */
 }
 
 .swal-overlay {
@@ -372,10 +372,13 @@ ul, menu, dir {
   padding-top: 40px;
   padding-left: 420px;
   padding-right: 270px;
+  padding-bottom: 60px;
   /* background: #16426a; */
   background: url("../src/images/Login Form Background.jpg");
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   min-height: 100vh;
   display: flex;
   flex-flow: column nowrap;
@@ -385,10 +388,13 @@ ul, menu, dir {
   padding-top: 130px;
   padding-left: 420px;
   padding-right: 270px;
+  padding-bottom: 60px;
   /* background: #16426a; */
   background: url("../src/images/Login Form Background.jpg");
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   min-height: 100vh;
   display: flex;
   flex-flow: column nowrap;
@@ -399,15 +405,33 @@ ul, menu, dir {
   padding-top: 300px;
   padding-left: 500px;
   padding-right: 450px;
+  padding-bottom: 60px;
   /* background: #16426a; */
   background: url("../src/images/Login Form Background.jpg");
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   min-height: 100vh;
   display: flex;
   flex-flow: column nowrap;
 }
 
+.Archives{
+  padding-top: 80px;
+  padding-left: 300px;
+  padding-right: 100px;
+  padding-bottom: 60px;
+  /* background: #16426a; */
+  background: url("../src/images/Login Form Background.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
+  display: flex;
+  flex-flow: column nowrap;
+}
 
 .ui.segments {
   position: relative;
@@ -435,10 +459,13 @@ ul, menu, dir {
   padding-top: 60px;
   padding-left: 350px;
   padding-right: 220px;
+  padding-bottom: 60px;
   /* background: #16426a; */
   background: url("../src/images/Login Form Background.jpg");
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   min-height: 100vh;
   display: flex;
   flex-flow: column nowrap;
@@ -453,10 +480,13 @@ ul, menu, dir {
   padding-top: 60px;
   padding-left: 350px;
   padding-right: 220px;
+  padding-bottom: 60px;
   /* background: #16426a; */
   background: url("../src/images/Login Form Background.jpg");
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   min-height: 100vh;
   display: flex;
   flex-flow: column nowrap;
@@ -529,4 +559,10 @@ i.icon.times.circle:hover {
 
 .tooltip:hover .tooltiptext {
   visibility: visible;
+}
+
+a:hover {
+  color: #1e70bf;
+  text-decoration: none;
+  cursor: pointer;
 }

@@ -4,6 +4,8 @@ body{
     background: url("../src/images/Login Form Background.jpg");
     background-size: cover;
     background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     font-family: sans-serif; 
 }
 .login-form {

@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
-import { Table, Message, Icon, Search } from 'semantic-ui-react'
+import { Table, Message, Icon, Input } from 'semantic-ui-react'
 import fire from '../config/Fire';
 import _ from 'lodash';
 import DeleteUserAccount from './DeleteUserAccount';
+import searchUser from '../functions/searchUser';
 
 class ManageAdmin extends Component{
 
@@ -11,49 +12,41 @@ class ManageAdmin extends Component{
         this.state = {
             admins: [{}],
             adminsProfiles: [{}],
-            administrators: [{}]
+            administrators: [{}],
+            search: ''
         }
         
     }
 
     componentDidMount(){
-        this.getAdministratorData();
-    }
-
-    // renderAdmins = () => {
-       
-    // }
-    getAdministratorData = () => {
-        var adminNode = fire.database().ref('webUsers/Administrator');
-        var adminsProfiles;
-        var administrators = [];
-        var adminObject = {};
-        adminNode.once('value', snapshot => {
-            adminsProfiles = snapshot.val();
-            console.log('administrators', adminsProfiles);
-            this.setState({adminsProfiles}, () => {
-                console.log('admin setstate', this.state.adminsProfiles);
-                _.map(adminsProfiles, (admin, key) => {
-                    var profile = fire.database().ref(`users/${admin.uid}`);
-                    profile.once('value', snapshot => {
-                        adminObject = snapshot.val();
-                        adminObject.uid = admin.uid;
-                        administrators.push(adminObject);
-                        this.setState({administrators}, () => {
-                            console.log('administrator key', adminObject);
-                        });
-                    });
+        var array = [];
+        fire.database().ref('users').orderByChild('user_type').equalTo('Administrator').once('value', snapshot => {
+            this.setState({administrators: snapshot.val()}, () => {
+                _.map(this.state.administrators, (administrator, key) => {
+                    var tempObject = administrator;
+                    tempObject.key = key;
+                    console.log('temp admin', tempObject);
+                    array.push(tempObject);
+                });
+                this.setState({adminsProfiles: array}, () => {
+                    console.log('adminsprofile', this.state.adminsProfiles);
                 });
             });
         });
     }
 
-    renderAdministrators = () => {
-        return _.map(this.state.administrators, (administrator, key) => {
-            console.log('renderAdministrators1', administrator.uid);
-            return(
-            <DeleteUserAccount uid={administrator.uid} firstName={administrator.firstName} lastName={administrator.lastName} email={administrator.email} contactNumber={administrator.contactNumber} user_type='Administrator' key={administrator.uid}/>);
-        });
+    searchHandler = (event) => {
+        this.setState({search: event.target.value});
+    }
+
+    delete = (uid) => {
+        var filteredItems = this.state.adminsProfiles.filter(function (item) {
+            return (item.key !== uid);
+          });
+         
+          this.setState({
+            adminsProfiles: filteredItems
+          });
     }
 
     render(){
@@ -64,18 +57,25 @@ class ManageAdmin extends Component{
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell colSpan='2'> Administrators </Table.HeaderCell>
-                            <Table.HeaderCell colSpan='2'><Search aligned='right' />  </Table.HeaderCell>
+                            <Table.HeaderCell colSpan='2'>
+                                <form>
+                                    <Input type="text" name="" id="" onChange={this.searchHandler} style={{marginLeft:'75px'}}/><Icon name='search' style={{marginLeft:'6px'}}/>    
+                                </form>
+                            </Table.HeaderCell>
                         </Table.Row>
                         
                         <Table.Row>
-                            <Table.HeaderCell>Name</Table.HeaderCell>
-                            <Table.HeaderCell>Email</Table.HeaderCell>
+                            <Table.HeaderCell style={{width:'350px'}}>Name</Table.HeaderCell>
+                            <Table.HeaderCell style={{width:'300px'}}>Email</Table.HeaderCell>
                             <Table.HeaderCell>Contact Number</Table.HeaderCell>
                             <Table.HeaderCell>Actions</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                            {this.renderAdministrators()}
+                            {this.state.adminsProfiles.filter(searchUser(this.state.search)).map(administrator => {
+                                return(
+                                <DeleteUserAccount user_type={administrator.user_type} firstName={administrator.firstName} lastName={administrator.lastName} contactNumber={administrator.contactNumber} email={administrator.email} uid={administrator.key}delete={this.delete}/>);
+                            })}
                         </Table.Body>
                     </Table>
                 :!this.state.administrators?
@@ -83,7 +83,11 @@ class ManageAdmin extends Component{
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell colSpan='2'> Administrators </Table.HeaderCell>
-                            <Table.HeaderCell colSpan='2'><Search aligned='right' />  </Table.HeaderCell>
+                            <Table.HeaderCell colSpan='2'>
+                                <form>
+                                    <Input type="text" name="" id="" onChange={this.searchHandler} style={{marginLeft:'75px'}}/><Icon name='search' style={{marginLeft:'6px'}}/>
+                                </form>
+                            </Table.HeaderCell>
                         </Table.Row>
                         
                         <Table.Row>

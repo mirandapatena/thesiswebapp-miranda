@@ -50,6 +50,7 @@ class DeleteUserAccount extends Component{
         super(props);
         
         this.state = {
+            editFirstName: false,
             firstName: '',
             lastName: '',
             password: '',
@@ -117,7 +118,11 @@ class DeleteUserAccount extends Component{
         
            this.setState({ formError, [name]: value }, () => console.log(this.state));
     
-    };
+      };
+
+    //   editFirstName = (e) =>{
+
+    //   }
 
       inputUserTypeHandler = (e, { value }) => {
         //this.setState({user_type: e.target.value})
@@ -149,73 +154,73 @@ class DeleteUserAccount extends Component{
         this.setState({sex: value })
       };
     
-    submitCreateAccount = (e) => {
-
-    e.preventDefault();
-    var isMobile = false;
-    var err = '';
-    if(this.state.user_type === 'Regular User' || this.state.user_type === 'Responder' || this.state.user_type === 'Volunteer'){
-        isMobile = true;
-    }
-
-    const account = {
-        firstName: this.state.firstName,
-        lastName: this.state.lastName,
-        password: this.state.password,
-        email: this.state.email,
-        user_type: this.state.user_type,
-        contactNumber: this.state.contactNumber,
-        sex: this.state.sex,
-        isMobile,
-        isVerified: false
-    }
-
-    const credentials = {
-        medicalProfession: this.state.medicalProfession,
-        medicalDegree: this.state.medicalDegree,
-        certification: this.state.certification,
-        isActiveVolunteer: this.state.isActiveVolunteer,
-        forVA: false,
-        forPI: false,
-        durationService: this.state.durationService
-    }
-
-    if (formValid(this.state)) {
-        console.log(`
-        --SUBMITTING--
-        First Name: ${this.state.firstName}
-        Last Name: ${this.state.lastName}
-        Email: ${this.state.email}
-        Password: ${this.state.password}
-        Contact Number: ${this.state.contactNumber}
-        Sex: ${this.state.sex}
-        User Type: ${this.state.user_type}
-        `);
-    }
-    if(account.user_type === 'Volunteer'){
-        err = createUserAccount(account, credentials);
-        this.setState({err: err});
-    }else{
-        err = createUserAccount(account);
-        this.setState({err: err});
-    }
-    this.setState({
-        firstName: '',
-        lastName: '',
-        userName: '',
-        password: '',
-        email: '',
-        user_type: '',
-        contactNumber: '',
-        sex: '',
-        medicalProfession: '',
-        medicalDegree: '',
-        certification: '',
-        isActiveVolunteer: ''
-    })
-
+      submitCreateAccount = (e) => {
     
-    }
+        e.preventDefault();
+        var isMobile = false;
+        var err = '';
+        if(this.state.user_type === 'Regular User' || this.state.user_type === 'Responder' || this.state.user_type === 'Volunteer'){
+          isMobile = true;
+        }
+    
+        const account = {
+          firstName: this.state.firstName,
+          lastName: this.state.lastName,
+          password: this.state.password,
+          email: this.state.email,
+          user_type: this.state.user_type,
+          contactNumber: this.state.contactNumber,
+          sex: this.state.sex,
+          isMobile,
+          isVerified: false
+        }
+    
+        const credentials = {
+          medicalProfession: this.state.medicalProfession,
+          medicalDegree: this.state.medicalDegree,
+          certification: this.state.certification,
+          isActiveVolunteer: this.state.isActiveVolunteer,
+          forVA: false,
+          forPI: false,
+          durationService: this.state.durationService
+        }
+    
+        if (formValid(this.state)) {
+          console.log(`
+            --SUBMITTING--
+            First Name: ${this.state.firstName}
+            Last Name: ${this.state.lastName}
+            Email: ${this.state.email}
+            Password: ${this.state.password}
+            Contact Number: ${this.state.contactNumber}
+            Sex: ${this.state.sex}
+            User Type: ${this.state.user_type}
+          `);
+        }
+        if(account.user_type === 'Volunteer'){
+          err = createUserAccount(account, credentials);
+          this.setState({err: err});
+        }else{
+          err = createUserAccount(account);
+          this.setState({err: err});
+        }
+        this.setState({
+          firstName: '',
+          lastName: '',
+          userName: '',
+          password: '',
+          email: '',
+          user_type: '',
+          contactNumber: '',
+          sex: '',
+          medicalProfession: '',
+          medicalDegree: '',
+          certification: '',
+          isActiveVolunteer: ''
+        })
+    
+        
+      }
 
     
 
@@ -239,16 +244,31 @@ class DeleteUserAccount extends Component{
                         console.log(`${this.props.uid} removed from webUsers node`);
                         userNode.remove().then(()=>{
                             console.log(`${this.props.uid} removed from users node`);
+                            this.props.delete(this.props.uid);
                         });
                     });
         
                 }else if(this.props.user_type === 'Regular User' || this.props.user_type === 'Responder' || this.props.user_type === 'Volunteer'){
-                    var mobileUserNode = fire.database().ref(`mobileUsers/${this.props.user_type}/${this.props.key}`);
-                    var userNode2 = fire.database().ref(`users/${this.props.key}`);
+                    var mobileUserNode = fire.database().ref(`mobileUsers/${this.props.user_type}/${this.props.uid}`);
+                    var userNode2 = fire.database().ref(`users/${this.props.uid}`);
                     mobileUserNode.remove().then(()=>{
-                        console.log(`${this.props.key} removed from mobileUsers node`);
+                        console.log(`${this.props.uid} removed from mobileUsers node`);
                         userNode2.remove().then(()=>{
-                            console.log(`${this.props.key} removed from users node`);
+                            console.log(`${this.props.uid} removed from users node`);
+                            if(this.props.user_type === 'Volunteer'){
+                                fire.database().ref(`credentials/${this.props.uid}`).remove().then(()=>{
+                                    console.log(`${this.props.uid} credentials have been deleted`);
+                                    this.props.delete(this.props.uid);
+                                });
+                            }
+                            if(!this.props.isVerified){
+                                var deleteUnverifiedNode = fire.database().ref(`unverifiedMobileUsers/${this.props.uid}`);
+                                deleteUnverifiedNode.remove().then(()=>{
+                                    this.props.delete(this.props.uid);
+                                })
+                            }else{
+                                this.props.delete(this.props.uid);
+                            }
                         });
                     });
                 }
@@ -264,7 +284,7 @@ class DeleteUserAccount extends Component{
     }
 
     updateUserFirstName = () =>{
-
+       // console.log(`${this.props.uid} 'firstName' ${this.state.firstName}`);
         swal({
             title: "Are you sure you want to edit this account's first name?",
             icon: "warning",
@@ -284,7 +304,10 @@ class DeleteUserAccount extends Component{
                         icon: "error",
                         });
                     } else {
-                        console.log('updated successfully!')
+                        //console.log(`${this.props.uid} 'firstName' ${this.state.firstName}`);
+                        //this.props.update(this.props.uid, 'firstName', this.state.firstName);
+                        console.log('updated successfully!');
+                        //this.props.update();
                         swal("Account successfully updated!", {
                         icon: "success",
                         });
@@ -358,23 +381,6 @@ class DeleteUserAccount extends Component{
                             });
                         }
                     });
-
-                    // var userEmail = fire.auth().currentUser;
-                    // console.log('auth', userEmail);
-
-                    // var newEmail = this.state.email;
-
-                    // userEmail.updateEmail(newEmail).then(function() {
-                    // // Update successful.
-                    // console.log('email updated successfully!')
-                            
-                    // }).catch(function(error) {
-                    // // An error happened.
-                    // console.log('email: error updating')
-                    // swal("Update failed", {
-                    //     icon: "error",
-                    //     });
-                    // });
                 
             } else {
                 swal("Edit Email has been cancelled!");
@@ -403,7 +409,8 @@ class DeleteUserAccount extends Component{
                             icon: "error",
                             });
                         } else {
-                        console.log('updated successfully!')
+                        console.log('updated successfully!');
+                        // this.props.
                         swal("Account successfully updated!", {
                             icon: "success",
                             });
