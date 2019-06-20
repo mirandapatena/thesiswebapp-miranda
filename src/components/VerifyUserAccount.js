@@ -6,7 +6,7 @@ import fire from '../config/Fire';
 import swal from 'sweetalert';
 
 class VerifyUserAccount extends Component{
-
+    
     verifyUser = () => {
         
 
@@ -28,6 +28,7 @@ class VerifyUserAccount extends Component{
                     swal("Account Verified!", {icon:"success"});
                     deleteNode.remove().then(()=>{
                         console.log(`${this.props.uid} node in unverifiedMobileUsers node removed`);
+                        this.props.verify(this.props.uid);
                     });
                 })
                 

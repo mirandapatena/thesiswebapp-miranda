@@ -1,6 +1,8 @@
 export default function searchUser(search){
     return function(x){
-        var name = x.incidentID + ' ' + x.incidentLocation + ' ' + x.timeReceived;
+        var name = x.firstName + ' ' + x.lastName + ' ' + x.contactNumber + ' ' + x.email + ' ' + x.sex;
         return name.toLowerCase().includes(search.toLowerCase()) || !search;
     }
 }
+
+

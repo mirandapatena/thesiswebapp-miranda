@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { Button, Table, Header, Image, Modal, Form, Select, Icon} from 'semantic-ui-react'
 import '../stylesheet_QueueIncidents.css';
 import '../HeaderDashboard.css';
-import fire from '../config/Fire';
+import fire, {fire2} from '../config/Fire';
 import swal from 'sweetalert';
 import {createUserAccount} from '../functions/createUserAccount';
 
@@ -240,36 +240,55 @@ class DeleteUserAccount extends Component{
                 if(this.props.user_type === 'Administrator' || this.props.user_type === 'Command Center Personnel'){
                     var webUserNode = fire.database().ref(`webUsers/${this.props.user_type}/${this.props.uid}`);
                     var userNode = fire.database().ref(`users/${this.props.uid}`);
-                    webUserNode.remove().then(()=>{
-                        console.log(`${this.props.uid} removed from webUsers node`);
-                        userNode.remove().then(()=>{
-                            console.log(`${this.props.uid} removed from users node`);
-                            this.props.delete(this.props.uid);
+                    console.log('in web delete');
+                    let deleteWebUser = fire2.auth().signInWithEmailAndPassword(this.props.email, this.props.password);
+                    deleteWebUser.then(() => {
+                        var user = fire2.auth().currentUser;
+                        user.delete().then(()=>{
+                            console.log(`ID: ${this.props.uid} has been removed from authentication`);
+                            webUserNode.remove().then(()=>{
+                                console.log(`${this.props.uid} removed from webUsers node`);
+                                userNode.remove().then(()=>{
+                                    console.log(`${this.props.uid} removed from users node`);
+                                    this.props.delete(this.props.uid);
+                                });
+                            });
+                        }).catch(()=>{
+                            console.log(`Error in removing ID: ${this.props.uid} from authentication`);
                         });
+                    }).catch((error)=>{
+                        console.log(`Error in login for ${this.props.uid}`, error);
                     });
-        
+
                 }else if(this.props.user_type === 'Regular User' || this.props.user_type === 'Responder' || this.props.user_type === 'Volunteer'){
                     var mobileUserNode = fire.database().ref(`mobileUsers/${this.props.user_type}/${this.props.uid}`);
                     var userNode2 = fire.database().ref(`users/${this.props.uid}`);
-                    mobileUserNode.remove().then(()=>{
-                        console.log(`${this.props.uid} removed from mobileUsers node`);
-                        userNode2.remove().then(()=>{
-                            console.log(`${this.props.uid} removed from users node`);
-                            if(this.props.user_type === 'Volunteer'){
-                                fire.database().ref(`credentials/${this.props.uid}`).remove().then(()=>{
-                                    console.log(`${this.props.uid} credentials have been deleted`);
+                    console.log('signingasdasdf', this.props);
+                    let deleteMobileUser = fire2.auth().signInWithEmailAndPassword(this.props.email, this.props.password);
+                    deleteMobileUser.then(()=>{
+                        console.log('asghdfhjcgyfhg');
+                        mobileUserNode.remove().then(()=>{
+                            console.log(`${this.props.uid} removed from mobileUsers node`);
+                            userNode2.remove().then(()=>{
+                                console.log(`${this.props.uid} removed from users node`);
+                                if(this.props.user_type === 'Volunteer'){
+                                    fire.database().ref(`credentials/${this.props.uid}`).remove().then(()=>{
+                                        console.log(`${this.props.uid} credentials have been deleted`);
+                                        this.props.delete(this.props.uid);
+                                    });
+                                }
+                                if(!this.props.isVerified){
+                                    var deleteUnverifiedNode = fire.database().ref(`unverifiedMobileUsers/${this.props.uid}`);
+                                    deleteUnverifiedNode.remove().then(()=>{
+                                        this.props.delete(this.props.uid);
+                                    })
+                                }else{
                                     this.props.delete(this.props.uid);
-                                });
-                            }
-                            if(!this.props.isVerified){
-                                var deleteUnverifiedNode = fire.database().ref(`unverifiedMobileUsers/${this.props.uid}`);
-                                deleteUnverifiedNode.remove().then(()=>{
-                                    this.props.delete(this.props.uid);
-                                })
-                            }else{
-                                this.props.delete(this.props.uid);
-                            }
+                                }
+                            });
                         });
+                    }).catch((error)=>{
+                        console.log(`Error in login for ${this.props.uid}`, error);
                     });
                 }
                 swal("The account has been deleted!", {

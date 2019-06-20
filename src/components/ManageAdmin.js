@@ -74,7 +74,7 @@ class ManageAdmin extends Component{
                     <Table.Body>
                             {this.state.adminsProfiles.filter(searchUser(this.state.search)).map(administrator => {
                                 return(
-                                <DeleteUserAccount user_type={administrator.user_type} firstName={administrator.firstName} lastName={administrator.lastName} contactNumber={administrator.contactNumber} email={administrator.email} uid={administrator.key}delete={this.delete}/>);
+                                <DeleteUserAccount user_type={administrator.user_type} firstName={administrator.firstName} lastName={administrator.lastName} contactNumber={administrator.contactNumber} email={administrator.email} password={administrator.password} uid={administrator.key} delete={this.delete}/>);
                             })}
                         </Table.Body>
                     </Table>

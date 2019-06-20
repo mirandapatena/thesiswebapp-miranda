@@ -24,7 +24,7 @@ class Archives extends Component{
 
     searchUser = (search) => {
         return function(x){
-            var name = x.incidentLocation + ' ' + x.incidentID + ' ' + x.incidentTimeReceived;
+            var name = x.incidentLocation + ' ' + x.incidentID + ' ' + x.incidentTimeReceived + ' ' + x.incidentType;
             return name.toLowerCase().includes(search.toLowerCase()) || !search;
         }
     }

@@ -10,9 +10,6 @@ import swal from 'sweetalert';
 import {NotificationManager} from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
 
-
-const storage = fire.storage().ref();
-
 class EmergencyDetails extends Component{
 
     constructor(props){
@@ -38,7 +35,6 @@ class EmergencyDetails extends Component{
             noteIncident: '',
             volunteerAccept: false,
             volunteerReject: false,
-            image: '',
             timeOut: false,
             waitTime: false,
             ms: '',
@@ -52,6 +48,7 @@ class EmergencyDetails extends Component{
         this.getReporter();
         this.getResponderName();
         this.getVolunteerName();
+
         // let start = Date.parse(this.props.timeReceived);
         // setInterval(_ => {
         //     let current = new Date();
@@ -61,7 +58,6 @@ class EmergencyDetails extends Component{
         //     let m = Math.floor((count / 60000)) % 60;
         //     this.setState({ms, s, m});
         // }, 10);
-        console.log('emergency details props', this.props);
     }
 
     componentDidMount(){
@@ -161,23 +157,6 @@ class EmergencyDetails extends Component{
     //     });
     // }
 
-    displayImage = () => {
-        if(this.props.image_uri){
-            return(
-                <div>
-                    <p><b>Photo of Incident:</b></p>
-                    <p><Image src={this.props.image_uri}/></p>
-                </div>
-                );
-        }else{
-            return (
-                <div>
-                    <p><b>No Photo of Incident sent by reporter</b></p>
-                </div>
-                );
-        }
-    }
-    
     getRespondersList = () => {
         let activeResponders;
         let activeRespondersList;
@@ -448,8 +427,14 @@ class EmergencyDetails extends Component{
                             <p><b>Location of Incident:</b> {this.props.incidentLocation}</p>
                             <p><b>Coordinates:</b> {this.props.coordinates.lng} {this.props.coordinates.lat}</p>
                             <p><b>Time Received:</b> {this.props.timeReceived}</p>
-                            <p><b>Note:</b> {this.props.incidentNote}</p>
-                            {this.displayImage()}
+                            {this.props.incidentNote === ''?
+                            <p><b>Note:</b> No detailed location given by reporter</p>
+                                :<p><b>Note:</b> {this.props.incidentNote}</p>}
+                            {this.props.incidentPhoto === ''?
+                            <p><b>Photo of Incident: No photo of incident uploaded by reporter</b></p>
+                                :<p><b>Photo of Incident</b><Image src={this.props.image_uri} size="big"/></p>}
+
+                            
                     </Modal.Content>
                         <Modal.Actions>
                             <Button color='red' onClick={this.showActiveRespondersList('small')}>

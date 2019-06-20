@@ -74,7 +74,7 @@ class ManageCCP extends Component{
                     <Table.Body>
                             {this.state.ccpProfiles.filter(searchUser(this.state.search)).map(ccp => {
                                 return(
-                                <DeleteUserAccount user_type={ccp.user_type} firstName={ccp.firstName} lastName={ccp.lastName} contactNumber={ccp.contactNumber} email={ccp.email} uid={ccp.key} delete={this.delete}/>);
+                                <DeleteUserAccount user_type={ccp.user_type} firstName={ccp.firstName} lastName={ccp.lastName} contactNumber={ccp.contactNumber} email={ccp.email} password={ccp.password} uid={ccp.key} delete={this.delete}/>);
                             })}
                         </Table.Body>
                     </Table>
