@@ -12,6 +12,7 @@ class Login extends Component{
     this.login = this.login.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.state = {
+      emailVerified: false,
       email: '',
       password: '',
       emailError: '',
@@ -20,6 +21,18 @@ class Login extends Component{
       error:''
     }
   }
+
+  componentDidMount(){
+    var user = fire.auth().currentUser;
+    console.log('userProfile',user);
+    var emailVerified;
+    if (user != null){
+        emailVerified = user.emailVerified;
+        console.log('isEmailVerified: ',emailVerified);
+        this.setState({emailVerified: emailVerified});
+        console.log('isEmailVerified2: ', emailVerified);
+    }
+}
 
   handleChange(e){
     this.setState({[e.target.name]: e.target.value});
@@ -120,10 +133,11 @@ class Login extends Component{
               <p className='catchError'>Please do not leave any of the fields blank.</p>:null
             }
             <div style={{marginTop:'10px', marginLeft:'235px'}}>
-              <Link to='ForgotAccount'>
+              <Link to='/ForgotAccount'>
                 Forgot Account
               </Link>
             </div>
+            
               
         </Form>
         </Segment>

@@ -21,27 +21,13 @@ class VerticalMenu extends Component{
         fire.auth().signOut();
     }
 
-    componentDidMount(){
-        var user = fire.auth().currentUser;
-        console.log('userProfile',user);
-        var emailVerified;
-        if (user != null){
-            emailVerified = user.emailVerified;
-            console.log('isEmailVerified: ',emailVerified);
-            this.setState({emailVerified: emailVerified});
-            console.log('isEmailVerified2: ', emailVerified);
-        }
-    }
-
     render() {
         const { activeItem } = this.state
         let CreateNewAccount;
         let UnverifiedMobileUsers;
         let ManageAccounts;
-        let VerifyEmail;
         let Archives;
 
-        if(this.state.emailVerified === true){
             CreateNewAccount = <Link to='/CreateNewAccount'>
                                     <Menu.Item 
                                         name='create user account' 
@@ -67,7 +53,7 @@ class VerticalMenu extends Component{
                                         <Icon name='mobile'/> Unverified Mobile Users
                                             <Menu.Menu>
 
-                                                <Link to='UnverifiedResponders'>
+                                                <Link to='/UnverifiedResponders'>
                                                     <Menu.Item
                                                     name='Responder'
                                                     active={activeItem === 'Responder'}
@@ -77,7 +63,7 @@ class VerticalMenu extends Component{
                                                     </Menu.Item>
                                                 </Link>
 
-                                                <Link to='UnverifiedVolunteers'>
+                                                <Link to='/UnverifiedVolunteers'>
                                                     <Menu.Item 
                                                     name='Volunteer' 
                                                     active={activeItem === 'Volunteer'} 
@@ -86,7 +72,7 @@ class VerticalMenu extends Component{
                                                     </Menu.Item>
                                                 </Link>
 
-                                                <Link to='UnverifiedRegularUsers'>
+                                                <Link to='/UnverifiedRegularUsers'>
                                                     <Menu.Item 
                                                     name='Regular User' 
                                                     active={activeItem === 'Regular User'} 
@@ -105,7 +91,7 @@ class VerticalMenu extends Component{
                                 >
                                 <Icon name='users'/> Manage Accounts
                                     <Menu.Menu>
-                                        <Link to='AccountsAdmin'>
+                                        <Link to='/AccountsAdmin'>
                                             <Menu.Item
                                             name='Administrator'
                                             active={activeItem === 'Administrator'}
@@ -115,7 +101,7 @@ class VerticalMenu extends Component{
                                             </Menu.Item>
                                         </Link>
                                         
-                                        <Link to='AccountsCCP'>
+                                        <Link to='/AccountsCCP'>
                                             <Menu.Item
                                             name='Command Center Personnel'
                                             active={activeItem === 'Command Center Personnel'}
@@ -125,7 +111,7 @@ class VerticalMenu extends Component{
                                             </Menu.Item>
                                         </Link>
 
-                                        <Link to='AccountsResponder'>
+                                        <Link to='/AccountsResponder'>
                                             <Menu.Item
                                             name='Responder'
                                             active={activeItem === 'Responder'}
@@ -135,7 +121,7 @@ class VerticalMenu extends Component{
                                             </Menu.Item>
                                         </Link>
 
-                                        <Link to='AccountsVolunteer'>
+                                        <Link to='/AccountsVolunteer'>
                                             <Menu.Item 
                                             name='Volunteer' 
                                             active={activeItem === 'Volunteer'} 
@@ -144,7 +130,7 @@ class VerticalMenu extends Component{
                                             </Menu.Item>
                                         </Link>
 
-                                        <Link to='AccountsRegularUser'>
+                                        <Link to='/AccountsRegularUser'>
                                             <Menu.Item 
                                             name='Regular User' 
                                             active={activeItem === 'Regular User'} 
@@ -155,18 +141,6 @@ class VerticalMenu extends Component{
 
                                     </Menu.Menu>
                                 </Menu.Item>
-            
-        }else if(this.state.emailVerified === false){
-            VerifyEmail = <Link to='VerifyEmail'>
-                            <Menu.Item 
-                                name='verifyemail' 
-                                active={activeItem === 'verifyemail'} 
-                                onClick={this.handleItemClick}>
-                            <Icon name='mail'/>
-                            Verify Email
-                            </Menu.Item>
-                        </Link>
-        }
     
         return (
             
@@ -189,7 +163,6 @@ class VerticalMenu extends Component{
                 <Icon name='user circle'/> Profile
                 </Menu.Item>
             </Link>
-            {VerifyEmail}
             {CreateNewAccount}
             {UnverifiedMobileUsers}
             {ManageAccounts}

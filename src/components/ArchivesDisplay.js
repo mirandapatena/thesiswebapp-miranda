@@ -12,7 +12,7 @@ class ArchivesDispaly extends Component{
             return(
                 <div style={{marginTop:'15px', marginBottom:'15px', paddingBottom:'15px', fontSize:'1.1em', fontFamily:'monospace,monospace'}}>
                     <p><b>PHOTO OF INCIDENT </b></p>
-                    <p><Image src={this.props.incidentImage} size='large'/></p>
+                    <p><Image style={{paddingLeft:'35px'}} src={this.props.incidentImage} size='large'/></p>
                 </div>
                 );
         }else{
