@@ -263,10 +263,8 @@ class DeleteUserAccount extends Component{
                 }else if(this.props.user_type === 'Regular User' || this.props.user_type === 'Responder' || this.props.user_type === 'Volunteer'){
                     var mobileUserNode = fire.database().ref(`mobileUsers/${this.props.user_type}/${this.props.uid}`);
                     var userNode2 = fire.database().ref(`users/${this.props.uid}`);
-                    console.log('signingasdasdf', this.props);
                     let deleteMobileUser = fire2.auth().signInWithEmailAndPassword(this.props.email, this.props.password);
                     deleteMobileUser.then(()=>{
-                        console.log('asghdfhjcgyfhg');
                         mobileUserNode.remove().then(()=>{
                             console.log(`${this.props.uid} removed from mobileUsers node`);
                             userNode2.remove().then(()=>{
