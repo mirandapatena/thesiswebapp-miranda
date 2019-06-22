@@ -5,6 +5,7 @@ import '../Home.css';
 import { Button, Form, Grid, Header, Segment } from 'semantic-ui-react'
 import fire from '../config/Fire';
 import swal from 'sweetalert';
+import {Link} from "react-router";
 
 class verifyEmail extends Component{
 
@@ -40,7 +41,7 @@ class verifyEmail extends Component{
         var user = fire.auth().currentUser;
         user.sendEmailVerification().then(function() {
             // Email sent.
-            swal("Email sent!", {
+            swal("A verification link has been sent to your email account!", {
                 icon: "success",
                 });
             }).catch(e=> {
@@ -55,7 +56,7 @@ class verifyEmail extends Component{
     render(){
         let unverifed;
 
-        if(this.state.emailVerified === false){
+        
             unverifed = <Grid textAlign='center' style={{ height: '100%' }} verticalAlign='middle'>
             <Grid.Column style={{ maxWidth: 450 }}>
       
@@ -70,14 +71,7 @@ class verifyEmail extends Component{
                     </p>
                 </div>
                 
-                {/* <Form size='large' >
-                    <div style={{marginTop:'30px',marginBottom:'20px'}}>
-                        <Form.Input
-                        icon='mail' 
-                        iconPosition='left' 
-                        value={this.state.email} 
-                        />
-                    </div> */}
+                
                     <div className="space"></div>
                     
                     <Button inverted color= 'red' fluid size='large' onClick={this.verifyEmail}>
@@ -85,26 +79,23 @@ class verifyEmail extends Component{
                     </Button>
                     
                     <p className='catchError'>{this.state.err}</p>
+                    <div style={{marginTop:'50px', marginLeft:'235px'}}>
+                    <Link to='login'>
+                        Back to login
+                    </Link>
+                    </div>
                   
-              
-              {/* </Form> */}
+            
               </Segment>
             </Grid.Column>
           </Grid>
-        }
+    
         return(
-            <div>
-                <div className="VerticalMenu">
-                    <VerticalMenu/>
-                </div>
                 
-                <div className="Homepage">
-                    {/* <h1>WELCOME MADAFAKKER!</h1> */}
-                    <div className="HomepageMessage">
+                    <div className="login-form">
                         {unverifed}
                     </div>
-                </div>
-            </div>
+            
         )
     }
 

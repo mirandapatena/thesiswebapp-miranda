@@ -10,15 +10,15 @@ class ArchivesDispaly extends Component{
     displayImage = () => {
         if(this.props.incidentImage !== 'No photo of incident uploaded by reporter'){
             return(
-                <div style={{marginTop:'15px', marginBottom:'15px', paddingBottom:'15px', fontSize:'1.1em', fontFamily:'monospace,monospace'}}>
+                <div style={{marginTop:'15px', marginBottom:'15px', paddingBottom:'15px', fontSize:'1em', fontFamily:'monospace,monospace'}}>
                     <p><b>PHOTO OF INCIDENT </b></p>
-                    <p><Image src={this.props.incidentImage} size='large'/></p>
+                    <p><Image style={{paddingLeft:'35px'}} src={this.props.incidentImage} size='large'/></p>
                 </div>
                 );
         }else{
             return (
-                <pre style={{marginTop:'15px', fontSize:'1.1em', fontFamily:'monospace,monospace',  paddingBottom:'15px'}}>
-                    <b>PHOTO OF INCIDENT</b>
+                <pre style={{marginTop:'15px',  paddingBottom:'15px', fontSize:'1em', fontFamily:'monospace,monospace'}}>
+                    <b>PHOTO OF INCIDENT: </b>
                     <u>  {this.props.incidentImage}  </u>
                 </pre>
                 );
@@ -31,7 +31,7 @@ class ArchivesDispaly extends Component{
         return(
             <Table.Row>
                 <Table.Cell width='4'>
-                    <Header as='h4' image><Image src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' rounded size='mini' circular/>
+                    <Header as='h4' image>
                         <Header.Content>
                             <Modal trigger={<a positive>{this.props.incidentKey}</a>} closeIcon size='large' >
                         
@@ -45,7 +45,7 @@ class ArchivesDispaly extends Component{
                                 </div>
                                 
                                 <Form>
-                                    <div style={{fontSize:'16px', paddingBottom:'5px', fontSize:'1.1em', fontFamily:'monospace,monospace',  paddingBottom:'15px'}}>
+                                    <div style={{fontSize:'16px', paddingBottom:'5px', fontSize:'1em', fontFamily:'monospace,monospace',  paddingBottom:'15px'}}>
                                         <Form.Group widths='2'>
                                             <Form.Field>
                                                 <pre style={{marginBottom:'0px', marginTop:'5px'}}>
@@ -80,7 +80,7 @@ class ArchivesDispaly extends Component{
                                         <b>INCIDENT INFORMATION</b>
                                     </div>
 
-                                    <div style={{paddingBottom:'5px', fontSize:'1.1em', fontFamily:'monospace,monospace'}}>
+                                    <div style={{paddingBottom:'5px', fontSize:'1em', fontFamily:'monospace,monospace'}}>
                                         <Form.Group widths='2'>
                                             <Form.Field>
                                                 <pre style={{marginBottom:'0px'}}>
@@ -95,7 +95,7 @@ class ArchivesDispaly extends Component{
                                                 </pre>
                                             </Form.Field>
                                         </Form.Group>
-                                        <div style={{marginTop:'-13px', marginBottom:'0px'}}>
+                                        <div style={{marginTop:'-13px', marginBottom:'0px', fontSize:'1em', fontFamily:'monospace,monospace'}}>
                                             <b>INCIDENT LOCATION : </b> 
                                             <u>&nbsp;&nbsp;{this.props.incidentLocation}&nbsp;&nbsp;</u>
                                         </div>  

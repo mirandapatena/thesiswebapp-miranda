@@ -39,7 +39,8 @@ class EmergencyDetails extends Component{
             waitTime: false,
             ms: '',
             s: '',
-            m: ''
+            m: '',
+            dispatchNumberOfResponders: ''
         }
         // console.log('time received', this.props.timeReceived);
         // var newDate = new Date(this.props.timeReceived);
@@ -157,6 +158,28 @@ class EmergencyDetails extends Component{
     //     });
     // }
 
+    dispatchNumberOfRespondersHandler = (e) => {
+        const re = /^[0-9\b]+$/;
+        if (e.target.value == '' || re.test(e.target.value)) {
+            this.setState({dispatchNumberOfResponders: e.target.value}, () => {
+                console.log('Number of Responders', this.state.dispatchNumberOfResponders);
+            })
+        }
+    }
+
+    dispatchMultipleResponders = (e) => {
+        e.preventDefault();
+        console.log('dispatch multiple');
+        var dispatchNumberOfResponders = this.state.dispatchNumberOfResponders;
+        var activeResponders = this.state.activeResponders;
+        for(var i=0; i< Number(dispatchNumberOfResponders); i++){
+            var responderNode = fire.database().ref(`mobileUsers/Responder/${activeResponders[i].key}`);
+            responderNode.update({incidentID: this.props.incidentKey}).then(()=>{
+                console.log(`${activeResponders[i].key} dispatched`);
+            });
+        }
+    }
+
     getRespondersList = () => {
         let activeResponders;
         let activeRespondersList;
@@ -217,9 +240,8 @@ class EmergencyDetails extends Component{
     }
 
     renderRespondersList = () => {
-        //var respondersList = this.state.activeResponders;
-        //console.log('responders lista', respondersList);
-        return _.map(this.state.activeResponders, (responder, key) => {
+        console.log('heloasdf', this.state.activeResponders);
+        return _.map(this.state.activeResponders, (responder, key) => { 
             return (
                 <DispatchMobileUser firstName={responder.firstName} lastName={responder.lastName} id={responder.uid} incidentID={this.props.incidentKey} distance={responder.distance} contactNumber={responder.contactNumber} email={responder.email} user_type='Responder'/>
             );
@@ -460,6 +482,11 @@ class EmergencyDetails extends Component{
                             <b>{this.state.m}:{this.state.s}:{this.state.ms}</b>
                         </div>
                     </Message>
+                    <form>
+                        <div><p>Maximum number of available responders: {this.state.activeResponders.length}</p>
+                        <input type="number" name="quantity" min="1" max={this.state.activeResponders.length} onChange={this.dispatchNumberOfRespondersHandler} value={this.state.dispatchNumberOfResponders}/></div>
+                        <button onClick={this.dispatchMultipleResponders}>Dispatch {this.state.dispatchNumberOfResponders} responder/s</button>
+                    </form>   
                     <Table>
                         <Table.Header>
                             <Table.Row>

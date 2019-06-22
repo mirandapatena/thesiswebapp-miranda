@@ -303,6 +303,7 @@ ul, menu, dir {
 .incidentReportedBy{
   font-size: 16px;
   color: #16426a;
+  /* color: #94a7b9; */
 }
 
 .swal-overlay {
@@ -564,4 +565,9 @@ a:hover {
   color: #1e70bf;
   text-decoration: none;
   cursor: pointer;
+}
+
+pre {
+  font-family: monospace,monospace;
+  font-size: 1.05em;
 }

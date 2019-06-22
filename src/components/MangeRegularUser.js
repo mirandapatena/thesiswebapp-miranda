@@ -4,7 +4,6 @@ import fire from '../config/Fire';
 import _ from 'lodash';
 import DeleteUserAccount from './DeleteUserAccount';
 import searchUser from '../functions/searchUser';
-import ManageVolunteer from './ManageVolunteer';
 
 class ManageRegularUser extends Component{
 

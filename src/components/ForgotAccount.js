@@ -36,7 +36,7 @@ handleChange(e){
             
             auth.sendPasswordResetEmail(emailAddress).then(function() {
               // Email sent.
-              swal("Email sent!", {
+              swal("A message has been sent to your email account with instruction to reset your password", {
                 icon: "success",
                 });
             }).catch(e=> {

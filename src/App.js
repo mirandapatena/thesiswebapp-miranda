@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Login from './components/Login';
 import DashboardAdmin from './components/DashboardAdmin';
 import DashboardCCPersonnel from './components/DashboardCCPersonnel';
-import LandingPage from './components/LandingPage';
 import AdministratorRoute from './components/AdministratorRoute';
 import CCPersonnelRoute from './components/CCPersonnelRoute';
 import {connect} from 'react-redux';
@@ -24,6 +23,9 @@ import AccountsRegularUser from './components/AccountsRegularUser';
 import ForgotAccount from './components/ForgotAccount';
 import VerifyEmail from './components/VerifyEmail';
 import Archives from './components/Archives';
+import VerticalMenu from './components/VerticalMenu';
+import swal from 'sweetalert';
+
 
 class App extends Component {
   constructor(props){
@@ -41,12 +43,14 @@ class App extends Component {
         user_type: '',
         isMobile: null,
         contactNumber: ''
-      }
+      },
+      isVerified: ''
     };
   }
 
   componentDidMount(){
     this.authListener();
+    
   }
 
   authListener() {
@@ -59,6 +63,7 @@ class App extends Component {
         browserHistory.replace('/login');
       }
     });
+        
   }
 
   getUserDetails = () => {
@@ -69,13 +74,42 @@ class App extends Component {
       userAccount.uid = this.state.userID;
       this.setState({user_type: userAccount.user_type});
       this.setState({userAccount: userAccount});
-      this.rerouteUserAccess();
       this.props.logUser(this.state.userAccount);
       this.props.logUID(this.state.userID);
+
+      if(fire.auth().currentUser.emailVerified===false){
+        
+        swal({
+          title: "Please verify your email.",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+          buttons: ["Cancel","Verify Email"]
+          })
+          .then((willUpdate) => {
+          if (willUpdate) {
+            
+              browserHistory.push('/VerifyEmail');
+              
+          } else {
+              swal("Email verification is cancelled!");
+              fire.auth().signOut();
+          }
+          });
+
+        
+        }
+      else{
+        this.rerouteUserAccess();
+      }
+
     });
+
+    
   }
 
   rerouteUserAccess = () => {
+
     switch(this.state.user_type){
       case 'Administrator': console.log('Adminstrator login');
                             browserHistory.push('/administrator');
@@ -91,6 +125,8 @@ class App extends Component {
   }
 
   render() {
+
+
     return (
       <Router history={browserHistory}>
         {/* <Route exact path='/' component={LandingPage}/> */}
@@ -109,8 +145,9 @@ class App extends Component {
         <AccountsVolunteer exact path='/AccountsVolunteer' component={AccountsVolunteer} user_type={this.state.user_type} />
         <AccountsRegularUser exact path='/AccountsRegularUser' component={AccountsRegularUser} user_type={this.state.user_type} />
         <ForgotAccount exact path='/ForgotAccount' component={ForgotAccount} />
-        <VerifyEmail exact path='VerifyEmail' component={VerifyEmail} user_type={this.state.user_type}/>
-        <Archives exact path='Archives' component={Archives} user_type={this.state.user_type}/>
+        <VerifyEmail exact path='/VerifyEmail' component={VerifyEmail} user_type={this.state.user_type}/>
+        <VerticalMenu exact path='/VerticalMenu' component={VerticalMenu} user_type={this.state.user_type}/>
+        <Archives exact path='/Archives' component={Archives} user_type={this.state.user_type}/>
       </Router>
     );
   }

@@ -1,6 +1,6 @@
 import VerticalMenu from './VerticalMenu';
 import React, {Component} from 'react'
-import { Input, Table, Search, Image, Modal, Form, Select, Icon} from 'semantic-ui-react'
+import { Input, Table, Icon} from 'semantic-ui-react'
 import '../stylesheet_QueueIncidents.css';
 import fire from '../config/Fire';
 import _ from 'lodash';
@@ -24,7 +24,7 @@ class Archives extends Component{
 
     searchUser = (search) => {
         return function(x){
-            var name = x.incidentLocation + ' ' + x.incidentID + ' ' + x.incidentTimeReceived + ' ' + x.incidentType;
+            var name = x.incidentLocation + ' ' + x.incidentID + ' ' + x.incidentTimeReceived + ' ' + x.incidentType + ' ' + x.feedbackByResponder + ' ' + x.incidentReportedBy;
             return name.toLowerCase().includes(search.toLowerCase()) || !search;
         }
     }
