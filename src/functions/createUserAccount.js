@@ -19,6 +19,18 @@ export function createUserAccount (account, credentials = {}){
       }else{
         saveUserType(user_type, isMobile, user.user.uid);
         swal(email,"Account successfully created!",{icon:"success"});
+          var auth = fire2.auth();
+          
+          auth.sendPasswordResetEmail(email).then(function() {
+            // Email sent.
+            console.log('reset password sent');
+          }).catch(e=> {
+            // An error happened.
+            var err = e.message;
+            console.log(err);
+            this.setState({err: err});
+            
+          });
       }
       return 'Success'
     });

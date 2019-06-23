@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import { Button, Table, Header, Image, Modal, Form, Select, Icon} from 'semantic-ui-react'
+import { Button, Table, Header, Image, Modal, Form, Select, Icon, ModalActions} from 'semantic-ui-react'
 import '../stylesheet_QueueIncidents.css';
 import '../HeaderDashboard.css';
-import fire from '../config/Fire';
+import fire, {fire2} from '../config/Fire';
 import swal from 'sweetalert';
 import {createUserAccount} from '../functions/createUserAccount';
 
@@ -76,6 +76,11 @@ class DeleteUserAccount extends Component{
             userID: ''  
             }
             this.submitCreateAccount = this.submitCreateAccount.bind(this);
+            this.toggleShow = this.toggleShow.bind(this);            
+    }
+
+    toggleShow() {
+        this.setState({ hidden: !this.state.hidden });
     }
 
     handleCreateAccount = (e) => {
@@ -240,36 +245,53 @@ class DeleteUserAccount extends Component{
                 if(this.props.user_type === 'Administrator' || this.props.user_type === 'Command Center Personnel'){
                     var webUserNode = fire.database().ref(`webUsers/${this.props.user_type}/${this.props.uid}`);
                     var userNode = fire.database().ref(`users/${this.props.uid}`);
-                    webUserNode.remove().then(()=>{
-                        console.log(`${this.props.uid} removed from webUsers node`);
-                        userNode.remove().then(()=>{
-                            console.log(`${this.props.uid} removed from users node`);
-                            this.props.delete(this.props.uid);
+                    console.log('in web delete');
+                    let deleteWebUser = fire2.auth().signInWithEmailAndPassword(this.props.email, this.props.password);
+                    deleteWebUser.then(() => {
+                        var user = fire2.auth().currentUser;
+                        user.delete().then(()=>{
+                            console.log(`ID: ${this.props.uid} has been removed from authentication`);
+                            webUserNode.remove().then(()=>{
+                                console.log(`${this.props.uid} removed from webUsers node`);
+                                userNode.remove().then(()=>{
+                                    console.log(`${this.props.uid} removed from users node`);
+                                    this.props.delete(this.props.uid);
+                                });
+                            });
+                        }).catch(()=>{
+                            console.log(`Error in removing ID: ${this.props.uid} from authentication`);
                         });
+                    }).catch((error)=>{
+                        console.log(`Error in login for ${this.props.uid}`, error);
                     });
-        
+
                 }else if(this.props.user_type === 'Regular User' || this.props.user_type === 'Responder' || this.props.user_type === 'Volunteer'){
                     var mobileUserNode = fire.database().ref(`mobileUsers/${this.props.user_type}/${this.props.uid}`);
                     var userNode2 = fire.database().ref(`users/${this.props.uid}`);
-                    mobileUserNode.remove().then(()=>{
-                        console.log(`${this.props.uid} removed from mobileUsers node`);
-                        userNode2.remove().then(()=>{
-                            console.log(`${this.props.uid} removed from users node`);
-                            if(this.props.user_type === 'Volunteer'){
-                                fire.database().ref(`credentials/${this.props.uid}`).remove().then(()=>{
-                                    console.log(`${this.props.uid} credentials have been deleted`);
+                    let deleteMobileUser = fire2.auth().signInWithEmailAndPassword(this.props.email, this.props.password);
+                    deleteMobileUser.then(()=>{
+                        mobileUserNode.remove().then(()=>{
+                            console.log(`${this.props.uid} removed from mobileUsers node`);
+                            userNode2.remove().then(()=>{
+                                console.log(`${this.props.uid} removed from users node`);
+                                if(this.props.user_type === 'Volunteer'){
+                                    fire.database().ref(`credentials/${this.props.uid}`).remove().then(()=>{
+                                        console.log(`${this.props.uid} credentials have been deleted`);
+                                        this.props.delete(this.props.uid);
+                                    });
+                                }
+                                if(!this.props.isVerified){
+                                    var deleteUnverifiedNode = fire.database().ref(`unverifiedMobileUsers/${this.props.uid}`);
+                                    deleteUnverifiedNode.remove().then(()=>{
+                                        this.props.delete(this.props.uid);
+                                    })
+                                }else{
                                     this.props.delete(this.props.uid);
-                                });
-                            }
-                            if(!this.props.isVerified){
-                                var deleteUnverifiedNode = fire.database().ref(`unverifiedMobileUsers/${this.props.uid}`);
-                                deleteUnverifiedNode.remove().then(()=>{
-                                    this.props.delete(this.props.uid);
-                                })
-                            }else{
-                                this.props.delete(this.props.uid);
-                            }
+                                }
+                            });
                         });
+                    }).catch((error)=>{
+                        console.log(`Error in login for ${this.props.uid}`, error);
                     });
                 }
                 swal("The account has been deleted!", {
@@ -381,6 +403,31 @@ class DeleteUserAccount extends Component{
                             });
                         }
                     });
+
+                    let updateUserEmail = fire2.auth().signInWithEmailAndPassword(this.props.email, this.props.password);
+                    updateUserEmail.then(() => {
+                        
+                        var userEmail = fire2.auth().currentUser;
+                        console.log('auth', userEmail);
+
+                        var newEmail = this.state.email;
+
+                        userEmail.updateEmail(newEmail).then(function() {
+                        // Update successful.
+                        console.log('email updated successfully!')
+                                
+                        }).catch(function(error) {
+                        // An error happened.
+                        console.log('email: error updating in authentication')
+                        swal("Update failed", {
+                            icon: "error",
+                            });
+                        });
+
+                    }).catch((error) =>{
+                        console.log(`Error in login for ${this.props.uid}`, error);
+                    });
+                    
                 
             } else {
                 swal("Edit Email has been cancelled!");
@@ -388,6 +435,65 @@ class DeleteUserAccount extends Component{
             });
 
     }
+
+    // updatePassword = () => {
+    //     swal({
+    //         title: "Are you sure you want to edit this account's password?",
+    //         icon: "warning",
+    //         buttons: true,
+    //         dangerMode: true,
+    //         buttons: ["No","Yes"]
+    //         })
+    //         .then((willUpdate) => {
+    //         if (willUpdate) {
+
+    //             fire.database().ref(`users/${this.props.uid}`).update({
+    //                 password: this.state.password
+    //             }, function(error) {
+    //                 if (error) {
+    //                     console.log('error updating password in database')
+    //                     swal("Update failed", {
+    //                         icon: "error",
+    //                         });
+    //                     } else {
+    //                     console.log('password updated successfully in database')
+    //                     swal("Account successfully updated!", {
+    //                         icon: "success",
+    //                         });
+    //                     }
+    //                 });
+
+    //                 let updateUserPassword = fire2.auth().signInWithEmailAndPassword(this.props.email, this.props.password);
+    //                 updateUserPassword.then(() => {
+                        
+    //                     var userPassword = fire2.auth().currentUser;
+    //                     console.log('auth', userPassword);
+
+    //                     var newPassword = this.state.password;
+
+    //                     updateUserPassword.updatePassword(newPassword).then(function() {
+    //                     // Update successful.
+    //                     console.log('password updated successfully!')
+                                
+    //                     }).catch(function(error) {
+    //                     // An error happened.
+    //                     console.log('password: error updating in authentication', error)
+    //                     swal("Update failed", {
+    //                         icon: "error",
+    //                         });
+    //                     });
+
+    //                 }).catch((error) =>{
+    //                     console.log(`Error in login for ${this.props.uid}`, error);
+    //                 });
+                    
+                
+    //         } else {
+    //             swal("Edit Email has been cancelled!");
+    //         }
+    //         });
+
+    // }
 
     updateUserContactNumber = () => {
         swal({
@@ -499,11 +605,44 @@ class DeleteUserAccount extends Component{
             { text: 'Female', value: 'Female'},
         ]
         return(
+            
             <Table.Row>
+                
                 <Table.Cell width='5'>
-                    <Header as='h4' image><Image src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' rounded size='mini' circular/>
+                    <Header as='h4' image>
+                        {this.props.sex === 'Male'?
+                        <Image src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' rounded size='mini' circular/>
+                        :<Image src='https://react.semantic-ui.com/images/avatar/small/lena.png' rounded size='mini' circular/>}
                         <Header.Content>
-                            {this.props.firstName} {this.props.lastName}
+                            {/* {this.props.firstName} {this.props.lastName} */}
+                            <Modal trigger={<a positive>{this.props.firstName} {this.props.lastName}</a>} closeIcon size='tiny'>
+                                <Modal.Header>Account Details</Modal.Header>
+                                <Modal.Content style={{backgroundColor:'#c5e2ff'}}>
+                                    <div style={{fontSize:'1.03em', fontFamily:'sans-serif', color:'#0b233b'}}>
+                                        <pre style={{fontSize:'1.03em', fontFamily:'sans-serif', marginBottom:'0px', marginTop:'5px'}}>
+                                            <Icon name='user'/><b>Name                   : </b>{this.props.firstName} {this.props.lastName}
+                                        </pre>
+                                        <pre style={{fontSize:'1.03em', fontFamily:'sans-serif', marginBottom:'0px', marginTop:'5px'}}>
+                                            <Icon name='mobile'/><b>Contact Number : </b>{this.props.contactNumber}
+                                        </pre>
+                                        <pre style={{fontSize:'1.03em', fontFamily:'sans-serif', marginBottom:'0px', marginTop:'5px'}}>
+                                            <Icon name='mail'/><b>Email Address    : </b>{this.props.email}
+                                        </pre>
+                                        <pre style={{fontSize:'1.03em', fontFamily:'sans-serif', marginBottom:'0px', marginTop:'5px'}}>
+                                            <Icon name='map marker alternate'/><b>Address               : </b>{this.props.address}
+                                        </pre>
+                                        <pre style={{fontSize:'1.03em', fontFamily:'sans-serif', marginBottom:'0px', marginTop:'5px'}}>
+                                            {this.props.sex === 'Male' ? 
+                                            <Icon name='male'/>:<Icon name='female'/>}
+                                            <b>Sex                       : </b>{this.props.sex}
+                                        </pre>
+                                        <pre style={{fontSize:'1.03em', fontFamily:'sans-serif', marginBottom:'0px', marginTop:'5px'}}>
+                                            <Icon name='address card outline'/><b>UID                       : </b>{this.props.uid}
+                                        </pre>
+                                    </div>
+                                </Modal.Content>
+                                <Modal.Actions style={{padding:'25px'}} />
+                            </Modal>
                         </Header.Content>
                     </Header>
                 </Table.Cell>
@@ -519,7 +658,6 @@ class DeleteUserAccount extends Component{
                 </Table.Cell> 
                 <Table.Cell width='3'>
                     <Button.Group>
-                        
                         <Modal trigger={<Button positive>Update</Button>} closeIcon size='small'  basic>
                             <Modal.Header>Edit Account</Modal.Header>
                             <Modal.Content>
@@ -646,6 +784,38 @@ class DeleteUserAccount extends Component{
                                         </Button>
                                     </Table.Cell>
                                 </Table.Row>
+
+                                {/* <Table.Row>
+                                    <Table.Cell width='4'><b>Password:</b></Table.Cell>
+                                    <Table.Cell>
+                                        <Form>
+                                            <Form.Field>
+                                                <Form.Input
+                                                    fluid
+                                                    placeholder='Password'
+                                                    type={this.state.hidden ? "password" : "text"}
+                                                    name='password'
+                                                    noValidate
+                                                    className={formError.password.length > 0 ? "error" : null}
+                                                    onChange={this.handleCreateAccount}
+                                                    required
+                                                    // defaultValue={this.state.password}
+                                                    // ref={input => this.password = input}
+                                                    value={this.state.password}
+                                                    onClick={this.toggleShow}
+                                                />
+                                            </Form.Field>
+                                            {formError.password.length > 0 && (
+                                            <span className="errorMessage">{formError.password}</span>)}
+                                        </Form>
+                                    </Table.Cell>
+                                    <Table.Cell width='2'>
+                                        <Button color='green' icon labelPosition='right' 
+                                                onClick={this.updatePassword} disabled={this.state.formError.password}>
+                                                Edit<Icon name='edit' />
+                                        </Button>
+                                    </Table.Cell>
+                                </Table.Row> */}
                                 
                                 </Table.Body>
                             </Table>

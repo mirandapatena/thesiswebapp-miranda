@@ -81,7 +81,8 @@ class Profile extends Component{
                 },
             }
             this.submitCreateAccount = this.submitCreateAccount.bind(this);
-            this.toggleShow = this.toggleShow.bind(this);            
+            this.toggleShow = this.toggleShow.bind(this);  
+            this.getUserProfile();          
     }
 
     // componentDidMount(){
@@ -324,7 +325,7 @@ class Profile extends Component{
                     email: this.state.email
                 }, function(error) {
                     if (error) {
-                        console.log('error updating')
+                        console.log('error updating in database')
                         swal("Update failed", {
                             icon: "error",
                             });
@@ -347,7 +348,7 @@ class Profile extends Component{
                             
                     }).catch(function(error) {
                     // An error happened.
-                    console.log('email: error updating')
+                    console.log('email: error updating in authentication')
                     swal("Update failed", {
                         icon: "error",
                         });
@@ -431,7 +432,7 @@ class Profile extends Component{
                         
                 }).catch(function(error) {
                 // An error happened.
-                console.log('password: error updating')
+                console.log('password: error updating',error)
                 });
 
                 swal("Update failed", {
@@ -472,7 +473,7 @@ class Profile extends Component{
 
 
     componentDidMount(){
-        this.getUserProfile();
+        
         var user = fire.auth().currentUser;
         console.log('userProfile',user);
         var emailVerified;
@@ -729,8 +730,8 @@ class Profile extends Component{
 }
 
 function mapStateToProps(state){
-    console.log('poooota', state.user.userAccount )
-    console.log('poooota', state.uid )
+    console.log('user details', state.user.userAccount )
+    console.log('user id', state.uid )
 
     return {
         user: state.user.userAccount,

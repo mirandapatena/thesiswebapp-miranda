@@ -5,6 +5,7 @@ import _ from 'lodash';
 import DeleteUserAccount from './DeleteUserAccount';
 import searchUser from '../functions/searchUser';
 
+
 class ManageRegularUser extends Component{
 
     constructor(props){
@@ -75,7 +76,7 @@ class ManageRegularUser extends Component{
                     <Table.Body>
                     {this.state.regularUsersProfiles.filter(searchUser(this.state.search)).map(regularUser => {
                         return(
-                        <DeleteUserAccount user_type={regularUser.user_type} firstName={regularUser.firstName} lastName={regularUser.lastName} contactNumber={regularUser.contactNumber} email={regularUser.email} uid={regularUser.key} delete={this.delete}/>);
+                        <DeleteUserAccount user_type={regularUser.user_type} firstName={regularUser.firstName} lastName={regularUser.lastName} sex={regularUser.sex} contactNumber={regularUser.contactNumber} email={regularUser.email} address={regularUser.address} password={regularUser.password} uid={regularUser.key} delete={this.delete}/>);
                     })}
                         </Table.Body>
                     </Table>

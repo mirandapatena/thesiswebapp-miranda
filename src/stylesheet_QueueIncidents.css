@@ -34,9 +34,9 @@
   z-index: 2;
 }
 
-.card{
+/* .card{
   background-color: black;
-}
+} */
 
 .ui.visible.left.vertical.sidebar.menu{
   background: #0b233b;
@@ -356,6 +356,7 @@ ul, menu, dir {
     -ms-box-flex:  0;
     box-flex:  0;  
     background: #0b233b;
+    /* background: #c5e2ff; */
 }
 
 .ui.vertical.menu .item {
@@ -457,8 +458,8 @@ ul, menu, dir {
 
 .UnverifiedMobileUsers{
   padding-top: 60px;
-  padding-left: 350px;
-  padding-right: 220px;
+  padding-left: 300px;
+  padding-right: 130px;
   padding-bottom: 60px;
   /* background: #16426a; */
   background: url("../src/images/Login Form Background.jpg");
@@ -478,8 +479,8 @@ ul, menu, dir {
 
 .ManageUserAccounts{
   padding-top: 60px;
-  padding-left: 350px;
-  padding-right: 220px;
+  padding-left: 300px;
+  padding-right: 130px;
   padding-bottom: 60px;
   /* background: #16426a; */
   background: url("../src/images/Login Form Background.jpg");

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Image, Table, Header, Button} from 'semantic-ui-react';
+import { Image, Table, Header, Button, Form} from 'semantic-ui-react';
 import _ from 'lodash';
 import fire from '../config/Fire';
 class DispatchMobileUser extends Component{
@@ -56,6 +56,7 @@ class DispatchMobileUser extends Component{
         }
         });
 
+        console.log('certificate',this.props.certification);
     }
 
     dispatchMobileUser = () => {
@@ -81,9 +82,29 @@ class DispatchMobileUser extends Component{
                 <Table.Cell>
                     <Header>
                         <Header.Content>
-                            <Header.Subheader><p className='colorBlue'><b>Email:</b> {this.props.email}</p></Header.Subheader>
-                            <Header.Subheader><p className='colorBlue'><b>Contact Number:</b> {this.props.contactNumber}</p></Header.Subheader>
-                            <Header.Subheader><p className='colorBlue'><b>Points:</b> {this.props.points}</p></Header.Subheader>
+                            <Form.Group widths='3'>
+                                <Form.Field>
+                                    <Header.Subheader><p className='colorBlue'><b>Distance:</b> {this.props.distance} m</p></Header.Subheader>
+                                </Form.Field>
+                                <Form.Field>
+                                    <Header.Subheader><p className='colorBlue'><b>Email:</b> {this.props.email}</p></Header.Subheader>
+                                </Form.Field>
+                                <Form.Field>
+                                    <Header.Subheader><p className='colorBlue'><b>Contact Number:</b> {this.props.contactNumber}</p></Header.Subheader>
+                                </Form.Field>
+                                </Form.Group>
+                                <Form.Field>
+                                    {this.props.user_type === 'Volunteer'?
+                                        <>
+                                        <Header.Subheader><p className='colorBlue'><b>Certification:</b> {this.props.certification}</p></Header.Subheader>
+                                        <Header.Subheader><p className='colorBlue'><b>Medical Degree:</b> {this.props.medicalDegree}</p></Header.Subheader>
+                                        <Header.Subheader><p className='colorBlue'><b>Medical Profession:</b> {this.props.medicalProfession}</p></Header.Subheader>
+                                        <Header.Subheader><p className='colorBlue'><b>Points:</b> {this.props.points}</p></Header.Subheader>
+                                        </>
+                                    :null}
+                                </Form.Field>
+                            
+                            
                         </Header.Content>
                     </Header>
                 </Table.Cell>

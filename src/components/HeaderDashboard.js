@@ -18,7 +18,7 @@ import volunteerLogo from '../images/tracking_volunteer.png';
 import responderLogo from '../images/tracking_responder.png';
 import incStat from '../images/incident_new.png';
 import swal from 'sweetalert';
-
+import {Link} from "react-router";
 
 const noteRegex = RegExp(
   /^.{0,150}$/
@@ -63,6 +63,7 @@ class HeaderDashboard extends Component{
         isShown: false,
         incidentPhoto: null,
         reportedBy: '',
+        reporterName: '',
         timeReceived: null,
         timeResponded: null,
         responderResponding: [],
@@ -78,56 +79,35 @@ class HeaderDashboard extends Component{
           incidentNote:''
         },
       userID: '',
-      uid: ''
+      uid: '',
+      currentUID: ''
       }
       this.logout = this.logout.bind(this);
-      // this.submitCreateAccount = this.submitCreateAccount.bind(this);
+      this.getUserProfile();
+      
+      
   }
 
   componentDidMount(){
-    var user = fire.auth().currentUser;
-        console.log('userProfile',user);
-        var uid;
-        if (user != null){
-            uid = user.uid;
-            // email = user.email;
-            
-            this.setState({uid});
-            console.log('MyUID: ',uid);
-            // console.log('My Email: ', uid);
-        }
-
-    // var user = fire.database().ref(`users/${this.state.uid}`);
-    //     var firstName, lastName, email, contactNumber, password, snap;
-    //     user.once('value', snapshot => {
-    //         console.log('snapshot', snapshot);
-    //         snap = snapshot.val();
-    //         firstName = snap.firstName;
-    //         lastName = snap.lastName;
-    //         email = snap.email;
-    //         contactNumber = snap.contactNumber;
-    //         password = snap.password;
-    //         this.setState({firstName, lastName, email, contactNumber, password}, () => {
-    //             console.log(
-    //                 `${this.state.firstName} 
-    //                 ${this.state.lastName} 
-    //                 ${this.state.email}
-    //                 ${this.state.contactNumber}
-    //                 ${this.state.password}
-    //                 userAccount`);
-    //         });
-    //     });
+    this.getUserProfile();
   }
 
-  // getUserDetails = () => {
-  //   let userAccount;
-  //   console.log('getuserdetails', this.state.userID);
-  //   fire.database().ref('users/'+this.state.userID).once("value", snapshot => {
-  //     userAccount = snapshot.val();
-  //     this.setState({userAccount: userAccount});
-  //     console.log('userAccount', this.state.userAccount);
-  //   });
-  // }
+  getUserProfile = () =>{
+    
+    var userProfile = fire.database().ref(`users/${this.props.uid.uid}`);
+        var firstName, lastName, snap;
+        userProfile.on('value', snapshot => {
+            // console.log('snapshot', snapshot);
+            snap = snapshot.val();
+            firstName = snap.firstName;
+            lastName = snap.lastName;
+            
+            this.setState({firstName, lastName}, () => {
+                // console.log(`${this.state.firstName} ${this.state.lastName} userAccount`);
+            });
+        });
+  }
+  
 
   show = size => () => this.setState({ size, open: true })
   close = () => this.setState(
@@ -136,6 +116,7 @@ class HeaderDashboard extends Component{
 
   handleChange = (incidentLocation, destinationPlaceId, e)  => {
     this.setState({ incidentLocation, destinationPlaceId, errorMessage: '', errorAddress:''});
+    this.getUserProfile();
   };
 
   handleNote = (e) =>{
@@ -148,15 +129,6 @@ class HeaderDashboard extends Component{
       formError.incidentNote = noteRegex.test(value) ? "" : "max of 150 characters";
     }
 
-    // switch (name) {
-    
-    //   case "incidentNote":
-    //     formError.incidentNote = noteRegex.test(value) ? "" : "max of 150 characters";
-    //     break;
-      
-    //   default:
-    //     break;
-    // }
 
     this.setState({ formError, [name]: value }, () => console.log(this.state));
 
@@ -209,6 +181,7 @@ class HeaderDashboard extends Component{
 
   submitIncidentHandler = (e) => {
     // console.log('uid reported', this.props.user.uid);
+    
     e.preventDefault();
     
     var d = Date();
@@ -224,8 +197,9 @@ class HeaderDashboard extends Component{
       isResponding: false,
       isSettled: false,
       coordinates: {lng: this.state.lng, lat: this.state.lat},
-      incidentPhoto: '',
+      // incidentPhoto: '',
       reportedBy: this.props.uid.uid,
+      reporterName: this.state.firstName + " " + this.state.lastName,
       timeReceived,
       timeResponded: '',
       timeSettled: '',
@@ -240,7 +214,8 @@ class HeaderDashboard extends Component{
       unrespondedVolunteer: true,
       isShown: false,
       isRespondingResponderShown: false,
-      isRespondingVolunteerShown: false
+      isRespondingVolunteerShown: false,
+      isRedundantReport: false
     }
     if (formValid(this.state)) {
       console.log(`
@@ -261,27 +236,14 @@ class HeaderDashboard extends Component{
         lat: null,
         isShown: false,
         isRespondingResponderShown: false,
-        isRespondingVolunteerShown: false
+        isRespondingVolunteerShown: false,
+        isRedundantReport: false
     });
     console.log(this.state.incidentsList);
     swal(this.state.incidentLocation,"New incident has been added!");
   }
 
-
-  trigger = (
-    <span>
-      <Icon className='user circle' />
-    </span>
-  )
-  
-  options = [
-    { key: 'user', text: 'Account', icon: 'user' },
-    // { key: 'help', text: 'Help', icon: 'question' },
-    // { key: 'settings', text: 'Settings', icon: 'settings' },
-    { key: 'sign-out', text: 'Sign Out', icon: 'sign out', onClick: this.logout },
-  ]
-  
-   
+ 
   logout() {
     fire.auth().signOut();
   }
@@ -301,7 +263,9 @@ class HeaderDashboard extends Component{
       radius: 10,
       types: ['establishment']
     }
-  
+
+    // this.getUserProfile();
+
 
     return (
 
@@ -314,6 +278,7 @@ class HeaderDashboard extends Component{
               </Menu.Item>
               <Menu.Item link onClick={this.show('tiny')}>
                  <Icon className="plus" />Add Incident
+                 
               </Menu.Item>
           </Menu.Menu>
           <Menu.Menu position='right'>
@@ -333,8 +298,14 @@ class HeaderDashboard extends Component{
                 </Dropdown.Menu>
               </Dropdown>
             </Menu.Item>
-            <Menu.Item onClick={this.handleItemClick}>
-              <Dropdown trigger={this.trigger} options={this.options} pointing='top left' icon={null} />
+            <Link to='/ProfileCCP'>
+                  <Menu.Item name='profile' >
+                    <Icon name='user circle'/> Profile
+                    {/* {this.state.firstName} {this.state.lastName} */}
+                  </Menu.Item>
+            </Link>
+            <Menu.Item onClick={this.logout}>
+              <Icon name='sign out'/> Log Out
             </Menu.Item>
           </Menu.Menu>
       </Menu>

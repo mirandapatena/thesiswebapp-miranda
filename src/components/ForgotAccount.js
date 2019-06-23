@@ -31,12 +31,12 @@ handleChange(e){
       } else {
         this.setState({emailError: false});
         
-        var auth = fire.auth();
+            var auth = fire.auth();
             var emailAddress = this.state.email;
             
             auth.sendPasswordResetEmail(emailAddress).then(function() {
               // Email sent.
-              swal("Email sent!", {
+              swal("A message has been sent to your email account with instruction to reset your password", {
                 icon: "success",
                 });
             }).catch(e=> {

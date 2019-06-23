@@ -13,6 +13,7 @@ import {Router, Route, browserHistory} from 'react-router';
 import CreateNewAccount from './components/CreateNewAccount';
 import Home from './components/Home';
 import Profile from './components/Profile';
+import ProfileCCP from './components/ProfileCCP';
 import UnverifiedResponders from './components/UnverifiedResponders';
 import UnverifiedVolunteers from './components/UnverifiedVolunteers';
 import UnverifiedRegularUsers from './components/UnverifiedRegularUsers';
@@ -137,6 +138,7 @@ class App extends Component {
         <CreateNewAccount exact path='/CreateNewAccount' component={CreateNewAccount} user_type={this.state.user_type} />
         <Home exact path='/Home' component={Home} user_type={this.state.user_type} />
         <Profile exact path='/Profile' component={Profile} user_type={this.state.user_type} user={this.state.userAccount}/>
+        <ProfileCCP exact path='/ProfileCCP' component={ProfileCCP} user_type={this.state.user_type} user={this.state.userAccount}/>
         <UnverifiedResponders exact path='/UnverifiedResponders' component={UnverifiedResponders} user_type={this.state.user_type} />
         <UnverifiedVolunteers exact path='/UnverifiedVolunteers' component={UnverifiedVolunteers} user_type={this.state.user_type} />
         <UnverifiedRegularUsers exact path='/UnverifiedRegularUsers' component={UnverifiedRegularUsers} user_type={this.state.user_type} />

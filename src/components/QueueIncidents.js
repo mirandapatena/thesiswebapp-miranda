@@ -14,8 +14,6 @@ class QueueIncidents extends Component {
         this.state = {
             incidentsList : [{
                 key: '',
-                // isSettled: false,
-                // isShown: false,
                 incidentType: '',
                 incidentLocation: '',
                 isResponded: '',
@@ -35,16 +33,17 @@ class QueueIncidents extends Component {
 
 
     renderEmergency = () => {        
-        return _.map(this.props.incidentsList, (incident, key) => {
-            // console.log('timeReceived:', incident.timeReceived);
-            // var timeToNumber = Date.parse(incident.timeReceived);
-            // console.log('timetoInteger:', timeToNumber);
-
-            // var points = [40, 100, 1, 5, 25, 10];
-            // var p = points.sort(function(a, b){return b - a});
-            // console.log('points', p);
-
-            if(incident.isSettled === false){
+        var list = [];
+        _.map(this.props.incidentsList, (incident, key)=> {
+            incident.key = key;
+            list.push(incident);
+        })
+        list.sort(function(a,b){
+            return new Date(b.timeReceived) - new Date(a.timeReceived);
+          });
+        return _.map(list, (incident, key) => {
+             
+            if(incident.isSettled === false || incident.isRedundantReport === false){
                 return (
                     <div className='item' key={key}>
                         <EmergencyDetails 
@@ -53,13 +52,18 @@ class QueueIncidents extends Component {
                             incidentLocation = {incident.incidentLocation}
                             incidentNote = {incident.incidentNote}
                             coordinates = {incident.coordinates}
-                            incidentKey = {key}
-                            reportedBy = {incident.reportedBy}
+                            incidentKey = {incident.key}
+                            reporterName = {incident.reporterName}
                             responderResponding = {incident.responderResponding}
                             volunteerResponding = {incident.volunteerResponding}
                             isRespondingResponder = {incident.isRespondingResponder}
                             isRespondingVolunteer = {incident.isRespondingVolunteer}
-                            incidentPhoto = {incident.incidentPhoto}
+                            isRespondingResponderShown = {incident.isRespondingResponderShown}
+                            isRespondingVolunteerShown = {incident.isRespondingVolunteerShown}
+                            image_uri = {incident.image_uri}
+                            originalResponderName = {incident.originalResponderName}
+                            originalVolunteerName = {incident.originalVolunteerName}
+
                         />
                     </div>
                 );

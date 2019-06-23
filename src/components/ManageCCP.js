@@ -52,7 +52,7 @@ class ManageCCP extends Component{
     render(){
         return(
             <div>
-                 {this.state.admins?
+                 {this.state.commandCenterPersonnel?
                     <Table celled>
                     <Table.Header>
                         <Table.Row>
@@ -74,15 +74,15 @@ class ManageCCP extends Component{
                     <Table.Body>
                             {this.state.ccpProfiles.filter(searchUser(this.state.search)).map(ccp => {
                                 return(
-                                <DeleteUserAccount user_type={ccp.user_type} firstName={ccp.firstName} lastName={ccp.lastName} contactNumber={ccp.contactNumber} email={ccp.email} uid={ccp.key} delete={this.delete}/>);
+                                <DeleteUserAccount user_type={ccp.user_type} firstName={ccp.firstName} lastName={ccp.lastName} sex={ccp.sex} address={ccp.address} contactNumber={ccp.contactNumber} email={ccp.email} password={ccp.password} uid={ccp.key} delete={this.delete}/>);
                             })}
                         </Table.Body>
                     </Table>
-                :!this.state.admins?
+                :!this.state.commandCenterPersonnel?
                 <Table celled>
                     <Table.Header>
                         <Table.Row>
-                            <Table.HeaderCell colSpan='2'> Command Center Personnels </Table.HeaderCell>
+                            <Table.HeaderCell colSpan='2'> Command Center Personnel </Table.HeaderCell>
                             <Table.HeaderCell colSpan='2'>
                                 <form>
                                     <Input type="text" name="" id="" onChange={this.searchHandler} style={{marginLeft:'75px'}}/><Icon name='search' style={{marginLeft:'6px'}}/>

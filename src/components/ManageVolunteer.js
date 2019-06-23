@@ -76,7 +76,7 @@ class ManageVolunteer extends Component{
                      <Table.Body>
                      {this.state.volunteerProfiles.filter(searchUser(this.state.search)).map(volunteer => {
                         return(
-                        <DeleteUserAccount user_type={volunteer.user_type} firstName={volunteer.firstName} lastName={volunteer.lastName} contactNumber={volunteer.contactNumber} email={volunteer.email} uid={volunteer.key} delete={this.delete}/>);
+                        <DeleteUserAccount user_type={volunteer.user_type} firstName={volunteer.firstName} lastName={volunteer.lastName} sex={volunteer.sex} contactNumber={volunteer.contactNumber} email={volunteer.email} password={volunteer.password} address={volunteer.address} uid={volunteer.key} delete={this.delete}/>);
                     })}
                         </Table.Body>
                     </Table>

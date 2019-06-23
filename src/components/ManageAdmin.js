@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Table, Message, Icon, Input } from 'semantic-ui-react'
+import { Table, Message, Icon, Input, Loader } from 'semantic-ui-react'
 import fire from '../config/Fire';
 import _ from 'lodash';
 import DeleteUserAccount from './DeleteUserAccount';
@@ -74,7 +74,7 @@ class ManageAdmin extends Component{
                     <Table.Body>
                             {this.state.adminsProfiles.filter(searchUser(this.state.search)).map(administrator => {
                                 return(
-                                <DeleteUserAccount user_type={administrator.user_type} firstName={administrator.firstName} lastName={administrator.lastName} contactNumber={administrator.contactNumber} email={administrator.email} uid={administrator.key}delete={this.delete}/>);
+                                <DeleteUserAccount user_type={administrator.user_type} firstName={administrator.firstName} lastName={administrator.lastName} contactNumber={administrator.contactNumber} email={administrator.email} address={administrator.address} password={administrator.password} sex={administrator.sex} uid={administrator.key} delete={this.delete}/>);
                             })}
                         </Table.Body>
                     </Table>

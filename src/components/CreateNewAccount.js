@@ -20,6 +20,10 @@ const lastNameRegex = RegExp(
   /^[a-zA-ZñÑ.,'-\s]+$/
 );
 
+const addressRegex = RegExp(
+  /^[a-zA-ZñÑ.,'-\s]+$/
+);
+
 const passwordRegex = RegExp(
   /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/
 );
@@ -50,6 +54,7 @@ class CreateNewAccount extends Component{
         
         this.state = {
           hidden: true,
+          address:'',
           firstName: '',
           lastName: '',
           password: '',
@@ -70,7 +75,9 @@ class CreateNewAccount extends Component{
             password:'',
             contactNumber:'',
             sex: '',
-            user_type:''
+            user_type:'',
+            address:''
+
         },
         userID: ''  
         }
@@ -98,7 +105,11 @@ class CreateNewAccount extends Component{
           case "lastName":
             formError.lastName = lastNameRegex.test(value) ? "" : "Please enter a valid name.";
             break;
-    
+          
+          case "address":
+            formError.address = addressRegex.test(value) ? "" : "Please enter a valid address.";
+            break;
+          
           case "email":
             formError.email = emailRegex.test(value)? "" : "Please enter a valid email address.";
             break;
@@ -170,6 +181,7 @@ class CreateNewAccount extends Component{
           email: this.state.email,
           user_type: this.state.user_type,
           contactNumber: this.state.contactNumber,
+          address: this.state.address,
           sex: this.state.sex,
           isMobile,
           isVerified: false
@@ -195,6 +207,7 @@ class CreateNewAccount extends Component{
             Contact Number: ${this.state.contactNumber}
             Sex: ${this.state.sex}
             User Type: ${this.state.user_type}
+            Address: ${this.state.address}
           `);
         }
         if(account.user_type === 'Volunteer'){
@@ -514,8 +527,25 @@ class CreateNewAccount extends Component{
                         />
                             
                     </Form.Field>
-    
+
                     </Form.Group>
+
+                    <Form.Field style={{marginBottom: '10px', color: 'whitesmoke'}} required>
+                        <Form.Input
+                        fluid
+                        placeholder='Address'
+                        type='text'
+                        name='address'
+                        noValidate
+                        value={this.state.address}
+                        className={formError.address.length > 0 ? "error" : null}
+                        onChange={this.handleCreateAccount}
+                        required
+                        />
+                        {formError.address.length > 0 && (
+                        <span className="errorMessage">{formError.address}</span>)}
+                    </Form.Field> 
+                    
                     </Form>
 
                     <Button floated='right' color='red' onClick={this.submitCreateAccount} 

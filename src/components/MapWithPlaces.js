@@ -52,45 +52,76 @@ const MapWithPlaces = compose(
         let lng = parseFloat(place.coordinates.lng, 10);     
         let incidentLogo = setLogo(place.incidentType, place.unresponded, place.isResponding, place.isSettled);
         console.log('responders', props.responders);
-        return (
-            <div key = {i}>
-                <Modal size="tiny" trigger={<Marker
-                  position={{ lat: lat, lng: lng }}
-                  title={place.incidentLocation} 
-                  icon={{
-                    url: incidentLogo,
-                    scaledSize: new window.google.maps.Size(50,50) 
-                  }}>
-                  <Circle center={{lat: lat, lng: lng}} radius={500} visible={true} 
-                    options={{
-                      strokeColor: '#babfc7',
-                      fillColor: '#7d899e',
-                      strokeOpacity: 0.5,
-                      strokeWeight: 1,
-                      fillOpacity: 0.5,
-                      }}   
-                  />
-                  </Marker>}>
-                    <Modal.Header>New Emergency</Modal.Header>
-                    <Modal.Content>
-                          <p><b>Reported by:</b> Regular User</p>
-                          <p><b>Type of Incident:</b> {place.incidentType}</p>
-                          <p><b>Location of Incident:</b> {place.incidentLocation}</p>
-                          <p><b>Photo of Incident:</b></p>
-                      </Modal.Content>
-                      <Modal.Actions>
-                          <Button color='red' >
-                              Dispatch Responders
-                          </Button>
-                          <Button color='blue'>
-                              Request Volunteers
-                          </Button>
-                      </Modal.Actions>
-                </Modal>
+        if(place.isSettled && !place.isResponding && !place.unresponded){
+          return (
+              <div key = {i}>
+                  <Modal size="tiny" trigger={<Marker
+                    position={{ lat: lat, lng: lng }}
+                    title={place.incidentLocation} 
+                    icon={{
+                      url: incidentLogo,
+                      scaledSize: new window.google.maps.Size(50,50) 
+                    }}>
+                    </Marker>}>
+                      <Modal.Header>New Emergency</Modal.Header>
+                      <Modal.Content>
+                            <p><b>Reported by:</b> Regular User</p>
+                            <p><b>Type of Incident:</b> {place.incidentType}</p>
+                            <p><b>Location of Incident:</b> {place.incidentLocation}</p>
+                            <p><b>Photo of Incident:</b></p>
+                        </Modal.Content>
+                        <Modal.Actions>
+                            <Button color='red' >
+                                Dispatch Responders
+                            </Button>
+                            <Button color='blue'>
+                                Request Volunteers
+                            </Button>
+                        </Modal.Actions>
+                  </Modal>
 
-            </div>
-        );
-        
+              </div>
+          );
+        }else{
+          return (
+              <div key = {i}>
+                  <Modal size="tiny" trigger={<Marker
+                    position={{ lat: lat, lng: lng }}
+                    title={place.incidentLocation} 
+                    icon={{
+                      url: incidentLogo,
+                      scaledSize: new window.google.maps.Size(50,50) 
+                    }}>
+                    <Circle center={{lat: lat, lng: lng}} radius={500} visible={true} 
+                      options={{
+                        strokeColor: '#babfc7',
+                        fillColor: '#7d899e',
+                        strokeOpacity: 0.5,
+                        strokeWeight: 1,
+                        fillOpacity: 0.5,
+                        }}   
+                    />
+                    </Marker>}>
+                      <Modal.Header>New Emergency</Modal.Header>
+                      <Modal.Content>
+                            <p><b>Reported by:</b> Regular User</p>
+                            <p><b>Type of Incident:</b> {place.incidentType}</p>
+                            <p><b>Location of Incident:</b> {place.incidentLocation}</p>
+                            <p><b>Photo of Incident:</b></p>
+                        </Modal.Content>
+                        <Modal.Actions>
+                            <Button color='red' >
+                                Dispatch Responders
+                            </Button>
+                            <Button color='blue'>
+                                Request Volunteers
+                            </Button>
+                        </Modal.Actions>
+                  </Modal>
+
+              </div>
+          );
+        }
       })
     }
       {/*render volunteers*/}

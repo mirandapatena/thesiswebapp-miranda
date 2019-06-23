@@ -36,13 +36,6 @@ class ManageResponder extends Component{
         });    
     }
 
-    renderResponders = () => {
-        return _.map(this.state.responders, (responder, key) => {
-            return(
-            <DeleteUserAccount uid={responder.uid} firstName={responder.firstName} lastName={responder.lastName} email={responder.email} contactNumber={responder.contactNumber} user_type='Responder' uid={key} delete={this.delete}/>);
-        });
-    }
-
     searchHandler = (event) => {
         this.setState({search: event.target.value});
     }
@@ -63,28 +56,6 @@ class ManageResponder extends Component{
     update(){
         console.log('updateDetails');
     }
-
-    // updateDetails = (uid, field, data) => {
-    //     console.log('in update');
-    //     console.log(`${uid} ${field} ${data}`);
-    //     // var users = this.state.respondersProfiles.map(user => {
-    //     //     if(user.key === uid){
-    //     //         switch(field){
-    //     //             case 'firstName':
-    //     //                             user.firstName = data; 
-    //     //                             break;
-    //     //             case 'lastName':
-    //     //                             user.lastName = data; 
-    //     //                             break;
-    //     //             case 'contactNumber':
-    //     //                             user.contactNumber = data; 
-    //     //                             break;
-    //     //             default: break;
-    //     //         }
-    //     //     }
-    //     // });
-    //     // this.setState({respondersProfiles: users}); 
-    // }
 
     render(){
         return(
@@ -111,7 +82,7 @@ class ManageResponder extends Component{
                      <Table.Body>
                             {this.state.respondersProfiles.filter(searchUser(this.state.search)).map(responder => {
                                 return(
-                                <DeleteUserAccount isVerified={this.isVerified} user_type={responder.user_type} firstName={responder.firstName} lastName={responder.lastName} contactNumber={responder.contactNumber} email={responder.email} uid={responder.key} delete={this.delete} update={this.update}/> );                        
+                                <DeleteUserAccount isVerified={this.isVerified} user_type={responder.user_type} firstName={responder.firstName} lastName={responder.lastName} sex={responder.sex} contactNumber={responder.contactNumber} email={responder.email} address={responder.address} password={responder.password} uid={responder.key} delete={this.delete} update={this.update}/> );                        
                             })}
                         </Table.Body>
                     </Table>
