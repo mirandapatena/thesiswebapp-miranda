@@ -54,15 +54,15 @@ class EmergencyDetails extends Component{
         this.getVolunteerName();
         this.requestVolunteers();
 
-        // let start = Date.parse(this.props.timeReceived);
-        // setInterval(_ => {
-        //     let current = new Date();
-        //     let count = +current - +start;
-        //     let ms = count % 1000;
-        //     let s = Math.floor((count /  1000)) % 60;
-        //     let m = Math.floor((count / 60000)) % 60;
-        //     this.setState({ms, s, m});
-        // }, 10);
+        let start = Date.parse(this.props.timeReceived);
+        setInterval(_ => {
+            let current = new Date();
+            let count = +current - +start;
+            let ms = count % 1000;
+            let s = Math.floor((count /  1000)) % 60;
+            let m = Math.floor((count / 60000)) % 60;
+            this.setState({ms, s, m});
+        }, 10);
     }
 
     componentDidMount(){
@@ -274,16 +274,8 @@ class EmergencyDetails extends Component{
 
     requestVolunteers = () => {
         let activeVolunteers;
-        let activeVolunteersList;
         let volunteersList = [];
         var tempVolunteerObject;
-        var incidentCoordinates = {
-            longitude: parseFloat(this.props.coordinates.lng),
-            latitude: parseFloat(this.props.coordinates.lat)
-        };
-        var nearestUsers = [];
-        var distance; 
-        var userObject = {};
         const volunteerRef = fire.database().ref('mobileUsers/Volunteer');
         volunteerRef.once('value', snapshot => {
             activeVolunteers = snapshot.val();
@@ -318,38 +310,6 @@ class EmergencyDetails extends Component{
                     console.log('Error in fetching responders', error);
                 });
             });
-            // var tempObject = this.state.temp;
-            // _.map(tempObject, (volunteer, key) => {
-            //     if(!volunteer.isAccepted){
-            //         var userCoordinates = {
-            //             latitude: parseFloat(volunteer.coordinates.lat),
-            //             longitude: parseFloat(volunteer.coordinates.lng)
-            //         }
-            //         var distance = computeDistance(volunteer.latitude, volunteer.longitude, volunteer.latitude, volunteer.longitude);
-            //         volunteer.distance = distance;
-            //         if(distance <= 500){
-            //             nearestUsers.push(volunteer);
-            //             console.log('asfgsdhgsrtgs', nearestUsers);
-            //         }
-            //     }
-            // })
-
-            //     var activeVolunteersLista = getNearestMobileUsers(this.props.coordinates.lng, this.props.coordinates.lat, this.state.temp, 'Volunteer');
-            //     // console.log('active volunteer list', activeVolunteersLista);
-            //     // // this.setState({bestVolunteers: activeVolunteers}, () => {
-            //     // //     console.log('asdgsrgser', this.state.bestVolunteers);
-            //     // // });
-            //     console.log('asdfasdfgdfgse', activeVolunteersLista);
-            
-            // this.setState({onlineVolunteers: this.extractActiveMobileUserDetails(activeVolunteers)}, () => {
-            //     console.log('active volunteer var', this.state.onlineVolunteers);
-            //     activeVolunteersList = getNearestMobileUsers(this.props.coordinates.lng, this.props.coordinates.lat, this.state.onlineVolunteers, 'Volunteer');
-            //     console.log('active volunteer list', activeVolunteersList);
-            //     this.setState({bestVolunteers: this.getUsersProfiles(activeVolunteersList)}, () => {
-            //         //this.getVolunteerCredentials(this.state.bestVolunteers);
-            //         console.log('c', this.state.bestVolunteers);
-            //     });
-            // });
             console.log('then', this.state.temp)
         }).then(()=>{
             console.log('hehe');

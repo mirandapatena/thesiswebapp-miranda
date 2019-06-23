@@ -6,6 +6,7 @@ import {getIncidents} from '../actions/incidentAction';
 import '../stylesheet_QueueIncidents.css';
 import {NotificationManager} from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
+import { longStackSupport } from 'q';
 
 class QueueIncidents extends Component {
    
@@ -35,7 +36,15 @@ class QueueIncidents extends Component {
 
 
     renderEmergency = () => {        
-        return _.map(this.props.incidentsList, (incident, key) => {
+        var list = [];
+        _.map(this.props.incidentsList, (incident, key)=> {
+            incident.key = key;
+            list.push(incident);
+        })
+        list.sort(function(a,b){
+            return new Date(b.timeReceived) - new Date(a.timeReceived);
+          });
+        return _.map(list, (incident, key) => {
             // console.log('timeReceived:', incident.timeReceived);
             // var timeToNumber = Date.parse(incident.timeReceived);
             // console.log('timetoInteger:', timeToNumber);
@@ -54,7 +63,7 @@ class QueueIncidents extends Component {
                             incidentLocation = {incident.incidentLocation}
                             incidentNote = {incident.incidentNote}
                             coordinates = {incident.coordinates}
-                            incidentKey = {key}
+                            incidentKey = {incident.key}
                             reportedBy = {incident.reportedBy}
                             responderResponding = {incident.responderResponding}
                             volunteerResponding = {incident.volunteerResponding}
