@@ -81,9 +81,18 @@ class DispatchMobileUser extends Component{
                 <Table.Cell>
                     <Header>
                         <Header.Content>
+                            <Header.Subheader><p className='colorBlue'><b>Distance:</b> {this.props.distance} m</p></Header.Subheader>
                             <Header.Subheader><p className='colorBlue'><b>Email:</b> {this.props.email}</p></Header.Subheader>
                             <Header.Subheader><p className='colorBlue'><b>Contact Number:</b> {this.props.contactNumber}</p></Header.Subheader>
-                            <Header.Subheader><p className='colorBlue'><b>Points:</b> {this.props.points}</p></Header.Subheader>
+                            {this.props.user_type === 'Volunteer'?
+                                <>
+                                <Header.Subheader><p className='colorBlue'><b>Certification:</b> {this.props.certification}</p></Header.Subheader>
+                                <Header.Subheader><p className='colorBlue'><b>Medical Degree:</b> {this.props.medicalDegree}</p></Header.Subheader>
+                                <Header.Subheader><p className='colorBlue'><b>Medical Profession:</b> {this.props.medicalProfession}</p></Header.Subheader>
+                                <Header.Subheader><p className='colorBlue'><b>Points:</b> {this.props.points}</p></Header.Subheader>
+                                </>
+                            :null}
+                            
                         </Header.Content>
                     </Header>
                 </Table.Cell>

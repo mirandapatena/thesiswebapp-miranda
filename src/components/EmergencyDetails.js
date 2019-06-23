@@ -9,6 +9,7 @@ import DispatchMobileUser from './DispatchMobileUser';
 import swal from 'sweetalert';
 import {NotificationManager} from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
+import {computeDistance} from '../functions/computeDistance';
 
 class EmergencyDetails extends Component{
 
@@ -41,7 +42,8 @@ class EmergencyDetails extends Component{
             s: '',
             m: '',
             dispatchNumberOfResponders: '',
-            dispatchNumberOfVolunteers: ''
+            dispatchNumberOfVolunteers: '',
+            temp: ''
         }
         // console.log('time received', this.props.timeReceived);
         // var newDate = new Date(this.props.timeReceived);
@@ -50,6 +52,7 @@ class EmergencyDetails extends Component{
         //this.getReporter();
         this.getResponderName();
         this.getVolunteerName();
+        this.requestVolunteers();
 
         // let start = Date.parse(this.props.timeReceived);
         // setInterval(_ => {
@@ -196,7 +199,7 @@ class EmergencyDetails extends Component{
         var dispatchNumberOfVolunteers = this.state.dispatchNumberOfVolunteers;
         var bestVolunteers = this.state.bestVolunteers;
         for(var i=0; i< Number(dispatchNumberOfVolunteers); i++){
-            var volunteerNode = fire.database().ref(`mobileUsers/Volunteer/${bestVolunteers[i].key}`);
+            var volunteerNode = fire.database().ref(`mobileUsers/Volunteer/${bestVolunteers[i].uid}`);
             volunteerNode.update({incidentID: this.props.incidentKey}).then(()=>{
                 console.log(`${bestVolunteers[i].key} dispatched`);
             });
@@ -228,19 +231,6 @@ class EmergencyDetails extends Component{
                 });
             });
         });
-    }
-    
-    extractActiveMobileUserDetails = (mobileUsers) => {
-        let activeMobileUserValues = mobileUsers;
-        let activeMobileUserList = _(activeMobileUserValues)
-                            .keys()
-                            .map(key => {
-                                let cloned = _.clone(activeMobileUserValues[key]);
-                                cloned.key = key;
-                                return cloned;
-                            })
-                            .value();
-        return activeMobileUserList;
     }
 
     getUsersProfiles = (userList) => {
@@ -285,20 +275,121 @@ class EmergencyDetails extends Component{
     requestVolunteers = () => {
         let activeVolunteers;
         let activeVolunteersList;
+        let volunteersList = [];
+        var tempVolunteerObject;
+        var incidentCoordinates = {
+            longitude: parseFloat(this.props.coordinates.lng),
+            latitude: parseFloat(this.props.coordinates.lat)
+        };
+        var nearestUsers = [];
+        var distance; 
+        var userObject = {};
         const volunteerRef = fire.database().ref('mobileUsers/Volunteer');
         volunteerRef.once('value', snapshot => {
             activeVolunteers = snapshot.val();
             console.log('activeVolunteersa', activeVolunteers);
-            this.setState({onlineVolunteers: this.extractActiveMobileUserDetails(activeVolunteers)}, () => {
-                console.log('active volunteer var', this.state.onlineVolunteers);
-                activeVolunteersList = getNearestMobileUsers(this.props.coordinates.lng, this.props.coordinates.lat, this.state.onlineVolunteers, 'Volunteer');
-                console.log('active volunteer list', activeVolunteersList);
-                this.setState({bestVolunteers: this.getUsersProfiles(activeVolunteersList)}, () => {
-                    //this.getVolunteerCredentials(this.state.bestVolunteers);
-                    console.log('the best', this.state.bestVolunteers);
+            _.map(activeVolunteers, (volunteer, key) => {
+                var volunteerDetailsNode = fire.database().ref(`users/${key}`);
+                volunteerDetailsNode.once('value', snapshot => {
+                    var volunteerDetails = snapshot.val();
+                    volunteer.uid = key;
+                    volunteer.firstName = volunteerDetails.firstName;
+                    volunteer.lastName = volunteerDetails.lastName;
+                    volunteer.email = volunteerDetails.email;
+                    volunteer.sex = volunteerDetails.sex;
+                    volunteer.contactNumber = volunteerDetails.contactNumber;
+                    console.log('volunteerDetails', volunteerDetails);
+                }).then(()=>{
+                    var volunteerCredentialsNode = fire.database().ref(`credentials/${key}`);
+                    volunteerCredentialsNode.once('value', snapshot => {
+                        var volunteerCredentials = snapshot.val();
+                        tempVolunteerObject = {...volunteer, ...volunteerCredentials};
+                        volunteersList.push(tempVolunteerObject);
+                        console.log('tempVolunteerObject', volunteersList);
+                    }).then(()=>{
+                        this.setState({
+                            temp: volunteersList,
+                        }, () => {
+                            console.log('asddgasggs', this.state.temp);
+                        });
+                    });
+                    
+                }).catch((error)=> {
+                    console.log('Error in fetching responders', error);
                 });
             });
+            // var tempObject = this.state.temp;
+            // _.map(tempObject, (volunteer, key) => {
+            //     if(!volunteer.isAccepted){
+            //         var userCoordinates = {
+            //             latitude: parseFloat(volunteer.coordinates.lat),
+            //             longitude: parseFloat(volunteer.coordinates.lng)
+            //         }
+            //         var distance = computeDistance(volunteer.latitude, volunteer.longitude, volunteer.latitude, volunteer.longitude);
+            //         volunteer.distance = distance;
+            //         if(distance <= 500){
+            //             nearestUsers.push(volunteer);
+            //             console.log('asfgsdhgsrtgs', nearestUsers);
+            //         }
+            //     }
+            // })
+
+            //     var activeVolunteersLista = getNearestMobileUsers(this.props.coordinates.lng, this.props.coordinates.lat, this.state.temp, 'Volunteer');
+            //     // console.log('active volunteer list', activeVolunteersLista);
+            //     // // this.setState({bestVolunteers: activeVolunteers}, () => {
+            //     // //     console.log('asdgsrgser', this.state.bestVolunteers);
+            //     // // });
+            //     console.log('asdfasdfgdfgse', activeVolunteersLista);
+            
+            // this.setState({onlineVolunteers: this.extractActiveMobileUserDetails(activeVolunteers)}, () => {
+            //     console.log('active volunteer var', this.state.onlineVolunteers);
+            //     activeVolunteersList = getNearestMobileUsers(this.props.coordinates.lng, this.props.coordinates.lat, this.state.onlineVolunteers, 'Volunteer');
+            //     console.log('active volunteer list', activeVolunteersList);
+            //     this.setState({bestVolunteers: this.getUsersProfiles(activeVolunteersList)}, () => {
+            //         //this.getVolunteerCredentials(this.state.bestVolunteers);
+            //         console.log('c', this.state.bestVolunteers);
+            //     });
+            // });
+            console.log('then', this.state.temp)
+        }).then(()=>{
+            console.log('hehe');
+            var incidentCoordinates = {
+                longitude: parseFloat(this.props.coordinates.lng),
+                latitude: parseFloat(this.props.coordinates.lat)
+            };
+            var nearestUsers = [];
+            var distance;
+            var tempArray = this.state.temp;
+            _.map(tempArray, (volunteer, key) => {
+                console.log('looping', volunteer);
+                var userCoordinates = {
+                    latitude: parseFloat(volunteer.coordinates.lat),
+                    longitude: parseFloat(volunteer.coordinates.lng)
+                }
+                distance = computeDistance(incidentCoordinates.latitude, incidentCoordinates.longitude, userCoordinates.latitude, userCoordinates.longitude);
+                volunteer.distance = distance;
+                if(distance <= 500){
+                    nearestUsers.push(volunteer);
+                    console.log('asdfasr', nearestUsers);
+                }
+            });
+            this.setState({bestVolunteers: nearestUsers}, () => {
+                console.log('fuck you', this.state.bestVolunteers);
+            });
         });
+    }
+
+    extractActiveMobileUserDetails = (mobileUsers) => {
+        let activeMobileUserValues = mobileUsers;
+        let activeMobileUserList = _(activeMobileUserValues)
+                            .keys()
+                            .map(key => {
+                                let cloned = _.clone(activeMobileUserValues[key]);
+                                cloned.key = key;
+                                return cloned;
+                            })
+                            .value();
+        return activeMobileUserList;
     }
 
     // getVolunteerCredentials = (bestVolunteers) => {
@@ -317,7 +408,7 @@ class EmergencyDetails extends Component{
         return _.map(this.state.bestVolunteers, (volunteer, key) => {
             return (
                 <DispatchMobileUser firstName={volunteer.firstName} lastName={volunteer.lastName} id={volunteer.uid} incidentID={this.props.incidentKey}
-                distance={volunteer.distance} user_type='Volunteer' email={volunteer.email} contactNumber={volunteer.contactNumber} points={volunteer.points}/>
+                distance={volunteer.distance} user_type='Volunteer' email={volunteer.email} contactNumber={volunteer.contactNumber} points={volunteer.points} certification={volunteer.certification} medicalDegree={volunteer.medicalDegree} medicalProfession={volunteer.medicalProfession} distance={volunteer.distance}/>
             );
         });
     }
