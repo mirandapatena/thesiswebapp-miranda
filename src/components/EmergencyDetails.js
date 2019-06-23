@@ -40,13 +40,14 @@ class EmergencyDetails extends Component{
             ms: '',
             s: '',
             m: '',
-            dispatchNumberOfResponders: ''
+            dispatchNumberOfResponders: '',
+            dispatchNumberOfVolunteers: ''
         }
         // console.log('time received', this.props.timeReceived);
         // var newDate = new Date(this.props.timeReceived);
         // console.log('time fuck', Date.parse(this.props.timeReceived));
         this.getRespondersList = this.getRespondersList.bind(this);
-        this.getReporter();
+        //this.getReporter();
         this.getResponderName();
         this.getVolunteerName();
 
@@ -169,7 +170,7 @@ class EmergencyDetails extends Component{
 
     dispatchMultipleResponders = (e) => {
         e.preventDefault();
-        console.log('dispatch multiple');
+        console.log('dispatch multiple responders');
         var dispatchNumberOfResponders = this.state.dispatchNumberOfResponders;
         var activeResponders = this.state.activeResponders;
         for(var i=0; i< Number(dispatchNumberOfResponders); i++){
@@ -178,6 +179,39 @@ class EmergencyDetails extends Component{
                 console.log(`${activeResponders[i].key} dispatched`);
             });
         }
+    }
+
+    dispatchNumberOfVolunteersHandler = (e) => {
+        const re = /^[0-9\b]+$/;
+        if (e.target.value == '' || re.test(e.target.value)) {
+            this.setState({dispatchNumberOfVolunteers: e.target.value}, () => {
+                console.log('Number of volunteers', this.state.dispatchNumberOfVolunteers);
+            })
+        }
+    }
+
+    dispatchMultipleVolunteers = (e) => {
+        e.preventDefault();
+        console.log('dispatch multiple volunteers');
+        var dispatchNumberOfVolunteers = this.state.dispatchNumberOfVolunteers;
+        var bestVolunteers = this.state.bestVolunteers;
+        for(var i=0; i< Number(dispatchNumberOfVolunteers); i++){
+            var volunteerNode = fire.database().ref(`mobileUsers/Volunteer/${bestVolunteers[i].key}`);
+            volunteerNode.update({incidentID: this.props.incidentKey}).then(()=>{
+                console.log(`${bestVolunteers[i].key} dispatched`);
+            });
+        }
+    }
+
+    markRedundantReport = (e) => {
+        e.preventDefault();
+        console.log('redundant report');
+        var incidentNode = fire.database().ref(`incidents/${this.props.incidentKey}`);
+        incidentNode.update({isRedundantReport: true}).then(()=>{
+            console.log('report marked redundant in firebase');
+        }).catch(() => {
+            console.log(`Error in marking report as redundant. ID: ${this.props.incidentKey}  `);
+        });
     }
 
     getRespondersList = () => {
@@ -279,6 +313,7 @@ class EmergencyDetails extends Component{
 
     renderVolunteersList = () => {
         // console.log('renderVolunteersList', this.state.bestVolunteers);
+        console.log('volunteers list asdf', this.state.bestVolunteers);
         return _.map(this.state.bestVolunteers, (volunteer, key) => {
             return (
                 <DispatchMobileUser firstName={volunteer.firstName} lastName={volunteer.lastName} id={volunteer.uid} incidentID={this.props.incidentKey}
@@ -326,19 +361,19 @@ class EmergencyDetails extends Component{
         })
     }
 
-    getReporter = () => {
-        var user = fire.database().ref(`users/${this.props.reportedBy}`);
-        var firstName, lastName, snap;
-        user.once('value', snapshot => {
-            console.log('snapshot', snapshot);
-            snap = snapshot.val();
-            firstName = snap.firstName;
-            lastName = snap.lastName;
-            this.setState({firstName, lastName}, () => {
-                console.log(`${this.state.firstName} ${this.state.lastName} reported an incident`);
-            });
-        });
-    }
+    // getReporter = () => {
+    //     var user = fire.database().ref(`users/${this.props.reportedBy}`);
+    //     var firstName, lastName, snap;
+    //     user.once('value', snapshot => {
+    //         console.log('snapshot', snapshot);
+    //         snap = snapshot.val();
+    //         firstName = snap.firstName;
+    //         lastName = snap.lastName;
+    //         this.setState({firstName, lastName}, () => {
+    //             console.log(`${this.state.firstName} ${this.state.lastName} reported an incident`);
+    //         });
+    //     });
+    // }
 
     getResponderName = () => {
         var user = fire.database().ref(`users/${this.props.responderResponding}`);
@@ -409,7 +444,7 @@ class EmergencyDetails extends Component{
                         </div>
                     </Card.Header>
                     <Card.Content>
-                        <p className='incidentReportedBy'><b>Reported By:</b> {this.state.firstName} {this.state.lastName}
+                        <p className='incidentReportedBy'><b>Reported By:</b> {this.props.reportedBy}
                         {this.props.isRespondingResponder === true? 
                             <div><b>Responded By:</b> {this.state.responderFirstName} {this.state.responderLastName}</div>:null}
                         {this.props.isRespondingVolunteer === true? 
@@ -459,6 +494,9 @@ class EmergencyDetails extends Component{
                             
                     </Modal.Content>
                         <Modal.Actions>
+                            <Button color='blue' onClick={this.markRedundantReport}>
+                                Mark report as redundant
+                            </Button>
                             <Button color='red' onClick={this.showActiveRespondersList('small')}>
                                 {this.state.isRequestingResponders === true ? 'Request Additional Responders' : 'Dispatch Responders'}
                             </Button>
@@ -525,6 +563,11 @@ class EmergencyDetails extends Component{
                             <b>{this.state.m}:{this.state.s}:{this.state.ms}</b>
                         </div>
                     </Message>
+                    <form>
+                        <div><p>Maximum number of available volunteers: {this.state.bestVolunteers.length}</p>
+                        <input type="number" name="quantity" min="1" max={this.state.bestVolunteers.length} onChange={this.dispatchNumberOfVolunteersHandler} value={this.state.dispatchNumberOfVolunteers}/></div>
+                        <button onClick={this.dispatchMultipleVolunteers}>Dispatch {this.state.dispatchNumberOfVolunteers} volunteer/s</button>
+                    </form>   
                     <Table>
                         <Table.Header>
                             <Table.Row>

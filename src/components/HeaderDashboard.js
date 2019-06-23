@@ -241,7 +241,8 @@ class HeaderDashboard extends Component{
       unrespondedVolunteer: true,
       isShown: false,
       isRespondingResponderShown: false,
-      isRespondingVolunteerShown: false
+      isRespondingVolunteerShown: false,
+      isRedundantReport: false
     }
     if (formValid(this.state)) {
       console.log(`

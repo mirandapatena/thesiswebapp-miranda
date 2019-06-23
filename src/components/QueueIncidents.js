@@ -44,7 +44,8 @@ class QueueIncidents extends Component {
             // var p = points.sort(function(a, b){return b - a});
             // console.log('points', p);
 
-            if(incident.isSettled === false){
+            //add isRedundantReport here, update list 
+            if(incident.isSettled === false || incident.isRedundantReport === false){
                 return (
                     <div className='item' key={key}>
                         <EmergencyDetails 
