@@ -1,0 +1,13 @@
+[debug] [2019-06-25T12:35:57.898Z] ----------------------------------------------------------------------
+[debug] [2019-06-25T12:35:57.903Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Mark Muga\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2019-06-25T12:35:57.903Z] CLI Version:   6.9.2
+[debug] [2019-06-25T12:35:57.903Z] Platform:      win32
+[debug] [2019-06-25T12:35:57.903Z] Node Version:  v10.15.3
+[debug] [2019-06-25T12:35:57.907Z] Time:          Tue Jun 25 2019 20:35:57 GMT+0800 (Philippine Standard Time)
+[debug] [2019-06-25T12:35:57.907Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2019-06-25T12:35:57.933Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-06-25T12:35:57.934Z] > authorizing via signed-in user
+[debug] [2019-06-25T12:35:57.935Z] [iam] checking project thesis-webapp for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2019-06-25T12:35:57.937Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/thesis-webapp:testIamPermissions  
+
