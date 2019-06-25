@@ -49,7 +49,7 @@ class ArchivesDispaly extends Component{
                                         <Form.Group widths='2'>
                                             <Form.Field>
                                                 <pre style={{marginBottom:'0px', marginTop:'5px'}}>
-                                                    <b>REPORTED BY : </b>           
+                                                    <b>REPORTED BY  : </b>           
                                                     <u>  {this.props.incidentReportedBy}  </u>
                                                 </pre>
                                             </Form.Field>
@@ -63,13 +63,13 @@ class ArchivesDispaly extends Component{
                                         <Form.Group widths='2'>
                                             <Form.Field>
                                                 <pre style={{marginBottom:'0px', marginTop:'-13px'}}>
-                                                    <b>ASSIGNED RESPONDER : </b> 
+                                                    <b>RESPONDED BY : </b> 
                                                     <u>  {this.props.feedbackByResponder}  </u>
                                                 </pre>
                                             </Form.Field>
                                             <Form.Field>
                                                 <pre style={{marginBottom:'0px', marginTop:'-13px'}}>
-                                                    <b>ASSIGNED VOLUNTEER : </b> 
+                                                    <b>VOLUNTEERED BY : </b> 
                                                     <u>  {this.props.incidentOriginalVolunteer}  </u>
                                                 </pre>
                                             </Form.Field>
@@ -90,16 +90,28 @@ class ArchivesDispaly extends Component{
                                             </Form.Field>
                                             <Form.Field>
                                                 <pre style={{marginBottom:'0px'}}>
-                                                    <b>SETTLED DATE  : </b> 
+                                                    <b>SETTLED DATE        : </b> 
                                                     <u>  {this.props.feedbackTimeSettled}  </u>
                                                 </pre>
                                             </Form.Field>
                                         </Form.Group>
-                                        <div style={{marginTop:'-13px', marginBottom:'0px', fontSize:'1em', fontFamily:'monospace,monospace'}}>
-                                            <b>INCIDENT LOCATION : </b> 
-                                            <u>&nbsp;&nbsp;{this.props.incidentLocation}&nbsp;&nbsp;</u>
-                                        </div>  
-                                        <pre style={{marginTop:'5px', marginBottom:'0px'}}>
+
+                                        <Form.Group widths='2'>
+                                            <Form.Field>
+                                                <pre style={{marginBottom:'5px', marginTop:'-13px'}}>
+                                                    <b>INCIDENT LOCATION : </b> 
+                                                    <u>&nbsp;&nbsp;{this.props.incidentLocation}&nbsp;&nbsp;</u>
+                                                </pre>
+                                            </Form.Field>
+                                            <Form.Field>
+                                                <pre style={{marginBottom:'5px', marginTop:'-13px'}}>
+                                                    <b>TOTAL RESPONSE TIME : </b> 
+                                                    <u>  7mins 4secs  </u>
+                                                </pre>
+                                            </Form.Field>
+                                        </Form.Group>
+                                          
+                                        <pre style={{marginBottom:'5px', marginTop:'-13px'}}>
                                             <b>DETAILED LOCATION : </b> 
                                             <u>  {this.props.feedbackLocation}  </u>
                                         </pre>

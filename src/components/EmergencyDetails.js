@@ -95,6 +95,20 @@ class EmergencyDetails extends Component{
             this.setState({isRespondingResponder: respondingResponder});
             console.log('isRespondingResponder',respondingResponder);
 
+            if(respondingResponder === true){
+                setTimeout(() => {
+            
+                    var isRespondingResponderShown = fire.database().ref(`incidents/${this.props.incidentKey}`);
+                    isRespondingResponderShown.update({isRespondingResponderShown: true}).then(()=>{
+                        console.log('update isArrivedResponderShown', isRespondingResponderShown);
+        
+                    }).catch(() => {
+                        console.log(`Error in marking report as redundant. ID: ${this.props.incidentKey}  `);
+                    });
+                    
+                    }, 7000);
+            }
+
             isRespondingResponderShown.on('value', snapshot => {
                 respondingResponderShown = snapshot.val();
                 this.setState({isRespondingResponderShown: respondingResponderShown});
@@ -107,7 +121,7 @@ class EmergencyDetails extends Component{
                                 <p>Responder <b>{this.props.originalResponderName}</b> has accepted this incident.</p>
                             </div>; 
             
-                    NotificationManager.success(a);
+                    NotificationManager.success(a,'', 20000);
                 }
             });
         });
@@ -121,6 +135,20 @@ class EmergencyDetails extends Component{
             this.setState({isRespondingVolunteer: respondingVolunteer});
             console.log('isRespondingVolunteer',respondingVolunteer);
 
+            if(respondingVolunteer === true){
+                setTimeout(() => {
+            
+                    var isRespondingVolunteerShown = fire.database().ref(`incidents/${this.props.incidentKey}`);
+                    isRespondingVolunteerShown.update({isRespondingVolunteerShown: true}).then(()=>{
+                        console.log('update isArrivedResponderShown', isRespondingVolunteerShown);
+        
+                    }).catch(() => {
+                        console.log(`Error in marking report as redundant. ID: ${this.props.incidentKey}  `);
+                    });
+                    
+                    }, 7000);
+            }
+
             isRespondingVolunteerShown.on('value', snapshot => {
                 respondingVolunteerShown = snapshot.val();
                 this.setState({isRespondingVolunteerShown: respondingVolunteerShown});
@@ -133,7 +161,7 @@ class EmergencyDetails extends Component{
                                 <p>Volunteer <b>{this.props.originalVolunteerName}</b> has accepted this incident.</p>
                             </div>; 
                     
-                    NotificationManager.success(a);
+                    NotificationManager.success(a,'', 20000);
                 }
             });
         });
@@ -147,6 +175,20 @@ class EmergencyDetails extends Component{
             this.setState({isArrivedResponder: ArrivedResponder});
             console.log('RESPONDER_ARRIVED',ArrivedResponder);
 
+            if(ArrivedResponder === true){
+                setTimeout(() => {
+            
+                    var isArrivedResponderShown = fire.database().ref(`incidents/${this.props.incidentKey}`);
+                    isArrivedResponderShown.update({isArrivedResponderShown: true}).then(()=>{
+                        console.log('update isArrivedResponderShown', isArrivedResponderShown);
+        
+                    }).catch(() => {
+                        console.log(`Error in marking report as redundant. ID: ${this.props.incidentKey}  `);
+                    });
+                    
+                    }, 7000);
+            }
+
             isArrivedResponderShown.on('value', snapshot => {
                 ArrivedResponderShown = snapshot.val();
                 this.setState({isArrivedResponderShown: ArrivedResponderShown});
@@ -159,33 +201,47 @@ class EmergencyDetails extends Component{
                                 <p>Responder <b>{this.props.originalResponderName}</b> has arrrived at the incident.</p>
                             </div>; 
                     
-                    NotificationManager.success(a);
+                    NotificationManager.success(a,'', 20000);
                 }
             });
         });
 
         var isArrivedVolunteer = fire.database().ref(`incidents/${this.props.incidentKey}/isArrivedVolunteer`);
-        var isArrivedVolunteerShow = fire.database().ref(`incidents/${this.props.incidentKey}/isArrivedVolunteerShow`);
+        var isArrivedVolunteerShown = fire.database().ref(`incidents/${this.props.incidentKey}/isArrivedVolunteerShown`);
         var ArrivedVolunteer;
-        var ArrivedVolunteerShow;
+        var ArrivedVolunteerShown;
         isArrivedVolunteer.on('value', snapshot => {
             ArrivedVolunteer = snapshot.val();
             this.setState({isArrivedVolunteer: ArrivedVolunteer});
             console.log('RESPONDER_ARRIVED',ArrivedVolunteer);
 
-            isArrivedVolunteerShow.on('value', snapshot => {
-                ArrivedVolunteerShow = snapshot.val();
-                this.setState({isArrivedVolunteerShow: ArrivedVolunteerShow});
-                console.log('isRespondingVolunteerShown',ArrivedVolunteerShow);
+            if(ArrivedVolunteer === true){
+                setTimeout(() => {
+            
+                    var isArrivedVolunteerShown = fire.database().ref(`incidents/${this.props.incidentKey}`);
+                    isArrivedVolunteerShown.update({isArrivedVolunteerShown: true}).then(()=>{
+                        console.log('update isArrivedResponderShown', isArrivedVolunteerShown);
+        
+                    }).catch(() => {
+                        console.log(`Error in marking report as redundant. ID: ${this.props.incidentKey}  `);
+                    });
+                    
+                    }, 7000);
+            }
 
-                if(ArrivedVolunteer === true && ArrivedVolunteerShow === false){
+            isArrivedVolunteerShown.on('value', snapshot => {
+                ArrivedVolunteerShown = snapshot.val();
+                this.setState({isArrivedVolunteerShown: ArrivedVolunteerShown});
+                console.log('isRespondingVolunteerShown',ArrivedVolunteerShown);
+
+                if(ArrivedVolunteer === true && ArrivedVolunteerShown === false){
                     var a = <div>
                                 {/* <p>Incident Type: {this.props.incidentType}</p> */}
                                 <p><b>Incident Location:</b> {this.props.incidentLocation}</p>
                                 <p>Volunteer <b>{this.props.originalVolunteerName}</b> has arrrived at the incident.</p>
                             </div>; 
                     
-                    NotificationManager.success(a);
+                    NotificationManager.success(a,'', 20000);
                 }
             });
         });
@@ -237,32 +293,28 @@ class EmergencyDetails extends Component{
         console.log('dispatch multiple responders');
         var dispatchNumberOfResponders = this.state.dispatchNumberOfResponders;
         var activeResponders = this.state.activeResponders;
-        for(var i=0; i< Number(dispatchNumberOfResponders); i++){
-            var responderNode = fire.database().ref(`mobileUsers/Responder/${activeResponders[i].key}`);
-            responderNode.update({incidentID: this.props.incidentKey}).then(()=>{
-                console.log(`${activeResponders[i].key} dispatched`);
-            });
+        if(Number(dispatchNumberOfResponders) > this.state.dispatchNumberOfResponders.length){
+            swal("Cannot dispatch a number more than available responders");
+        }else{
+            for(var i=0; i< Number(dispatchNumberOfResponders); i++){
+                var responderNode = fire.database().ref(`mobileUsers/Responder/${activeResponders[i].key}`);
+                responderNode.update({incidentID: this.props.incidentKey}).then(()=>{
+                    console.log(`${activeResponders[i].key} dispatched`);
+                });
+            }
         }
+       
     }
 
     dispatchNumberOfVolunteersHandler = (e) => {
-        // const re = /^[0-9\b]+$/;
-        // let formError = { ...this.state.formError };
-
-        // if (e.target.value == '' || re.test(e.target.value)) {
-        //     this.setState({dispatchNumberOfVolunteers: e.target.value}, () => {
-        //         console.log('Number of volunteers', this.state.dispatchNumberOfVolunteers);
-        //     })
-        // }
-        const { name, value } = e.target;
-        let formError = { ...this.state.formError };
-
-        if (name === "quality"){
-            formError.quality = qualityRegex.test(value) ? "" : "invalid number of volunteers";
+        const re = /^[0-9\b]+$/;
+    
+        if (e.target.value == '' || re.test(e.target.value)) {
+            this.setState({dispatchNumberOfVolunteers: e.target.value}, () => {
+                console.log('Number of volunteers', this.state.dispatchNumberOfVolunteers);
+            })
         }
-
-
-        this.setState({ formError, [name]: value }, () => console.log(this.state));
+       
     }
 
     dispatchMultipleVolunteers = (e) => {
@@ -270,12 +322,19 @@ class EmergencyDetails extends Component{
         console.log('dispatch multiple volunteers');
         var dispatchNumberOfVolunteers = this.state.dispatchNumberOfVolunteers;
         var bestVolunteers = this.state.bestVolunteers;
-        for(var i=0; i< Number(dispatchNumberOfVolunteers); i++){
-            var volunteerNode = fire.database().ref(`mobileUsers/Volunteer/${bestVolunteers[i].key}`);
-            volunteerNode.update({incidentID: this.props.incidentKey}).then(()=>{
-                console.log(`${bestVolunteers[i].key} dispatched`);
-            });
+
+        if(Number(dispatchNumberOfVolunteers) > this.state.dispatchNumberOfVolunteers.length){
+            swal("Cannot dispatch a number more than available volunteers");
+        }else{
+            for(var i=0; i< Number(dispatchNumberOfVolunteers); i++){
+                var volunteerNode = fire.database().ref(`mobileUsers/Volunteer/${bestVolunteers[i].key}`);
+                volunteerNode.update({incidentID: this.props.incidentKey}).then(()=>{
+                    console.log(`${bestVolunteers[i].key} dispatched`);
+                });
+            }
+
         }
+        
     }
 
     markRedundantReport = (e) => {
@@ -625,9 +684,6 @@ class EmergencyDetails extends Component{
                                 {this.state.isRequestingResponders === true ? 'Request Additional Responders' : 'Dispatch Responders'}
                             </Button>
 
-                            <Button color='blue' onClick={this.showActiveVolunteersList('large')}>
-                                {this.state.isRequestingVolunteers === true ? 'Request Additional Volunteers' : 'Request Volunteer'}
-                            </Button>
                         </Modal.Actions>                        
             </Modal>
 
@@ -655,7 +711,8 @@ class EmergencyDetails extends Component{
                             {this.renderRespondersList()}
                         </Table.Body>
                     </Table>
-
+                    
+                    {this.state.isRequestingResponders === true ?
                     <Form>
                         <div style={{paddingTop:'30px', textAlign:'right'}}>
                             <p style={{fontSize:'1.2em'}}>Maximum number of available responders: {this.state.activeResponders.length}</p>
@@ -665,12 +722,11 @@ class EmergencyDetails extends Component{
                                 max={this.state.activeResponders.length} 
                                 onChange={this.dispatchNumberOfRespondersHandler} 
                                 value={this.state.dispatchNumberOfResponders}
-                                // className={formError.quality.length > 0 ? "error" : null}
                             />
-                            {/* {formError.quality.length > 0 && (
-                        <span className="errorMessage">{formError.quality}</span>)} */}
+                            
                         </div>
-                    </Form>  
+                    </Form>
+                    :null}  
 
                     </div>
                     :!this.state.activeResponders?
@@ -686,9 +742,14 @@ class EmergencyDetails extends Component{
                     :null}
                 </Modal.Content>
                 <Modal.Actions>
+                <Button color='blue' onClick={this.showActiveVolunteersList('large')}>
+                    {this.state.isRequestingVolunteers === true ? 'Request Additional Volunteers' : 'Request Volunteer'}
+                </Button>
+                {this.state.isRequestingResponders === true ?
                     <Button onClick={this.dispatchMultipleResponders} color='red'>
                         Dispatch {this.state.dispatchNumberOfResponders} responder/s
                     </Button>
+                :null}
                 </Modal.Actions>
             </Modal>
 
@@ -716,7 +777,7 @@ class EmergencyDetails extends Component{
                             {this.renderVolunteersList()}
                         </Table.Body>    
                     </Table>
-
+                    {this.state.isRequestingVolunteers === true ?
                     <Form>
                         <div style={{paddingTop:'30px', textAlign:'right'}}>
                             <b style={{fontSize:'1.1em', color:'white'}}>Maximum number of available volunteers: {this.state.bestVolunteers.length}</b>
@@ -730,6 +791,7 @@ class EmergencyDetails extends Component{
                             />
                         </div>
                     </Form>
+                    :null}
                     
                 </div>
                 :!this.state.bestVolunteers?
@@ -745,10 +807,11 @@ class EmergencyDetails extends Component{
                 :null}
                 </Modal.Content>
                 <Modal.Actions>
-                    <Button color='blue' onClick={this.volunteerDispatch}>Request Volunteer</Button>
-                    <Button onClick={this.dispatchMultipleVolunteers} color='red' floated='right'>
-                        Dispatch {this.state.dispatchNumberOfVolunteers} volunteer/s
-                    </Button>
+                    {this.state.isRequestingVolunteers === true ?
+                        <Button onClick={this.dispatchMultipleVolunteers} color='red' floated='right'>
+                            Dispatch {this.state.dispatchNumberOfVolunteers} volunteer/s
+                        </Button>
+                    :<div></div>}
                 </Modal.Actions>
             </Modal>
         </div>

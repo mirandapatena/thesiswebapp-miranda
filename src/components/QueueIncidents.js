@@ -43,7 +43,8 @@ class QueueIncidents extends Component {
           });
         return _.map(list, (incident, key) => {
              
-            if(incident.isSettled === false || incident.isRedundantReport === false){
+        if(incident.isRedundantReport === false){
+            if(incident.isSettled === false){
                 return (
                     <div className='item' key={key}>
                         <EmergencyDetails 
@@ -67,7 +68,7 @@ class QueueIncidents extends Component {
                         />
                     </div>
                 );
-                
+            }
             }
             if(incident.isSettled === true && incident.isShown === false){   
                 var a = <div>
@@ -75,7 +76,7 @@ class QueueIncidents extends Component {
                                 <p>This incident has been settled</p>
                             </div>; 
             
-                    NotificationManager.success(a);
+                    NotificationManager.success(a,'', 20000);
             }
         });
     }
